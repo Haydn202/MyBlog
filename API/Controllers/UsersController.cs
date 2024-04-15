@@ -9,20 +9,18 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class UsersController(DataContext context) : ControllerBase
 {
-
-    
-    
     [HttpGet]
-    public ActionResult<IEnumerable<User>> GetUsers()
+    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
     {
-        var users = context.Users.ToList();
+        var users = await context.Users.ToListAsync();
 
         return users;
     }
 
     [HttpGet("{id:guid}")]
-    public ActionResult<User> GetUser(Guid id)
+    public async Task<ActionResult<User>> GetUser(Guid id)
     { 
-        return context.Users.Find(id);
+        return await context.Users.FindAsync(id);
     }
+    
 }

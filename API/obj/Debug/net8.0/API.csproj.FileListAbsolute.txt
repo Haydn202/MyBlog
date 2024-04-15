@@ -125,3 +125,4 @@
 /Users/haydn/Repos/MyBlog/API/bin/Debug/net8.0/runtimes/win-x64/native/e_sqlite3.dll
 /Users/haydn/Repos/MyBlog/API/bin/Debug/net8.0/runtimes/win-x86/native/e_sqlite3.dll
 /Users/haydn/Repos/MyBlog/API/obj/Debug/net8.0/API.csproj.Up2Date
+/Users/haydn/Repos/MyBlog/API/obj/Debug/net8.0/API.sourcelink.json
