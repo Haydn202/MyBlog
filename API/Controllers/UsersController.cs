@@ -1,10 +1,12 @@
 using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
+[Authorize]
 public class UsersController(DataContext context) : BaseApiController
 {
     [HttpGet]
@@ -19,25 +21,5 @@ public class UsersController(DataContext context) : BaseApiController
     public async Task<ActionResult<User>> GetUser(Guid id)
     { 
         return await context.Users.FindAsync(id);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<User>> CreateUser()
-    {
-        var user = new User
-        {
-            Id = new Guid(),
-            UserName = "Sally",
-            PasswordHash = new byte[]
-            {
-            },
-            PasswordSalt = new byte[]
-            {
-            }
-        };
-
-        await context.Users.AddAsync(user);
-        await context.SaveChangesAsync();
-        return user;
     }
 }
