@@ -2,10 +2,7 @@
 
 namespace API.DTOs.Comments;
 
-public class MainCommentDto
+public class MainCommentDto: CommentDto
 {
-    public Guid Id { get; set; }
-    public string Message { get; set; }
-    public DateTime CreatedOn { get; set; }
     public List<SubCommentDto>? SubComments { get; set; }
 }

@@ -1,7 +1,6 @@
 ﻿namespace API.DTOs.Comments;
 
-public class SubCommentDto
+public class SubCommentDto: CommentDto
 {
-    public string Message { get; set; }
     public DateTime CreatedOn { get; set; }
 }
