@@ -17,9 +17,14 @@ public class TopicsController(IMapper mapper, DataContext context): BaseApiContr
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<Ok<TopicDto>> GetTopic(Guid id)
+    public async Task<Results<NotFound, Ok<TopicDto>>> GetTopic(Guid id)
     {
-        var topic = await context.Topics.FirstAsync(x => x.Id == id);
+        var topic = await context.Topics.FirstOrDefaultAsync(x => x.Id == id);
+        
+        if (topic == null)
+        {
+            return TypedResults.NotFound();
+        }
         
         return TypedResults.Ok(mapper.Map<TopicDto>(topic));
     }
