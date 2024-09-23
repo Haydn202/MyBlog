@@ -40,27 +40,6 @@ namespace API.Data.Migrations
                     b.ToTable("SubComments");
                 });
 
-            modelBuilder.Entity("API.Entities.Contributor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Bio")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ProfileUrl")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Contributors");
-                });
-
             modelBuilder.Entity("API.Entities.MainComment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -94,7 +73,7 @@ namespace API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ContributorId")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
@@ -109,12 +88,7 @@ namespace API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("WrittenOn")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ContributorId");
 
                     b.ToTable("Posts");
                 });
@@ -153,6 +127,9 @@ namespace API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("BLOB");
 
+                    b.Property<int?>("Role")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -178,17 +155,6 @@ namespace API.Data.Migrations
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("API.Entities.Post", b =>
-                {
-                    b.HasOne("API.Entities.Contributor", "Contributor")
-                        .WithMany()
-                        .HasForeignKey("ContributorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Contributor");
                 });
 
             modelBuilder.Entity("API.Entities.Topic", b =>

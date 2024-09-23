@@ -15,5 +15,4 @@ public class DataContext : DbContext
     public DbSet<MainComment> MainComments { get; set; }
     public DbSet<SubComment> SubComments { get; set; }
     public DbSet<Topic> Topics { get; set; }
-    public DbSet<Contributor> Contributors { get; set; }
 }

@@ -22,4 +22,6 @@ public class UsersController(DataContext context) : BaseApiController
     { 
         return await context.Users.FindAsync(id);
     }
+    
+    
 }

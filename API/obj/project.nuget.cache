@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "InPUBwGK4gg=",
+  "dgSpecHash": "+P9dIySlZA0=",
   "success": true,
   "projectFilePath": "C:\\Users\\ThomsonH\\Repos\\MyBlog\\API\\API.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\ThomsonH\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\ThomsonH\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\ThomsonH\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.8\\microsoft.aspnetcore.authentication.jwtbearer.8.0.8.nupkg.sha512",
     "C:\\Users\\ThomsonH\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
