@@ -1,4 +1,5 @@
 ﻿using API.Data;
+using API.DTOs.Comments;
 using API.DTOs.Posts;
 using API.Entities;
 using AutoMapper;
@@ -61,5 +62,31 @@ public class PostsController(IMapper mapper, DataContext context): BaseApiContro
         await context.SaveChangesAsync();
 
         return TypedResults.NoContent();
+    }
+
+    [HttpPut]
+    public async Task<Results<Ok<PostSummary>, NotFound>> UpdatePost(PostUpdateDto request)
+    {
+        var post = await context.Posts.FirstOrDefaultAsync(x => x.Id == request.Id);
+
+        if (post is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        mapper.Map(request, post);
+        
+        await context.SaveChangesAsync();
+        
+        return TypedResults.Ok(mapper.Map<PostSummary>(post));
+    }
+    
+    [AllowAnonymous]
+    [HttpGet("{id:guid}/comments")]
+    public async Task<Ok<List<MainCommentDto>>> GetMainComments(Guid id)
+    {
+        var comments = context.MainComments.Where(x => x.PostId == id).ToListAsync();
+        
+        return TypedResults.Ok(mapper.Map<List<MainCommentDto>>(comments));
     }
 }

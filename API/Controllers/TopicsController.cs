@@ -1,7 +1,9 @@
 ﻿using API.Data;
+using API.DTOs.Comments;
 using API.DTOs.Topics;
 using API.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

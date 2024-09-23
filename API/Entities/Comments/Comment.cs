@@ -4,5 +4,5 @@ public class Comment
 {
     public Guid Id { get; init; }    
     public required string Message { get; set; }
-    public DateTime Created { get; set; }
+    public DateTime CreatedOn { get; set; }
 }
