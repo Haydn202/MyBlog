@@ -15,4 +15,25 @@ public class DataContext : DbContext
     public DbSet<MainComment> MainComments { get; set; }
     public DbSet<SubComment> SubComments { get; set; }
     public DbSet<Topic> Topics { get; set; }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Topic>()
+            .HasKey(t => t.Id); 
+        
+        modelBuilder.Entity<Post>()
+            .HasMany(a => a.Topics);
+        
+        modelBuilder.Entity<Post>()
+            .HasMany(a => a.MainComments)
+            .WithOne()
+            .HasForeignKey(c => c.PostId);
+
+        modelBuilder.Entity<MainComment>()
+            .HasMany(mc => mc.SubComments)
+            .WithOne()
+            .HasForeignKey(sc => sc.MainCommentId);
+    }
 }

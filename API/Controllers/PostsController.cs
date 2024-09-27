@@ -16,7 +16,7 @@ public class PostsController(IMapper mapper, DataContext context): BaseApiContro
     [HttpGet("{id:guid}")]
     public async Task<Results<NotFound, Ok<Post>>> GetPost(Guid id)
     {
-        var post = await context.Posts.FirstOrDefaultAsync(x => x.Id == id);
+        var post = await context.Posts.Include("Topics").FirstOrDefaultAsync(x => x.Id == id);
 
         if (post is null)
         {
@@ -32,6 +32,7 @@ public class PostsController(IMapper mapper, DataContext context): BaseApiContro
         var posts = await context.Posts
             .OrderByDescending(x => x.CreatedOn)
             .Take(10)
+            .Include("Topics")
             .ToListAsync();
 
         return TypedResults.Ok(mapper.Map<List<PostSummary>>(posts));
@@ -64,10 +65,10 @@ public class PostsController(IMapper mapper, DataContext context): BaseApiContro
         return TypedResults.NoContent();
     }
 
-    [HttpPut]
-    public async Task<Results<Ok<PostSummary>, NotFound>> UpdatePost(PostUpdateDto request)
+    [HttpPut("{id:guid}")]
+    public async Task<Results<Ok<PostSummary>, NotFound>> UpdatePost(PostUpdateDto request, [FromRoute] Guid id)
     {
-        var post = await context.Posts.FirstOrDefaultAsync(x => x.Id == request.Id);
+        var post = await context.Posts.FirstOrDefaultAsync(x => x.Id == id);
 
         if (post is null)
         {

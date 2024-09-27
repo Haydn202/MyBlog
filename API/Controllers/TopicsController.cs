@@ -42,10 +42,10 @@ public class TopicsController(IMapper mapper, DataContext context): BaseApiContr
         return TypedResults.Ok(mapper.Map<TopicDto>(topic));
     }
 
-    [HttpPut]
-    public async Task<Results<NotFound, Ok<TopicDto>>> UpdateTopic(TopicUpdateDto request)
+    [HttpPut("{id:guid}")]
+    public async Task<Results<NotFound, Ok<TopicDto>>> UpdateTopic(TopicUpdateDto request, [FromRoute]Guid id)
     {
-        var topic = await context.Topics.FirstOrDefaultAsync(x => x.Id == request.Id);
+        var topic = await context.Topics.FirstOrDefaultAsync(x => x.Id == id);
 
         if (topic == null)
         {

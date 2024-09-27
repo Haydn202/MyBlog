@@ -5,7 +5,6 @@ namespace API.DTOs.Posts;
 
 public class PostUpdateDto
 {
-    public Guid Id { get; init; }
     [StringLength(100, MinimumLength = 3)]
     public required string Title { get; set; }
     
