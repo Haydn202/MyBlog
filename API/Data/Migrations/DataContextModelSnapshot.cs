@@ -23,6 +23,9 @@ namespace API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -33,10 +36,9 @@ namespace API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
 
                     b.HasIndex("MainCommentId");
 
@@ -49,6 +51,9 @@ namespace API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -59,10 +64,9 @@ namespace API.Data.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
 
                     b.HasIndex("PostId");
 
@@ -157,20 +161,36 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.Comments.SubComment", b =>
                 {
+                    b.HasOne("API.Entities.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("API.Entities.MainComment", null)
                         .WithMany("SubComments")
                         .HasForeignKey("MainCommentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("API.Entities.MainComment", b =>
                 {
+                    b.HasOne("API.Entities.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("API.Entities.Post", null)
                         .WithMany("MainComments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("PostTopic", b =>

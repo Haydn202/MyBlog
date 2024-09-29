@@ -15,5 +15,5 @@ public class PostCreateDto
     public DateTime CreatedOn { get; set; } = DateTime.Now;
     
     public required string Content { get; set; }
-    public List<Guid> TopicIds { get; set; }
+    public required List<Guid> TopicIds { get; init; }
 }

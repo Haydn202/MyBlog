@@ -14,7 +14,7 @@ public class PostsController(IMapper mapper, DataContext context): BaseApiContro
 {
     [AllowAnonymous]
     [HttpGet("{id:guid}")]
-    public async Task<Results<NotFound, Ok<Post>>> GetPost(Guid id)
+    public async Task<Results<NotFound, Ok<PostDto>>> GetPost(Guid id)
     {
         var post = await context.Posts.Include("Topics").FirstOrDefaultAsync(x => x.Id == id);
 
@@ -22,7 +22,7 @@ public class PostsController(IMapper mapper, DataContext context): BaseApiContro
         {
             return TypedResults.NotFound();
         }
-        return TypedResults.Ok(post);
+        return TypedResults.Ok(mapper.Map<PostDto>(post));
     }
     
     [AllowAnonymous]

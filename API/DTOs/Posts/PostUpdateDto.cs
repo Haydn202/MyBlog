@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using API.DTOs.Topics;
 using API.Entities;
 
 namespace API.DTOs.Posts;
@@ -15,5 +16,5 @@ public class PostUpdateDto
     public DateTime CreatedOn { get; set; } = DateTime.Now;
     
     public required string Content { get; set; }
-    public List<Topic> Topics { get; set; }
+    public List<TopicDto> Topics { get; set; }
 }

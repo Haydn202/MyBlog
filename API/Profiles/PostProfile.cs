@@ -12,6 +12,7 @@ public class PostProfile : Profile
         CreateMap<PostCreateDto, Post>()
             .ForMember(dest => dest.Topics, opt => opt.MapFrom<TopicResolver>());
         CreateMap<Post, PostSummary>();
+        CreateMap<Post, PostDto>();
         CreateMap<PostUpdateDto, Post>();
     }
 }
