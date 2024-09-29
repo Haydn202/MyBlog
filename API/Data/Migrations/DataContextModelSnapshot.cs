@@ -109,12 +109,7 @@ namespace API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("PostId")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("PostId");
 
                     b.ToTable("Topics");
                 });
@@ -145,6 +140,21 @@ namespace API.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("PostTopic", b =>
+                {
+                    b.Property<Guid>("PostsId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("TopicsId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PostsId", "TopicsId");
+
+                    b.HasIndex("TopicsId");
+
+                    b.ToTable("PostTopics", (string)null);
+                });
+
             modelBuilder.Entity("API.Entities.Comments.SubComment", b =>
                 {
                     b.HasOne("API.Entities.MainComment", null)
@@ -163,11 +173,19 @@ namespace API.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("API.Entities.Topic", b =>
+            modelBuilder.Entity("PostTopic", b =>
                 {
                     b.HasOne("API.Entities.Post", null)
-                        .WithMany("Topics")
-                        .HasForeignKey("PostId");
+                        .WithMany()
+                        .HasForeignKey("PostsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Entities.Topic", null)
+                        .WithMany()
+                        .HasForeignKey("TopicsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("API.Entities.MainComment", b =>
@@ -178,8 +196,6 @@ namespace API.Data.Migrations
             modelBuilder.Entity("API.Entities.Post", b =>
                 {
                     b.Navigation("MainComments");
-
-                    b.Navigation("Topics");
                 });
 #pragma warning restore 612, 618
         }

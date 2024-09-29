@@ -20,11 +20,10 @@ public class DataContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Topic>()
-            .HasKey(t => t.Id); 
-        
         modelBuilder.Entity<Post>()
-            .HasMany(a => a.Topics);
+            .HasMany(p => p.Topics)
+            .WithMany(t => t.Posts)
+            .UsingEntity(j => j.ToTable("PostTopics"));
         
         modelBuilder.Entity<Post>()
             .HasMany(a => a.MainComments)
