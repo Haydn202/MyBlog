@@ -86,7 +86,10 @@ public class PostsController(IMapper mapper, DataContext context): BaseApiContro
     [HttpGet("{postId:guid}/comments")]
     public async Task<Ok<List<CommentDto>>> GetComments(Guid postId)
     {
-        var comments = await context.Comments.Where(x => x.PostId == postId).ToListAsync();
+        var comments = await context.Comments
+            .Where(c => c.PostId == postId)
+            .Include(c => c.CreatedBy)
+            .ToListAsync();
         
         return TypedResults.Ok(mapper.Map<List<CommentDto>>(comments));
     }

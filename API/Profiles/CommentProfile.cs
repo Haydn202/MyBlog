@@ -10,7 +10,8 @@ public class CommentProfile: Profile
 {
     public CommentProfile()
     {
-        CreateMap<Comment, CommentDto>();
+        CreateMap<Comment, CommentDto>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom<UserNameResolver>());
         CreateMap<CommentDto, Comment>();
         CreateMap<Reply, ReplyDto>();
         CreateMap<CreateCommentDto, Comment>()
