@@ -11,6 +11,7 @@ public class CommentProfile: Profile
     public CommentProfile()
     {
         CreateMap<Comment, CommentDto>();
+        CreateMap<CommentDto, Comment>();
         CreateMap<Reply, ReplyDto>();
         CreateMap<CreateCommentDto, Comment>()
             .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom<CreatedByResolver>());
