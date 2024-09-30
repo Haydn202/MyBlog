@@ -1,9 +1,9 @@
-﻿namespace API.Entities.Comments;
+﻿using API.Entities.Comments;
 
-public class Comment
+namespace API.Entities;
+
+public class Comment : CommentBase
 {
-    public Guid Id { get; init; }
-    public required string Message { get; set; }
-    public DateTime CreatedOn { get; set; }
-    public User CreatedBy { get; init; }
+    public Guid PostId { get; set; }
+    public List<Reply>? Replies { get; set; }
 }

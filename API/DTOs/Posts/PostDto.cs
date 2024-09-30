@@ -11,6 +11,6 @@ public class PostDto
     public List<TopicDto> Topics { get; init; }
     public DateTime CreatedOn { get; init; }
     public required string Content { get; init; }
-    public List<MainComment>? MainComments { get; init; }
+    public List<Comment>? MainComments { get; init; }
     public string ThumbnailUrl { get; set; }
 }

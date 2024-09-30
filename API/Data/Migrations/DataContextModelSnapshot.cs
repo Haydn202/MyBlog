@@ -17,35 +17,7 @@ namespace API.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
 
-            modelBuilder.Entity("API.Entities.Comments.SubComment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("MainCommentId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("MainCommentId");
-
-                    b.ToTable("SubComments");
-                });
-
-            modelBuilder.Entity("API.Entities.MainComment", b =>
+            modelBuilder.Entity("API.Entities.Comment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,7 +42,35 @@ namespace API.Data.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("MainComments");
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("API.Entities.Comments.Reply", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CommentId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.ToTable("Replies");
                 });
 
             modelBuilder.Entity("API.Entities.Post", b =>
@@ -159,24 +159,7 @@ namespace API.Data.Migrations
                     b.ToTable("PostTopics", (string)null);
                 });
 
-            modelBuilder.Entity("API.Entities.Comments.SubComment", b =>
-                {
-                    b.HasOne("API.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("API.Entities.MainComment", null)
-                        .WithMany("SubComments")
-                        .HasForeignKey("MainCommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-                });
-
-            modelBuilder.Entity("API.Entities.MainComment", b =>
+            modelBuilder.Entity("API.Entities.Comment", b =>
                 {
                     b.HasOne("API.Entities.User", "CreatedBy")
                         .WithMany()
@@ -189,6 +172,25 @@ namespace API.Data.Migrations
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("API.Entities.Comments.Reply", b =>
+                {
+                    b.HasOne("API.Entities.Comment", "Comment")
+                        .WithMany("Replies")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Entities.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
 
                     b.Navigation("CreatedBy");
                 });
@@ -208,9 +210,9 @@ namespace API.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("API.Entities.MainComment", b =>
+            modelBuilder.Entity("API.Entities.Comment", b =>
                 {
-                    b.Navigation("SubComments");
+                    b.Navigation("Replies");
                 });
 
             modelBuilder.Entity("API.Entities.Post", b =>

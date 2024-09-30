@@ -83,11 +83,31 @@ public class PostsController(IMapper mapper, DataContext context): BaseApiContro
     }
     
     [AllowAnonymous]
-    [HttpGet("{id:guid}/comments")]
-    public async Task<Ok<List<MainCommentDto>>> GetMainComments(Guid id)
+    [HttpGet("{postId:guid}/comments")]
+    public async Task<Ok<List<CommentDto>>> GetComments(Guid postId)
     {
-        var comments = context.MainComments.Where(x => x.PostId == id).ToListAsync();
+        var comments = context.Comments.Where(x => x.PostId == postId).ToListAsync();
         
-        return TypedResults.Ok(mapper.Map<List<MainCommentDto>>(comments));
+        return TypedResults.Ok(mapper.Map<List<CommentDto>>(comments));
+    }
+    
+    [AllowAnonymous]
+    [HttpPost("{postId:guid}/comments")]
+    public async Task<Ok<CommentDto>> CreateComment([FromQuery]Guid postId, CreateCommentDto request)
+    {
+        var comment = mapper.Map<Comment>(request);
+
+        await context.Comments.AddAsync(comment);
+        
+        return TypedResults.Ok(mapper.Map<CommentDto>(comment));
+    }
+    
+    [AllowAnonymous]
+    [HttpGet("{postId:guid}/comments/{commentId:guid}")]
+    public async Task<Ok<List<CommentDto>>> GetReplies(Guid postId)
+    {
+        var comments = context.Comments.Where(x => x.PostId == postId).ToListAsync();
+        
+        return TypedResults.Ok(mapper.Map<List<CommentDto>>(comments));
     }
 }

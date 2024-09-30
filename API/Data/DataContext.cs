@@ -10,10 +10,10 @@ public class DataContext : DbContext
     {
     }
 
-    public DbSet<User?> Users { get; init; } 
+    public DbSet<User> Users { get; init; } 
     public DbSet<Post> Posts { get; init; }
-    public DbSet<MainComment> MainComments { get; set; }
-    public DbSet<SubComment> SubComments { get; set; }
+    public DbSet<Comment> Comments { get; set; }
+    public DbSet<Reply> Replies { get; set; }
     public DbSet<Topic> Topics { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,10 +29,5 @@ public class DataContext : DbContext
             .HasMany(a => a.MainComments)
             .WithOne()
             .HasForeignKey(c => c.PostId);
-
-        modelBuilder.Entity<MainComment>()
-            .HasMany(mc => mc.SubComments)
-            .WithOne()
-            .HasForeignKey(sc => sc.MainCommentId);
     }
 }

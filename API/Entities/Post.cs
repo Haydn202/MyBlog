@@ -9,5 +9,5 @@ public class Post
     public List<Topic> Topics { get; set; }
     public DateTime CreatedOn { get; set; } = DateTime.Now;
     public required string Content { get; set; }
-    public List<MainComment>? MainComments { get; set; }
+    public List<Comment>? MainComments { get; set; }
 }
