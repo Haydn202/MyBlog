@@ -8,7 +8,7 @@ namespace API.Features.Topics.Commands;
 
 public class CreateTopicCommand(TopicCreateDto request) : IRequest<TopicDto>
 {
-    private TopicCreateDto Request { get; set; } = request;
+    private TopicCreateDto Request { get; } = request;
 
     private sealed class CreateTopicCommandHandler(DataContext dbContext, IMapper mapper)
         : IRequestHandler<CreateTopicCommand, TopicDto>
