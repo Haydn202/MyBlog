@@ -17,6 +17,10 @@ public static class ApplicationServiceExtensions
         {
             opt.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
         });
+        services.AddMediatR(configuration =>
+        {
+            configuration.RegisterServicesFromAssembly(typeof(Program).Assembly);
+        });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddScoped<ITokenService, TokenService>(); 

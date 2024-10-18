@@ -1,16 +1,19 @@
 ﻿using API.Data;
-using API.DTOs.Comments;
 using API.DTOs.Topics;
 using API.Entities;
+using API.Features.Topics.Commands;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class TopicsController(IMapper mapper, DataContext context): BaseApiController
+public class TopicsController(
+    IMapper mapper, 
+    DataContext context,
+    ISender _sender): BaseApiController
 {
     [HttpGet]
     public async Task<List<Topic>> GetTopics()
@@ -34,12 +37,10 @@ public class TopicsController(IMapper mapper, DataContext context): BaseApiContr
     [HttpPost]
     public async Task<Ok<TopicDto>> CreateTopic(TopicCreateDto request)
     {
-        var topic = mapper.Map<Topic>(request);
+        var command = new CreateTopicCommand(request);
+        var response = await _sender.Send(command);
 
-        await context.Topics.AddAsync(topic);
-        await context.SaveChangesAsync();
-
-        return TypedResults.Ok(mapper.Map<TopicDto>(topic));
+        return TypedResults.Ok(response);
     }
 
     [HttpPut("{id:guid}")]
