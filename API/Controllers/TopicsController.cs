@@ -2,6 +2,7 @@
 using API.DTOs.Topics;
 using API.Entities;
 using API.Features.Topics.Commands;
+using API.Features.Topics.Queries;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -13,32 +14,36 @@ namespace API.Controllers;
 public class TopicsController(
     IMapper mapper, 
     DataContext context,
-    ISender _sender): BaseApiController
+    ISender sender): BaseApiController
 {
     [HttpGet]
-    public async Task<List<Topic>> GetTopics()
+    public async Task<Ok<List<TopicDto>>> GetTopics()
     {
-        return await context.Topics.ToListAsync();
+        var query = new GetTopics();
+        var response = await sender.Send(query);
+        
+        return TypedResults.Ok(response);
     }
 
     [HttpGet("{id:guid}")]
     public async Task<Results<NotFound, Ok<TopicDto>>> GetTopic(Guid id)
     {
-        var topic = await context.Topics.FirstOrDefaultAsync(x => x.Id == id);
+        var query = new GetTopic(id);
+        var response = await sender.Send(query);
         
-        if (topic == null)
+        if (response is null)
         {
             return TypedResults.NotFound();
         }
         
-        return TypedResults.Ok(mapper.Map<TopicDto>(topic));
+        return TypedResults.Ok(response);
     }
 
     [HttpPost]
     public async Task<Ok<TopicDto>> CreateTopic(TopicCreateDto request)
     {
-        var command = new CreateTopicCommand(request);
-        var response = await _sender.Send(command);
+        var command = new CreateTopic(request);
+        var response = await sender.Send(command);
 
         return TypedResults.Ok(response);
     }

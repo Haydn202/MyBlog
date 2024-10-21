@@ -6,14 +6,14 @@ using MediatR;
 
 namespace API.Features.Topics.Commands;
 
-public class CreateTopicCommand(TopicCreateDto request) : IRequest<TopicDto>
+public class CreateTopic(TopicCreateDto request) : IRequest<TopicDto>
 {
     private TopicCreateDto Request { get; } = request;
 
-    private sealed class CreateTopicCommandHandler(DataContext dbContext, IMapper mapper)
-        : IRequestHandler<CreateTopicCommand, TopicDto>
+    private sealed class CreateTopicHandler(DataContext dbContext, IMapper mapper)
+        : IRequestHandler<CreateTopic, TopicDto>
     {
-        public async Task<TopicDto> Handle(CreateTopicCommand command, CancellationToken cancellationToken)
+        public async Task<TopicDto> Handle(CreateTopic command, CancellationToken cancellationToken)
         {
             var topic = mapper.Map<Topic>(command.Request);
 
