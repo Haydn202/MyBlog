@@ -1,16 +1,13 @@
-﻿using API.Data;
-using API.DTOs.Topics;
+﻿using API.DTOs.Topics;
 using API.Features.Topics.Commands;
 using API.Features.Topics.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
 public class TopicsController(
-    DataContext context,
     ISender sender): BaseApiController
 {
     [HttpGet]

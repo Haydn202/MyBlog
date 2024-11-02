@@ -3,42 +3,28 @@ using System.Text;
 using API.Data;
 using API.DTOs.Accounts;
 using API.Entities;
+using API.Features.Accounts.Commands;
 using API.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class AccountsController(DataContext context, ITokenService tokenService): BaseApiController
+public class AccountsController(
+    DataContext context, 
+    ITokenService tokenService,
+    ISender sender): BaseApiController
 {
     [AllowAnonymous]
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
-        if (await UserExists(registerDto.Username))
-        {
-            return BadRequest("Username is Taken");
-        }
+        var command = new RegisterUser(registerDto);
+        var response = await sender.Send(command);
         
-        using var hmac = new HMACSHA512();
-
-        var user = new User
-        {
-            Id = default,
-            UserName = registerDto.Username.ToLower(),
-            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-            PasswordSalt = hmac.Key
-        };
-
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
-
-        return new UserDto
-        {
-            Name = user.UserName,
-            Token = tokenService.CreateToken(user)
-        };
+        return response;
     }
 
     [AllowAnonymous]

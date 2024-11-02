@@ -276,3 +276,5 @@ C:/Users/ThomsonH/Repos/MyBlog/API/bin/Debug/net8.0/MediatR.Contracts.dll
 /Users/haydn/Repos/MyBlog/API/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 /Users/haydn/Repos/MyBlog/API/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
 /Users/haydn/Repos/MyBlog/API/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll
+/Users/haydn/Repos/MyBlog/API/bin/Debug/net8.0/FluentValidation.dll
+/Users/haydn/Repos/MyBlog/API/bin/Debug/net8.0/FluentValidation.DependencyInjectionExtensions.dll
