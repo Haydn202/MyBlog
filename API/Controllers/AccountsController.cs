@@ -2,7 +2,6 @@ using System.Security.Cryptography;
 using System.Text;
 using API.Data;
 using API.DTOs.Accounts;
-using API.Entities;
 using API.Features.Accounts.Commands;
 using API.Interfaces;
 using MediatR;

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Accounts.Commands;
 
-public class RegisterUser(RegisterDto request) : IRequest<Result<UserDto>>
+public class RegisterUser(RegisterDto request) : IRequest<ValidationResult<UserDto>>
 {
     public RegisterDto Request { get; } = request;
 
@@ -19,17 +19,16 @@ public class RegisterUser(RegisterDto request) : IRequest<Result<UserDto>>
         DataContext dbContext,
         ITokenService tokenService,
         IValidator<RegisterUser> validator)
-        : IRequestHandler<RegisterUser, Result<UserDto>>
+        : IRequestHandler<RegisterUser, ValidationResult<UserDto>>
     {
-        public async Task<Result<UserDto>> Handle(RegisterUser request, CancellationToken cancellationToken)
+        public async Task<ValidationResult<UserDto>> Handle(RegisterUser request, CancellationToken cancellationToken)
         {
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
             {
                 var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<UserDto>.Failure(errors);
+                return ValidationResult<UserDto>.Failure(errors);
             }
-
 
             using var hmac = new HMACSHA512();
 
@@ -50,7 +49,7 @@ public class RegisterUser(RegisterDto request) : IRequest<Result<UserDto>>
                 Token = tokenService.CreateToken(user)
             };
             
-            return Result<UserDto>.Success(userDto);
+            return ValidationResult<UserDto>.Success(userDto);
         }
     }
 }
