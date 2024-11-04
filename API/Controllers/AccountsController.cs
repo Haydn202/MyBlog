@@ -24,7 +24,12 @@ public class AccountsController(
         var command = new RegisterUser(registerDto);
         var response = await sender.Send(command);
         
-        return response;
+        if (!response.IsSuccess)
+        {
+            return BadRequest(new { Errors = response.Errors });
+        }
+
+        return Ok(response.Data);
     }
 
     [AllowAnonymous]

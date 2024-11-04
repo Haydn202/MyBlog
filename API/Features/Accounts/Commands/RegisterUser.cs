@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using API.Data;
+using API.DTOs;
 using API.DTOs.Accounts;
 using API.Entities;
 using API.Interfaces;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Accounts.Commands;
 
-public class RegisterUser(RegisterDto request) : IRequest<UserDto>
+public class RegisterUser(RegisterDto request) : IRequest<Result<UserDto>>
 {
     public RegisterDto Request { get; } = request;
 
@@ -18,16 +19,17 @@ public class RegisterUser(RegisterDto request) : IRequest<UserDto>
         DataContext dbContext,
         ITokenService tokenService,
         IValidator<RegisterUser> validator)
-        : IRequestHandler<RegisterUser, UserDto>
+        : IRequestHandler<RegisterUser, Result<UserDto>>
     {
-        public async Task<UserDto> Handle(RegisterUser request, CancellationToken cancellationToken)
+        public async Task<Result<UserDto>> Handle(RegisterUser request, CancellationToken cancellationToken)
         {
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
             {
-                // Optionally, return errors in a structured way, or throw an exception.
-                throw new ValidationException(validationResult.Errors);
+                var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return Result<UserDto>.Failure(errors);
             }
+
 
             using var hmac = new HMACSHA512();
 
@@ -42,11 +44,13 @@ public class RegisterUser(RegisterDto request) : IRequest<UserDto>
             dbContext.Users.Add(user);
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return new UserDto
+            var userDto = new UserDto
             {
                 Name = user.UserName,
                 Token = tokenService.CreateToken(user)
             };
+            
+            return Result<UserDto>.Success(userDto);
         }
     }
 }
