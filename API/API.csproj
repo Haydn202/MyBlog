@@ -23,8 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Posts\" />
-    <Folder Include="Features\Users\" />
+    <Folder Include="Features\Posts\Commands\" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,9 @@
 using API.DTOs.Comments;
 using API.DTOs.Posts;
 using API.Entities;
+using API.Features.Posts.Queries;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -10,19 +12,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class PostsController(IMapper mapper, DataContext context): BaseApiController
+public class PostsController(
+    IMapper mapper,
+    DataContext context,
+    ISender sender): BaseApiController
 {
     [AllowAnonymous]
     [HttpGet("{id:guid}")]
     public async Task<Results<NotFound, Ok<PostDto>>> GetPost(Guid id)
     {
-        var post = await context.Posts.Include("Topics").FirstOrDefaultAsync(x => x.Id == id);
-
-        if (post is null)
+        var query = new GetPost(id);
+        var response = await sender.Send(query);
+        
+        if (response is null)
         {
             return TypedResults.NotFound();
         }
-        return TypedResults.Ok(mapper.Map<PostDto>(post));
+        
+        return TypedResults.Ok(response);
     }
     
     [AllowAnonymous]
