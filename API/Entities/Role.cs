@@ -2,6 +2,7 @@
 
 public enum Role
 {
+    None,
     Contributor,
     Admin
 }

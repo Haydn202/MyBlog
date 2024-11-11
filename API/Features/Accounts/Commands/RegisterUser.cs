@@ -45,7 +45,7 @@ public class RegisterUser(RegisterDto request) : IRequest<ValidationResult<UserD
 
             var userDto = new UserDto
             {
-                Name = user.UserName,
+                UserName = user.UserName,
                 Token = tokenService.CreateToken(user)
             };
             

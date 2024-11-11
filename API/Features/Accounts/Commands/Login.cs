@@ -35,7 +35,7 @@ public class Login(LoginDto request) : IRequest<ValidationResult<UserDto>>
 
             var userDto = new UserDto
             {
-                Name = user.UserName,
+                UserName = user.UserName,
                 Token = tokenService.CreateToken(user)
             };
 
