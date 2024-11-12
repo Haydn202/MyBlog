@@ -34,26 +34,23 @@ public class PostsController(
     
     [AllowAnonymous]
     [HttpGet]
-    public async Task<Ok<List<PostSummary>>> GetPosts()
+    public async Task<Ok<List<PostSummaryDto>>> GetPosts()
     {
-        var posts = await context.Posts
-            .OrderByDescending(x => x.CreatedOn)
-            .Take(10)
-            .Include("Topics")
-            .ToListAsync();
+        var query = new GetPosts();
+        var response = await sender.Send(query);
 
-        return TypedResults.Ok(mapper.Map<List<PostSummary>>(posts));
+        return TypedResults.Ok(response);
     }
 
     [HttpPost]
-    public async Task<Ok<PostSummary>> CreatePost(PostCreateDto request)
+    public async Task<Ok<PostSummaryDto>> CreatePost(PostCreateDto request)
     {
         var post = mapper.Map<Post>(request);
 
         context.Posts.Add(post);
         await context.SaveChangesAsync();
 
-        return TypedResults.Ok(mapper.Map<PostSummary>(post));
+        return TypedResults.Ok(mapper.Map<PostSummaryDto>(post));
     }
 
     [HttpDelete("{id:guid}")]
@@ -73,7 +70,7 @@ public class PostsController(
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<Results<Ok<PostSummary>, NotFound>> UpdatePost(PostUpdateDto request, [FromRoute] Guid id)
+    public async Task<Results<Ok<PostSummaryDto>, NotFound>> UpdatePost(PostUpdateDto request, [FromRoute] Guid id)
     {
         var post = await context.Posts.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -86,7 +83,7 @@ public class PostsController(
         
         await context.SaveChangesAsync();
         
-        return TypedResults.Ok(mapper.Map<PostSummary>(post));
+        return TypedResults.Ok(mapper.Map<PostSummaryDto>(post));
     }
     
     [AllowAnonymous]

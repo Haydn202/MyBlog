@@ -37,7 +37,8 @@ public class RegisterUser(RegisterDto request) : IRequest<ValidationResult<UserD
                 Id = default,
                 UserName = request.Request.Username.ToLower(),
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Request.Password)),
-                PasswordSalt = hmac.Key
+                PasswordSalt = hmac.Key,
+                Role = Role.None
             };
 
             dbContext.Users.Add(user);

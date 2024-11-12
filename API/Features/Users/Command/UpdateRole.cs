@@ -1,22 +1,38 @@
 using API.Data;
+using API.DTOs;
 using API.DTOs.Accounts;
 using API.DTOs.User;
+using API.Entities;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Users.Command;
 
-public class UpdateRole(RoleUpdateDto request, Guid id) : IRequest<UserDto>
+public class UpdateRole(RoleUpdateDto request, Guid id) : IRequest<ValidationResult<UserDto>>
 {
-    private RoleUpdateDto Request { get; } = request;
+    public RoleUpdateDto Request { get; } = request;
     private Guid id { get; } = id;
 
-    private sealed class UpdateRoleHandler(DataContext dbContext, IMapper mapper)
-        : IRequestHandler<UpdateRole, UserDto?>
+    private sealed class UpdateRoleHandler(
+        DataContext dbContext, 
+        IMapper mapper,
+        IValidator<UpdateRole> validator)
+        : IRequestHandler<UpdateRole, ValidationResult<UserDto>>
     {
-        public async Task<UserDto?> Handle(UpdateRole request, CancellationToken cancellationToken)
+        public async Task<ValidationResult<UserDto>> Handle(
+            UpdateRole request, 
+            CancellationToken cancellationToken)
         {
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+            
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return ValidationResult<UserDto>.Failure(errors);
+            }
+            
             var user = await dbContext.Users.FirstOrDefaultAsync(x => 
                 x.Id == request.id, cancellationToken: cancellationToken);
 
@@ -25,13 +41,24 @@ public class UpdateRole(RoleUpdateDto request, Guid id) : IRequest<UserDto>
                 return null;
             }
             
-            // add validation for this instead of defaulting role
-            Enum.TryParse<Entities.Role>(request.Request.Role, true, out var roleEnum);
+            Enum.TryParse<Role>(request.Request.Role, true, out var roleEnum);
 
             user.Role = roleEnum;
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return mapper.Map<UserDto>(user);
+            var userDto = mapper.Map<UserDto>(user);
+
+            return ValidationResult<UserDto>.Success(userDto);
         }
+    }
+}
+
+public class UpdateRoleValidator : AbstractValidator<UpdateRole>
+{
+    public UpdateRoleValidator()
+    {
+        RuleFor(u => u.Request.Role)
+            .Must(r => Enum.TryParse<Role>(r, true, out var roleEnum))
+            .WithMessage("The provided role is not a valid.");
     }
 }

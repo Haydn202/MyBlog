@@ -1,9 +1,8 @@
 ﻿using API.DTOs.Topics;
-using API.Entities;
 
 namespace API.DTOs.Posts;
 
-public class PostSummary
+public class PostSummaryDto
 {
     public Guid Id { get; init; }
     public required string Title { get; init; }

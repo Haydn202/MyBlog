@@ -5,7 +5,6 @@ using API.Entities;
 using API.Features.Users.Command;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,17 +29,22 @@ public class UsersController(
         return await context.Users.FindAsync(id);
     }
 
-    [HttpPost("{id:guid}")]
-    public async Task<Results<NotFound, Ok<UserDto>>> UpdateUserRole([FromBody] RoleUpdateDto request, [FromRoute] Guid id)
+    [HttpPatch("{id:guid}")]
+    public async Task<ActionResult<UserDto>> UpdateUserRole([FromBody] RoleUpdateDto request, [FromRoute] Guid id)
     {
         var command = new UpdateRole(request, id);
         var response = await sender.Send(command);
 
         if (response is null)
         {
-            return TypedResults.NotFound();
+            return NotFound();
         }
 
-        return TypedResults.Ok(response);
+        if (!response.IsSuccess)
+        {
+            return BadRequest(new { response.Errors });
+        }
+
+        return Ok(response.Data);
     }
 }
