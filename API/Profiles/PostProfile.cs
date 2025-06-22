@@ -10,9 +10,10 @@ public class PostProfile : Profile
     {
         CreateMap<Post, PostCreateDto>();
         CreateMap<PostCreateDto, Post>()
-            .ForMember(dest => dest.Topics, opt => opt.MapFrom<TopicResolver>());
+            .ForMember(dest => dest.Topics, opt => opt.MapFrom<PostCreateTopicResolver>());
         CreateMap<Post, PostSummaryDto>();
         CreateMap<Post, PostDto>();
-        CreateMap<PostUpdateDto, Post>();
+        CreateMap<PostUpdateDto, Post>()
+            .ForMember(dest => dest.Topics, opt => opt.MapFrom<PostUpdateTopicResolver>());
     }
 }

@@ -36,7 +36,8 @@ public class Login(LoginDto request) : IRequest<ValidationResult<UserDto>>
             var userDto = new UserDto
             {
                 UserName = user.UserName,
-                Token = tokenService.CreateToken(user)
+                Token = tokenService.CreateToken(user),
+                Role = user.Role.ToString()
             };
 
             return ValidationResult<UserDto>.Success(userDto);
