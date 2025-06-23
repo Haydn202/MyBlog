@@ -2,6 +2,7 @@
 using API.DTOs.Comments;
 using API.DTOs.Posts;
 using API.Entities;
+using API.Features.Posts.Commands;
 using API.Features.Posts.Queries;
 using AutoMapper;
 using MediatR;
@@ -42,17 +43,25 @@ public class PostsController(
         return TypedResults.Ok(response);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<Ok<PostSummaryDto>> CreatePost(PostCreateDto request)
+    public async Task<ActionResult<PostSummaryDto>> CreatePost(PostCreateDto request)
     {
-        var post = mapper.Map<Post>(request);
+        var command = new CreatePost(request);
+        var response = await sender.Send(command);
 
-        context.Posts.Add(post);
-        await context.SaveChangesAsync();
+        if (!response.IsSuccess)
+        {
+            return BadRequest(new
+            {
+                response.Errors
+            });
+        }
 
-        return TypedResults.Ok(mapper.Map<PostSummaryDto>(post));
+        return Ok(response.Data);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id:guid}")]
     public async Task<Results<NoContent, NotFound>> DeletePost(Guid id)
     {
@@ -69,6 +78,7 @@ public class PostsController(
         return TypedResults.NoContent();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:guid}")]
     public async Task<Results<Ok<PostSummaryDto>, NotFound>> UpdatePost(PostUpdateDto request, [FromRoute] Guid id)
     {

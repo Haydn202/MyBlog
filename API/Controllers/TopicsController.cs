@@ -2,6 +2,7 @@
 using API.Features.Topics.Commands;
 using API.Features.Topics.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace API.Controllers;
 public class TopicsController(
     ISender sender): BaseApiController
 {
+    [AllowAnonymous]
     [HttpGet]
     public async Task<Ok<List<TopicDto>>> GetTopics()
     {
@@ -19,6 +21,7 @@ public class TopicsController(
         return TypedResults.Ok(response);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id:guid}")]
     public async Task<Results<NotFound, Ok<TopicDto>>> GetTopic(Guid id)
     {
@@ -33,6 +36,7 @@ public class TopicsController(
         return TypedResults.Ok(response);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<Ok<TopicDto>> CreateTopic(TopicCreateDto request)
     {
@@ -42,6 +46,7 @@ public class TopicsController(
         return TypedResults.Ok(response);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:guid}")]
     public async Task<Results<NotFound, Ok<TopicDto>>> UpdateTopic(TopicUpdateDto request, [FromRoute] Guid id)
     {
@@ -56,6 +61,7 @@ public class TopicsController(
         return TypedResults.Ok(response);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id:guid}")]
     public async Task<Results<NotFound, NoContent>> DeleteTopic(Guid id)
     {

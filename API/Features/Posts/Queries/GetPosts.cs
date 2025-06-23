@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Posts.Queries;
 
-public class GetPosts() : IRequest<List<PostSummaryDto>>
+public class GetPosts : IRequest<List<PostSummaryDto>>
 {
     private sealed class GetPostsHandler(
         DataContext dbContext, 

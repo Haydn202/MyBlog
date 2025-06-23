@@ -1,26 +1,19 @@
-﻿using API.Data;
+using API.Data;
 using API.DTOs.Posts;
 using API.Entities;
 using AutoMapper;
 
 namespace API.Profiles.Resolvers;
 
-public class TopicResolver : IValueResolver<PostCreateDto, Post, List<Topic>>
+public class PostUpdateTopicResolver(DataContext dbContext) : IValueResolver<PostUpdateDto, Post, List<Topic>>
 {
-    private readonly DataContext _dbContext;
-
-    public TopicResolver(DataContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public List<Topic> Resolve(
-        PostCreateDto source, 
+        PostUpdateDto source, 
         Post destination, 
         List<Topic> destMember, 
         ResolutionContext context)
     {
-        return _dbContext.Topics
+        return dbContext.Topics
             .Where(t => source.TopicIds.Contains(t.Id))
             .ToList();
     }
