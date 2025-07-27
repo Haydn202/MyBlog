@@ -1,4 +1,7 @@
-﻿using API.Data;
+﻿using System.Reflection;
+using API.Behaviours;
+using API.Data;
+using API.Exceptions;
 using API.Features.Accounts.Commands;
 using API.Interfaces;
 using API.Profiles.Resolvers;
@@ -19,16 +22,24 @@ public static class ApplicationServiceExtensions
         {
             opt.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
         });
+        services.AddHttpContextAccessor();
         services.AddMediatR(configuration =>
         {
             configuration.RegisterServicesFromAssembly(typeof(Program).Assembly);
+            configuration.AddOpenBehavior(typeof(RequestResponseLoggingBehaviour<,>));
+            configuration.AddOpenBehavior(typeof(ValidationBehaviour<,>));
         });
+        
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddScoped<ITokenService, TokenService>(); 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         
-        services.AddValidatorsFromAssemblyContaining<RegistrationValidator>();
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddProblemDetails();
+        
+        //services.AddValidatorsFromAssemblyContaining<RegistrationValidator>();
 
         return services;
     }

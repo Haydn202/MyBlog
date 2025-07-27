@@ -49,16 +49,8 @@ public class PostsController(
     {
         var command = new CreatePost(request);
         var response = await sender.Send(command);
-
-        if (!response.IsSuccess)
-        {
-            return BadRequest(new
-            {
-                response.Errors
-            });
-        }
-
-        return Ok(response.Data);
+        
+        return Ok(response);
     }
 
     [Authorize(Roles = "Admin")]

@@ -8,31 +8,22 @@ using MediatR;
 
 namespace API.Features.Posts.Commands;
 
-public class CreatePost(PostCreateDto request) : IRequest<ValidationResult<PostSummaryDto>>
+public class CreatePost(PostCreateDto request) : IRequest<PostSummaryDto>
 {
     public PostCreateDto Request { get; } = request;
 
     private sealed class CreatePostHandler(
         DataContext dbContext,
-        IMapper mapper,
-        IValidator<CreatePost> validator) : IRequestHandler<CreatePost, ValidationResult<PostSummaryDto>>
+        IMapper mapper) : IRequestHandler<CreatePost, PostSummaryDto>
     {
-        public async Task<ValidationResult<PostSummaryDto>> Handle(CreatePost request, CancellationToken cancellationToken)
+        public async Task<PostSummaryDto> Handle(CreatePost request, CancellationToken cancellationToken)
         {
-            var validationResult = await validator.ValidateAsync(request, cancellationToken);
-            
-            if (!validationResult.IsValid)
-            {
-                var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return ValidationResult<PostSummaryDto>.Failure(errors);
-            }
-            
             var post = mapper.Map<Post>(request.Request);
 
             dbContext.Posts.Add(post);
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return ValidationResult<PostSummaryDto>.Success(mapper.Map<PostSummaryDto>(post));
+            return mapper.Map<PostSummaryDto>(post);
         }
     }
 }
