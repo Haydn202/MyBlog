@@ -18,7 +18,7 @@ public class CreateComment(CreateCommentDto request) : IRequest<CommentDto>
     {
         public async Task<CommentDto> Handle(CreateComment request, CancellationToken cancellationToken)
         {
-            var comment = mapper.Map<Comment>(request);
+            var comment = mapper.Map<Comment>(request.Request);
 
             await dbContext.Comments.AddAsync(comment, cancellationToken);
         
@@ -37,9 +37,22 @@ public class CreateCommentValidator : AbstractValidator<CreateComment>
     {
         _dbContext = dbContext;
         
+        RuleFor(u => u.Request.Message)
+            .NotEmpty()
+            .WithMessage("Message cannot be empty");
+        
         RuleFor(u => u.Request)
             .MustAsync(PostExists)
             .WithMessage("Post not found");
+        
+        RuleFor(u => u.Request.UserId)
+            .MustAsync(UserExists)
+            .WithMessage("User not found");
+    }
+
+    private async Task<bool> UserExists(Guid userId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Users.AnyAsync(u => u.Id == userId, cancellationToken);
     }
 
     private async Task<bool> PostExists(CreateCommentDto request,  CancellationToken cancellationToken)

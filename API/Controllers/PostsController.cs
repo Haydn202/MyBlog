@@ -97,12 +97,5 @@ public class PostsController(
         return Ok(response);
     }
     
-    [AllowAnonymous]
-    [HttpGet("{postId:guid}/comments/{commentId:guid}")]
-    public async Task<Ok<List<CommentDto>>> GetReplies(Guid postId)
-    {
-        var comments = context.Comments.Where(x => x.PostId == postId).ToListAsync();
-        
-        return TypedResults.Ok(mapper.Map<List<CommentDto>>(comments));
-    }
+    // TODO add logic for replies.
 }
