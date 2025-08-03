@@ -1,10 +1,10 @@
 using API.Data;
-using API.DTOs;
 using API.DTOs.Posts;
 using API.Entities;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Posts.Commands;
 
@@ -37,8 +37,13 @@ public class CreatePostValidator : AbstractValidator<CreatePost>
         _dbContext = dbContext;
         
         RuleFor(u => u.Request)
-            .MustAsync(async (request, cancellationToken) => 
-                dbContext.Posts.Where(p => p.Title == request.Title).ToList().Count == 0)
-            .WithMessage("A post already a has this title.");
+            .MustAsync(TitleIsUnique)
+            .WithMessage("A post already has this title.");
+    }
+    
+    private async Task<bool> TitleIsUnique(PostCreateDto request, CancellationToken cancellationToken)
+    {
+        return !await _dbContext.Posts
+            .AnyAsync(p => p.Title == request.Title, cancellationToken);
     }
 }
