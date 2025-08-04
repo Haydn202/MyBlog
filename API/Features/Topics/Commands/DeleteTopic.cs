@@ -1,35 +1,52 @@
 using API.Data;
 using API.DTOs.Topics;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Topics.Commands;
 
-public class DeleteTopic(Guid id) : IRequest<TopicDto>
+public class DeleteTopic(Guid id) : IRequest<bool>
 {
-    private Guid Id { get; set; } = id;
+    public Guid Id { get; set; } = id;
     
-    private sealed class DeleteTopicHandler(DataContext dbContext, IMapper mapper) 
-        : IRequestHandler<DeleteTopic, TopicDto?>
+    private sealed class DeleteTopicHandler(DataContext dbContext) 
+        : IRequestHandler<DeleteTopic, bool>
     {
-        public async Task<TopicDto?> Handle(DeleteTopic command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(DeleteTopic request, CancellationToken cancellationToken)
         {
             var topic = await dbContext.Topics.FirstOrDefaultAsync(x =>
-                x.Id == command.Id, cancellationToken: cancellationToken);
+                x.Id == request.Id, cancellationToken: cancellationToken);
 
             if (topic == null)
             {
-                return null;
+                return false;
             }
-            
-            var topicDto = mapper.Map<TopicDto>(topic);
         
             dbContext.Topics.Remove(topic);
-
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return topicDto;
+            return true;
         }
+    }
+}
+
+public class DeleteTopicValidator : AbstractValidator<DeleteTopic>
+{
+    private readonly DataContext _dbContext;
+
+    public DeleteTopicValidator(DataContext dbContext)
+    {
+        _dbContext = dbContext;
+
+        RuleFor(u => u.Id)
+            .MustAsync(TopicExists)
+            .WithMessage("Topic not found.");
+    }
+
+    private async Task<bool> TopicExists(Guid id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Topics.AnyAsync(t => t.Id == id, cancellationToken);
     }
 }

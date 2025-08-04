@@ -15,7 +15,6 @@ namespace API.Controllers;
 
 public class PostsController(
     IMapper mapper,
-    DataContext context,
     ISender sender): BaseApiController
 {
     [AllowAnonymous]
@@ -47,7 +46,7 @@ public class PostsController(
     [HttpPost]
     public async Task<ActionResult<PostSummaryDto>> CreatePost(PostCreateDto request)
     {
-        var command = new CreatePost(request);
+        var command = new CreatePost(mapper.Map<CreatePostCommandRequest>(request));
         var response = await sender.Send(command);
         
         return Ok(response);
@@ -91,7 +90,9 @@ public class PostsController(
     [HttpPost("{postId:guid}/comments")]
     public async Task<ActionResult<CommentDto>> CreateComment([FromQuery]Guid postId, CreateCommentDto request)
     {
-        var command = new CreateComment(request);
+        var commandRequest = mapper.Map<CreateCommentCommandRequest>(request);
+        commandRequest.PostId = postId; // Set the PostId from the route parameter
+        var command = new CreateComment(commandRequest);
         var response = await sender.Send(command);
         
         return Ok(response);

@@ -1,6 +1,7 @@
 ﻿using API.DTOs.Topics;
 using API.Features.Topics.Commands;
 using API.Features.Topics.Queries;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 public class TopicsController(
+    IMapper mapper,
     ISender sender): BaseApiController
 {
     [AllowAnonymous]
@@ -38,19 +40,19 @@ public class TopicsController(
 
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<Ok<TopicDto>> CreateTopic(TopicCreateDto request)
+    public async Task<ActionResult<TopicDto>> CreateTopic(TopicCreateDto request)
     {
-        var command = new CreateTopic(request);
+        var command = new CreateTopic(mapper.Map<CreateTopicCommandRequest>(request));
         var response = await sender.Send(command);
 
-        return TypedResults.Ok(response);
+        return Ok(response);
     }
 
     [Authorize(Roles = "Admin")]
     [HttpPut("{id:guid}")]
-    public async Task<Results<NotFound, Ok<TopicDto>>> UpdateTopic(TopicUpdateDto request, [FromRoute] Guid id)
+    public async Task<Results<NotFound, Ok<TopicDto>>> UpdateTopic(TopicUpdateDto dto, [FromRoute] Guid id)
     {
-        var command = new UpdateTopic(request, id);
+        var command = new UpdateTopic(mapper.Map<UpdateTopicCommandRequest>((dto, id)));
         var response = await sender.Send(command);
         
         if (response is null)
@@ -66,8 +68,13 @@ public class TopicsController(
     public async Task<Results<NotFound, NoContent>> DeleteTopic(Guid id)
     {
         var command = new DeleteTopic(id);
-        await sender.Send(command);
+        var response = await sender.Send(command);
 
+        if (response is false)
+        {
+            return TypedResults.NotFound();
+        }
+        
         return TypedResults.NoContent();
     }
 }

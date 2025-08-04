@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Posts.Commands;
 
-public class CreatePost(PostCreateDto request) : IRequest<PostSummaryDto>
+public class CreatePost(CreatePostCommandRequest request) : IRequest<PostSummaryDto>
 {
-    public PostCreateDto Request { get; } = request;
+    public CreatePostCommandRequest Request { get; set; } = request;
 
     private sealed class CreatePostHandler(
         DataContext dbContext,
@@ -41,7 +41,7 @@ public class CreatePostValidator : AbstractValidator<CreatePost>
             .WithMessage("A post already has this title.");
     }
     
-    private async Task<bool> TitleIsUnique(PostCreateDto request, CancellationToken cancellationToken)
+    private async Task<bool> TitleIsUnique(CreatePostCommandRequest request, CancellationToken cancellationToken)
     {
         return !await _dbContext.Posts
             .AnyAsync(p => p.Title == request.Title, cancellationToken);

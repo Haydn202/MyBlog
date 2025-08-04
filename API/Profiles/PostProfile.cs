@@ -1,4 +1,5 @@
-﻿using API.DTOs.Posts;
+﻿using API.DTOs.Comments;
+using API.DTOs.Posts;
 using API.Entities;
 using API.Features.Posts.Commands;
 using API.Profiles.Resolvers;
@@ -25,6 +26,7 @@ public class PostProfile : Profile
             .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => src.Dto.CreatedOn))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Dto.Content))
             .ForMember(dest => dest.TopicIds, opt => opt.MapFrom(src => src.Dto.TopicIds));
-
+        CreateMap<PostCreateDto, CreatePostCommandRequest>();
+        CreateMap<CreateCommentDto, CreateCommentCommandRequest>();
     }
 }

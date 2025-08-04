@@ -26,7 +26,12 @@ public class UsersController(
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<User>> GetUser(Guid id)
     { 
-        return await context.Users.FindAsync(id);
+        var user = await context.Users.FindAsync(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+        return user;
     }
 
     [HttpPatch("{id:guid}")]
@@ -35,16 +40,6 @@ public class UsersController(
         var command = new UpdateRole(request, id);
         var response = await sender.Send(command);
 
-        if (response is null)
-        {
-            return NotFound();
-        }
-
-        if (!response.IsSuccess)
-        {
-            return BadRequest(new { response.Errors });
-        }
-
-        return Ok(response.Data);
+        return Ok(response);
     }
 }

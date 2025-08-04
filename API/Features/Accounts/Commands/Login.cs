@@ -10,28 +10,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Accounts.Commands;
 
-public class Login(LoginDto request) : IRequest<ValidationResult<UserDto>>
+public class Login(LoginCommandRequest request) : IRequest<UserDto>
 {
-    public LoginDto Request { get;} = request;
+    public LoginCommandRequest Request { get; set; } = request;
     
     private sealed class LoginHandler(
         DataContext dbContext, 
-        ITokenService tokenService,
-        IValidator<Login> validator) 
-        : IRequestHandler<Login, ValidationResult<UserDto>>
+        ITokenService tokenService) 
+        : IRequestHandler<Login, UserDto>
     {
-        public async Task<ValidationResult<UserDto>> Handle(Login request, CancellationToken cancellationToken)
+        public async Task<UserDto> Handle(Login request, CancellationToken cancellationToken)
         {
-            var validationResult = await validator.ValidateAsync(request, cancellationToken);
-            
-            if (!validationResult.IsValid)
-            {
-                var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return ValidationResult<UserDto>.Failure(errors);
-            }
-            
             var user = await dbContext.Users.FirstOrDefaultAsync(u => 
                 u.UserName == request.Request.UserName.ToLower());
+
+            if (user == null)
+            {
+                throw new InvalidOperationException("Incorrect username or password.");
+            }
 
             var userDto = new UserDto
             {
@@ -41,7 +37,7 @@ public class Login(LoginDto request) : IRequest<ValidationResult<UserDto>>
                 Role = user.Role.ToString()
             };
 
-            return ValidationResult<UserDto>.Success(userDto);
+            return userDto;
         }
     }
 }
@@ -66,7 +62,7 @@ public class LoginValidator : AbstractValidator<Login>
                 await PasswordIsValid(request)).WithMessage("Incorrect username or password.");
     }
     
-    private async Task<bool> PasswordIsValid(LoginDto request)
+    private async Task<bool> PasswordIsValid(LoginCommandRequest request)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName.ToLower());
         

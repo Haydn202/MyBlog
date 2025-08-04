@@ -10,35 +10,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Users.Command;
 
-public class UpdateRole(RoleUpdateDto request, Guid id) : IRequest<ValidationResult<UserDto>>
+public class UpdateRole(RoleUpdateDto request, Guid id) : IRequest<UserDto>
 {
     public RoleUpdateDto Request { get; } = request;
     private Guid id { get; } = id;
 
     private sealed class UpdateRoleHandler(
         DataContext dbContext, 
-        IMapper mapper,
-        IValidator<UpdateRole> validator)
-        : IRequestHandler<UpdateRole, ValidationResult<UserDto>>
+        IMapper mapper)
+        : IRequestHandler<UpdateRole, UserDto>
     {
-        public async Task<ValidationResult<UserDto>> Handle(
+        public async Task<UserDto> Handle(
             UpdateRole request, 
             CancellationToken cancellationToken)
         {
-            var validationResult = await validator.ValidateAsync(request, cancellationToken);
-            
-            if (!validationResult.IsValid)
-            {
-                var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return ValidationResult<UserDto>.Failure(errors);
-            }
-            
             var user = await dbContext.Users.FirstOrDefaultAsync(x => 
                 x.Id == request.id, cancellationToken: cancellationToken);
 
             if (user is null)
             {
-                return null;
+                throw new InvalidOperationException("User not found.");
             }
             
             Enum.TryParse<Role>(request.Request.Role, true, out var roleEnum);
@@ -48,7 +39,7 @@ public class UpdateRole(RoleUpdateDto request, Guid id) : IRequest<ValidationRes
 
             var userDto = mapper.Map<UserDto>(user);
 
-            return ValidationResult<UserDto>.Success(userDto);
+            return userDto;
         }
     }
 }

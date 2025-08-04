@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Posts.Commands;
 
-public class CreateComment(CreateCommentDto request) : IRequest<CommentDto>
+public class CreateComment(CreateCommentCommandRequest request) : IRequest<CommentDto>
 {
-    public CreateCommentDto Request { get; } = request;
+    public CreateCommentCommandRequest Request { get; set; } = request;
     
     private sealed class CreateCommentHandler(
         DataContext dbContext,
@@ -55,7 +55,7 @@ public class CreateCommentValidator : AbstractValidator<CreateComment>
         return await _dbContext.Users.AnyAsync(u => u.Id == userId, cancellationToken);
     }
 
-    private async Task<bool> PostExists(CreateCommentDto request,  CancellationToken cancellationToken)
+    private async Task<bool> PostExists(CreateCommentCommandRequest request, CancellationToken cancellationToken)
     {
         return await _dbContext.Posts
             .AnyAsync(post => post.Id == request.PostId, cancellationToken: cancellationToken);
