@@ -2,6 +2,7 @@
 using API.DTOs.Comments;
 using API.DTOs.Posts;
 using API.Entities;
+using API.Features.Posts.Commands;
 using API.Features.Posts.Queries;
 using AutoMapper;
 using MediatR;
@@ -42,81 +43,59 @@ public class PostsController(
         return TypedResults.Ok(response);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<Ok<PostSummaryDto>> CreatePost(PostCreateDto request)
+    public async Task<ActionResult<PostSummaryDto>> CreatePost(PostCreateDto request)
     {
-        var post = mapper.Map<Post>(request);
-
-        context.Posts.Add(post);
-        await context.SaveChangesAsync();
-
-        return TypedResults.Ok(mapper.Map<PostSummaryDto>(post));
+        var command = new CreatePost(request);
+        var response = await sender.Send(command);
+        
+        return Ok(response);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id:guid}")]
     public async Task<Results<NoContent, NotFound>> DeletePost(Guid id)
     {
-        var post = await context.Posts.FirstOrDefaultAsync(x => x.Id == id);
+        var command = new DeletePost(id);
+        var response = await sender.Send(command);
 
-        if (post is null)
+        if (response is false)
         {
             return TypedResults.NotFound();
         }
-
-        context.Posts.Remove(post);
-        await context.SaveChangesAsync();
-
+        
         return TypedResults.NoContent();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:guid}")]
-    public async Task<Results<Ok<PostSummaryDto>, NotFound>> UpdatePost(PostUpdateDto request, [FromRoute] Guid id)
+    public async Task<ActionResult<PostSummaryDto>> UpdatePost(PostUpdateDto dto, [FromRoute] Guid id)
     {
-        var post = await context.Posts.FirstOrDefaultAsync(x => x.Id == id);
-
-        if (post is null)
-        {
-            return TypedResults.NotFound();
-        }
-
-        mapper.Map(request, post);
+        var command = new UpdatePost(mapper.Map<UpdatePostCommandRequest>((dto, id)));
+        var response = await sender.Send(command);
         
-        await context.SaveChangesAsync();
-        
-        return TypedResults.Ok(mapper.Map<PostSummaryDto>(post));
+        return Ok(response);
     }
     
     [AllowAnonymous]
     [HttpGet("{postId:guid}/comments")]
     public async Task<Ok<List<CommentDto>>> GetComments(Guid postId)
     {
-        var comments = await context.Comments
-            .Where(c => c.PostId == postId)
-            .Include(c => c.CreatedBy)
-            .ToListAsync();
-        
-        return TypedResults.Ok(mapper.Map<List<CommentDto>>(comments));
+        var query = new GetComments(postId);
+        var response = await sender.Send(query);
+        return TypedResults.Ok(mapper.Map<List<CommentDto>>(response));
     }
     
     [AllowAnonymous]
     [HttpPost("{postId:guid}/comments")]
-    public async Task<Ok<CommentDto>> CreateComment([FromQuery]Guid postId, CreateCommentDto request)
+    public async Task<ActionResult<CommentDto>> CreateComment([FromQuery]Guid postId, CreateCommentDto request)
     {
-        var comment = mapper.Map<Comment>(request);
-
-        await context.Comments.AddAsync(comment);
+        var command = new CreateComment(request);
+        var response = await sender.Send(command);
         
-        await context.SaveChangesAsync();
-        
-        return TypedResults.Ok(mapper.Map<CommentDto>(comment));
+        return Ok(response);
     }
     
-    [AllowAnonymous]
-    [HttpGet("{postId:guid}/comments/{commentId:guid}")]
-    public async Task<Ok<List<CommentDto>>> GetReplies(Guid postId)
-    {
-        var comments = context.Comments.Where(x => x.PostId == postId).ToListAsync();
-        
-        return TypedResults.Ok(mapper.Map<List<CommentDto>>(comments));
-    }
+    // TODO add logic for replies.
 }

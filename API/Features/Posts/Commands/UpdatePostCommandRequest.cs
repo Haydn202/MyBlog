@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using API.DTOs.Topics;
-using API.Entities;
+using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.Posts;
+namespace API.Features.Posts.Commands;
 
-public class PostUpdateDto
+public class UpdatePostCommandRequest
 {
     [Required]
     public Guid Id { get; set; }
