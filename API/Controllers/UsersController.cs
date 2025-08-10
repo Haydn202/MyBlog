@@ -16,6 +16,7 @@ public class UsersController(
     ISender sender) : BaseApiController
 {
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<User>>> GetUsers()
     {
         var users = await context.Users.ToListAsync();
@@ -24,6 +25,7 @@ public class UsersController(
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<User>> GetUser(Guid id)
     { 
         var user = await context.Users.FindAsync(id);
@@ -35,7 +37,8 @@ public class UsersController(
     }
 
     [HttpPatch("{id:guid}")]
-    public async Task<ActionResult<UserDto>> UpdateUserRole([FromBody] RoleUpdateDto request, [FromRoute] Guid id)
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<UserDto>> UpdateUserRole([FromBody] RoleUpdateDto request, [FromRoute] string id)
     {
         var command = new UpdateRole(request, id);
         var response = await sender.Send(command);

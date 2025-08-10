@@ -9,4 +9,4 @@ public class LoginCommandRequest
     
     [Required]
     public required string Password { get; set; }
-} 
+}

@@ -50,7 +50,7 @@ public class CreateCommentValidator : AbstractValidator<CreateComment>
             .WithMessage("User not found");
     }
 
-    private async Task<bool> UserExists(Guid userId, CancellationToken cancellationToken)
+    private async Task<bool> UserExists(string userId, CancellationToken cancellationToken)
     {
         return await _dbContext.Users.AnyAsync(u => u.Id == userId, cancellationToken);
     }

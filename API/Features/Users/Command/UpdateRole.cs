@@ -6,17 +6,19 @@ using API.Entities;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Users.Command;
 
-public class UpdateRole(RoleUpdateDto request, Guid id) : IRequest<UserDto>
+public class UpdateRole(RoleUpdateDto request, string id) : IRequest<UserDto>
 {
     public RoleUpdateDto Request { get; } = request;
-    private Guid id { get; } = id;
+    public string Id { get; } = id;
 
     private sealed class UpdateRoleHandler(
-        DataContext dbContext, 
+        UserManager<User> userManager,
         IMapper mapper)
         : IRequestHandler<UpdateRole, UserDto>
     {
@@ -24,32 +26,33 @@ public class UpdateRole(RoleUpdateDto request, Guid id) : IRequest<UserDto>
             UpdateRole request, 
             CancellationToken cancellationToken)
         {
-            var user = await dbContext.Users.FirstOrDefaultAsync(x => 
-                x.Id == request.id, cancellationToken: cancellationToken);
-
-            if (user is null)
-            {
-                throw new InvalidOperationException("User not found.");
-            }
+            var user = await userManager.FindByIdAsync(request.Id);
+            await userManager.AddToRoleAsync(user, request.Request.Role);
             
-            Enum.TryParse<Role>(request.Request.Role, true, out var roleEnum);
-
-            user.Role = roleEnum;
-            await dbContext.SaveChangesAsync(cancellationToken);
-
-            var userDto = mapper.Map<UserDto>(user);
-
-            return userDto;
+            return mapper.Map<UserDto>(user);
         }
     }
 }
 
 public class UpdateRoleValidator : AbstractValidator<UpdateRole>
 {
-    public UpdateRoleValidator()
+    UserManager<User> _userManager;
+    
+    public UpdateRoleValidator(UserManager<User> userManager)
     {
+        _userManager = userManager;
         RuleFor(u => u.Request.Role)
             .Must(r => Enum.TryParse<Role>(r, true, out var roleEnum))
             .WithMessage("The provided role is not a valid.");
+        
+        RuleFor(u => u.Id)
+            .MustAsync(async (id, _) => await UserExists(id))
+            .WithMessage("The user does not exist.");
+    }
+
+    private async Task<bool> UserExists(string id)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        return user is not null;
     }
 }

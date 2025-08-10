@@ -11,5 +11,5 @@ public class CreateCommentCommandRequest
     public required string Message { get; set; }
     
     [Required]
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
 } 

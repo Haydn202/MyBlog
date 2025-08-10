@@ -1,5 +1,8 @@
 ﻿using System.Text;
+using API.Data;
+using API.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Extensions;
@@ -10,6 +13,21 @@ public static class IdentityServiceExtensions
         this IServiceCollection services, 
         IConfiguration configuration)
     {
+
+        //TODO Make less permissive
+        services.AddIdentityCore<User>(opt =>
+            {
+                opt.Password.RequiredLength = 1; 
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequiredUniqueChars = 0;
+                opt.User.RequireUniqueEmail = true;
+                opt.Password.RequireDigit = false;
+            }).AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<DataContext>();
+
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -23,7 +41,7 @@ public static class IdentityServiceExtensions
                     ValidateAudience = false
                 };
             });
-
+        
         return services;
     }
 }

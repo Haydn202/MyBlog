@@ -1,16 +1,13 @@
 using API.Entities;
 using API.Entities.Comments;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
-public class DataContext : DbContext
+public class DataContext(DbContextOptions options) : IdentityDbContext<User>(options)
 {
-    public DataContext(DbContextOptions options) : base(options)
-    {
-    }
-
-    public DbSet<User> Users { get; init; } 
     public DbSet<Post> Posts { get; init; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Reply> Replies { get; set; }
@@ -19,6 +16,12 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<IdentityRole>()
+            .HasData(
+                new IdentityRole { Name = "Admin", NormalizedName = "ADMIN"},
+                new IdentityRole { Name = "None", NormalizedName = "NONE"}
+                );
 
         modelBuilder.Entity<Post>()
             .HasMany(p => p.Topics)

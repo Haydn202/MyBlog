@@ -17,6 +17,11 @@ public class AccountsController(
     {
         var command = new RegisterUser(mapper.Map<RegisterUserCommandRequest>(registerDto));
         var response = await sender.Send(command);
+
+        if (response is null)
+        {
+            return BadRequest("Something went wrong");
+        }
         
         return Ok(response);
     }

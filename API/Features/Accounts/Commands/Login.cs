@@ -3,26 +3,27 @@ using System.Text;
 using API.Data;
 using API.DTOs;
 using API.DTOs.Accounts;
+using API.Entities;
 using API.Interfaces;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Accounts.Commands;
 
 public class Login(LoginCommandRequest request) : IRequest<UserDto>
 {
-    public LoginCommandRequest Request { get; set; } = request;
+    public LoginCommandRequest Request { get; } = request;
     
     private sealed class LoginHandler(
-        DataContext dbContext, 
+        UserManager<User> userManager, 
         ITokenService tokenService) 
         : IRequestHandler<Login, UserDto>
     {
         public async Task<UserDto> Handle(Login request, CancellationToken cancellationToken)
         {
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => 
-                u.UserName == request.Request.UserName.ToLower());
+            var user = await userManager.FindByNameAsync(request.Request.UserName);
 
             if (user == null)
             {
@@ -33,8 +34,7 @@ public class Login(LoginCommandRequest request) : IRequest<UserDto>
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                Token = tokenService.CreateToken(user),
-                Role = user.Role.ToString()
+                Token = await tokenService.CreateToken(user)
             };
 
             return userDto;
@@ -44,11 +44,11 @@ public class Login(LoginCommandRequest request) : IRequest<UserDto>
 
 public class LoginValidator : AbstractValidator<Login>
 {
-    private readonly DataContext _dbContext;
+    private readonly UserManager<User> _userManager;
 
-    public LoginValidator(DataContext dbContext)
+    public LoginValidator(UserManager<User> userManager)
     {
-        _dbContext = dbContext;
+        _userManager = userManager;
 
         RuleFor(u => u.Request.UserName)
             .NotEmpty().WithMessage("Username is required.");
@@ -64,22 +64,15 @@ public class LoginValidator : AbstractValidator<Login>
     
     private async Task<bool> PasswordIsValid(LoginCommandRequest request)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName.ToLower());
+        var user = await _userManager.FindByNameAsync(request.UserName);
         
         if (user is null)
         {
             return false;
         }
         
-        using var hmac = new HMACSHA512(user.PasswordSalt);
-
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
-
-        if (computedHash.Where((t, i) => t != user.PasswordHash[i]).Any())
-        {
-            return false;
-        }
-
-        return true;
+        var passwordIsValid = await _userManager.CheckPasswordAsync(user, request.Password);
+        
+        return passwordIsValid;
     }
 }

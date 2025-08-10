@@ -8,5 +8,9 @@ public class RegisterDto
     public required string Username { get; set; }
     
     [Required]
+    [EmailAddress]
+    public string Email { get; set; }
+    
+    [Required]
     public required string Password { get; set; }
 }

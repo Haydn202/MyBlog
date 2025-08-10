@@ -1,10 +1,10 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace API.Entities;
 
-public class User
+public class User : IdentityUser
 {
-    public Guid Id { get; init; }
-    public required string UserName { get; set; }
-    public required byte[] PasswordHash { get; set; }
-    public required byte[] PasswordSalt { get; set; }
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpires { get; set; }
     public Role? Role { get; set; }
 }

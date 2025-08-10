@@ -3,5 +3,5 @@
 public class CreateCommentBaseDto
 {
     public required string Message { get; set; }
-    public Guid UserId { get; init; }
+    public string UserId { get; init; }
 }
