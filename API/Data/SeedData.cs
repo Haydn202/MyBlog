@@ -17,7 +17,6 @@ public class SeedData
         {
             UserName = "admin",
             Email = "Admin@email.com",
-            EmailConfirmed = true,
         };
         var res = await userManager.CreateAsync(user, "admin");
 
