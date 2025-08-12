@@ -5,11 +5,11 @@ namespace API.Features.Posts.Commands;
 public class CreateCommentCommandRequest
 {
     [Required]
-    public Guid PostId { get; set; }
+    public required Guid PostId { get; set; }
     
     [Required]
     public required string Message { get; set; }
     
     [Required]
-    public string UserId { get; set; }
+    public required string UserId { get; set; }
 } 

@@ -17,7 +17,12 @@ public class CreateTopic(CreateTopicCommandRequest request) : IRequest<TopicDto>
     {
         public async Task<TopicDto> Handle(CreateTopic request, CancellationToken cancellationToken)
         {
-            var topic = mapper.Map<Topic>(request.Request);
+            var topic = new Topic
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Request.Name,
+                Posts = []
+            };
 
             await dbContext.Topics.AddAsync(topic, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);

@@ -4,6 +4,7 @@ using API.DTOs.Posts;
 using API.Entities;
 using API.Features.Posts.Commands;
 using API.Features.Posts.Queries;
+using API.Helpers;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -34,9 +35,9 @@ public class PostsController(
     
     [AllowAnonymous]
     [HttpGet]
-    public async Task<Ok<List<PostSummaryDto>>> GetPosts()
+    public async Task<Ok<PaginatedResult<PostSummaryDto>>> GetPosts([FromQuery]PagingParams pagingParams)
     {
-        var query = new GetPosts();
+        var query = new GetPosts(pagingParams);
         var response = await sender.Send(query);
 
         return TypedResults.Ok(response);
@@ -79,19 +80,18 @@ public class PostsController(
     
     [AllowAnonymous]
     [HttpGet("{postId:guid}/comments")]
-    public async Task<Ok<List<CommentDto>>> GetComments(Guid postId)
+    public async Task<Ok<PaginatedResult<CommentDto>>> GetComments(Guid postId,  [FromQuery]PagingParams pagingParams)
     {
-        var query = new GetComments(postId);
+        var query = new GetComments(postId,  pagingParams);
         var response = await sender.Send(query);
-        return TypedResults.Ok(mapper.Map<List<CommentDto>>(response));
+        return TypedResults.Ok(response);
     }
     
     [AllowAnonymous]
     [HttpPost("{postId:guid}/comments")]
-    public async Task<ActionResult<CommentDto>> CreateComment([FromQuery]Guid postId, CreateCommentDto request)
+    public async Task<ActionResult<CommentDto>> CreateComment(CreateCommentDto request)
     {
         var commandRequest = mapper.Map<CreateCommentCommandRequest>(request);
-        commandRequest.PostId = postId; // Set the PostId from the route parameter
         var command = new CreateComment(commandRequest);
         var response = await sender.Send(command);
         

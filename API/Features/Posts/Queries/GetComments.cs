@@ -1,28 +1,32 @@
 using API.Data;
 using API.DTOs.Comments;
 using API.Entities;
+using API.Helpers;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Posts.Queries;
 
-public class GetComments(Guid id) : IRequest<List<CommentDto>>
+public class GetComments(Guid id, PagingParams pagingParams) : IRequest<PaginatedResult<CommentDto>>
 {
-    public Guid Id { get; } = id;
+    private Guid Id { get; } = id;
+    private PagingParams PagingParams { get; } = pagingParams;
 
     private sealed class GetCommentsHandler(
         DataContext dbContext,
-        IMapper mapper) : IRequestHandler<GetComments, List<CommentDto>>
+        IMapper mapper) : IRequestHandler<GetComments, PaginatedResult<CommentDto>>
     {
-        public async Task<List<CommentDto>> Handle(GetComments request, CancellationToken cancellationToken)
+        public async Task<PaginatedResult<CommentDto>> Handle(GetComments request, CancellationToken cancellationToken)
         {
-            var comments = await dbContext.Comments
+            var query = dbContext.Comments
                 .Where(c => c.PostId == request.Id)
                 .Include(c => c.CreatedBy)
-                .ToListAsync(cancellationToken: cancellationToken);
+                .ProjectTo<CommentDto>(mapper.ConfigurationProvider)
+                .AsQueryable();
             
-            return mapper.Map<List<CommentDto>>(comments);
+            return await PaginationHelper.CreateAsync(query, request.PagingParams.PageNumber, request.PagingParams.PageSize);
         }
     }
 }

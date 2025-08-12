@@ -1,26 +1,32 @@
 using API.Data;
 using API.DTOs.Posts;
+using API.Entities;
+using API.Helpers;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Posts.Queries;
 
-public class GetPosts : IRequest<List<PostSummaryDto>>
+public class GetPosts(PagingParams pagingParams) : IRequest<PaginatedResult<PostSummaryDto>>
 {
+    private PagingParams PagingParams { get; } = pagingParams;
+
     private sealed class GetPostsHandler(
         DataContext dbContext, 
-        IMapper mapper) : IRequestHandler<GetPosts, List<PostSummaryDto>>
+        IMapper mapper) : IRequestHandler<GetPosts, PaginatedResult<PostSummaryDto>>
     {
-        public async Task<List<PostSummaryDto>> Handle(GetPosts request, CancellationToken cancellationToken)
+        public async Task<PaginatedResult<PostSummaryDto>> Handle(GetPosts request, CancellationToken cancellationToken)
         {
-            var posts = await dbContext.Posts
+            var query = dbContext.Posts
                 .OrderByDescending(x => x.CreatedOn)
                 .Take(10)
                 .Include("Topics")
-                .ToListAsync(cancellationToken: cancellationToken);
-
-            return mapper.Map<List<PostSummaryDto>>(posts);
+                .ProjectTo<PostSummaryDto>(mapper.ConfigurationProvider)
+                .AsQueryable();
+            
+            return await PaginationHelper.CreateAsync(query, request.PagingParams.PageNumber, request.PagingParams.PageSize);
         }
     }
 }

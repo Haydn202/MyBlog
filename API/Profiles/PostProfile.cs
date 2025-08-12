@@ -11,6 +11,9 @@ public class PostProfile : Profile
     public PostProfile()
     {
         CreateMap<Post, PostCreateDto>();
+        CreateMap<CreatePostCommandRequest, Post>()
+            .ForMember(dest => dest.Topics, opt => opt.MapFrom<PostCreateCommandTopicResolver>());
+        CreateMap<Post, CreatePostCommandRequest>();
         CreateMap<PostCreateDto, Post>()
             .ForMember(dest => dest.Topics, opt => opt.MapFrom<PostCreateTopicResolver>());
         CreateMap<Post, PostSummaryDto>();
@@ -28,5 +31,6 @@ public class PostProfile : Profile
             .ForMember(dest => dest.TopicIds, opt => opt.MapFrom(src => src.Dto.TopicIds));
         CreateMap<PostCreateDto, CreatePostCommandRequest>();
         CreateMap<CreateCommentDto, CreateCommentCommandRequest>();
+        CreateMap<CreateCommentCommandRequest, CreateCommentDto>();
     }
 }
