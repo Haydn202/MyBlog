@@ -20,7 +20,8 @@ public static class ApplicationServiceExtensions
         services.AddControllers();
         services.AddDbContext<DataContext>(opt =>
         {
-            opt.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+            opt.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            //opt.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
         });
         services.AddHttpContextAccessor();
         services.AddMediatR(configuration =>
