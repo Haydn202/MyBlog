@@ -1,0 +1,19 @@
+<div class="card bg-base-100 w-3/4 mb-12 mx-auto p-6 shadow-xl">
+  <div class="flex gap-6 items-start">
+    <!-- Thumbnail -->
+    <img src="/img.png" alt="thumbnail" class="w-32 h-32 rounded-box object-cover">
+
+    <!-- Text content -->
+    <div class="flex flex-col">
+      <!-- Title -->
+      <h2 class="card-title text-lg font-bold mb-2">
+        {{ post?.title }}
+      </h2>
+
+      <!-- Description -->
+      <p class="text-base text-gray-600">
+        {{ post?.description }}
+      </p>
+    </div>
+  </div>
+</div>

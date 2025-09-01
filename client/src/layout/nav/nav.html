@@ -1,0 +1,33 @@
+<header class="p-3 w-full fixed top-0 z-50 bg-gradient-to-r from-primary to-secondary">
+
+  <div class="flex align-middle items-center px-10 mx-auto gap-6">
+    <a class="max-h-16 flex items-center gap-3 text-white border-r-white border-r-2 pr-6">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+        <path d="M11.25 4.533A9.707 9.707 0 0 0 6 3a9.735 9.735 0 0 0-3.25.555.75.75 0 0 0-.5.707v14.25a.75.75 0 0 0 1 .707A8.237 8.237 0 0 1 6 18.75c1.995 0 3.823.707 5.25 1.886V4.533ZM12.75 20.636A8.214 8.214 0 0 1 18 18.75c.966 0 1.89.166 2.75.47a.75.75 0 0 0 1-.708V4.262a.75.75 0 0 0-.5-.707A9.735 9.735 0 0 0 18 3a9.707 9.707 0 0 0-5.25 1.533v16.103Z" />
+      </svg>
+
+      <h3 class="text-2xl font-semibold text-white uppercase">My Blog</h3>
+    </a>
+    <nav class="flex gap-3 my-2 uppercase text-lg text-white">
+      <a>Posts</a>
+      <a>About</a>
+      <a>Write</a>
+    </nav>
+    <div class="flex align-middle ml-auto gap-3">
+      @if (accountService.currentUser(); as user) {
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="flex item-center text-white text-xl gap-3 cursor-pointer">
+            <img src="/img.png" alt="user avatar" class="w-8 -8 rounded-full">
+            <span>{{user.userName}}</span>
+          </div>
+          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            <li><a>Edit profile</a></li>
+            <li><a (click)="Logout()">Logout</a></li>
+          </ul>
+        </div>
+      } @else {
+        <app-auth></app-auth>
+      }
+    </div>
+  </div>
+</header>

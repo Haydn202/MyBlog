@@ -6,5 +6,6 @@ public class UserDto
 {
     public string Id { get; init; }
     public required string UserName { get; set; }
+    public required string Email { get; set; }
     public required string Token { get; set; }
 }

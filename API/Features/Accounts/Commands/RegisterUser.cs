@@ -50,7 +50,8 @@ public class RegisterUser(RegisterUserCommandRequest request) : IRequest<UserDto
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                Token = await tokenService.CreateToken(user)
+                Token = await tokenService.CreateToken(user),
+                Email = user.Email,
             };
             
             return userDto;

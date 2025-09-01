@@ -23,18 +23,19 @@ public class Login(LoginCommandRequest request) : IRequest<UserDto>
     {
         public async Task<UserDto> Handle(Login request, CancellationToken cancellationToken)
         {
-            var user = await userManager.FindByNameAsync(request.Request.UserName);
+            var user = await userManager.FindByEmailAsync(request.Request.Email);
 
             if (user == null)
             {
-                throw new InvalidOperationException("Incorrect username or password.");
+                throw new InvalidOperationException("Incorrect email or password.");
             }
 
             var userDto = new UserDto
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                Token = await tokenService.CreateToken(user)
+                Token = await tokenService.CreateToken(user),
+                Email = user.Email,
             };
 
             return userDto;
@@ -50,8 +51,8 @@ public class LoginValidator : AbstractValidator<Login>
     {
         _userManager = userManager;
 
-        RuleFor(u => u.Request.UserName)
-            .NotEmpty().WithMessage("Username is required.");
+        RuleFor(u => u.Request.Email)
+            .NotEmpty().WithMessage("Email is required.");
 
         RuleFor(u => u.Request.Password)
             .NotEmpty().WithMessage("Password is required.");
@@ -59,12 +60,12 @@ public class LoginValidator : AbstractValidator<Login>
         RuleFor(u => u.Request)
             .NotEmpty().WithMessage("Password is required.")
             .MustAsync(async (request, cancellationToken) => 
-                await PasswordIsValid(request)).WithMessage("Incorrect username or password.");
+                await PasswordIsValid(request)).WithMessage("Incorrect email or password.");
     }
     
     private async Task<bool> PasswordIsValid(LoginCommandRequest request)
     {
-        var user = await _userManager.FindByNameAsync(request.UserName);
+        var user = await _userManager.FindByEmailAsync(request.Email);
         
         if (user is null)
         {
