@@ -15,26 +15,26 @@
     </button>
 
     <!-- Login form -->
-    <div *ngIf="isLoggingIn" class="mb-6">
-      <h2 class="text-2xl font-bold mb-4 text-center">Log In</h2>
-      <app-login></app-login>
-      <div class="text-center mt-4">
-        <button class="btn btn-outline btn-primary w-full" (click)="isLoggingIn = false">
-          Sign Up Instead
-        </button>
+    @if (isLoggingIn) {
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-4 text-center">Log In</h2>
+        <app-login></app-login>
+        <div class="text-center mt-4">
+          <button class="btn btn-outline btn-primary w-full" (click)="isLoggingIn = false">
+            Sign Up Instead
+          </button>
+        </div>
       </div>
-    </div>
-
-    <!-- Register form -->
-    <div *ngIf="!isLoggingIn" class="mb-6">
-      <h2 class="text-2xl font-bold mb-4 text-center">Sign Up</h2>
-      <app-register></app-register>
-      <div class="text-center mt-4">
-        <button class="btn btn-outline btn-primary w-full" (click)="isLoggingIn = true">
-          Back to Log In
-        </button>
+    } @else {
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-4 text-center">Sign Up</h2>
+        <app-register></app-register>
+        <div class="text-center mt-4">
+          <button class="btn btn-outline btn-primary w-full" (click)="isLoggingIn = true">
+            Back to Log In
+          </button>
+        </div>
       </div>
-    </div>
-
+    }
   </div>
 </div>

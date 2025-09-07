@@ -11,7 +11,6 @@ import { Register } from './register/register';
   imports: [
     FormsModule,   // ngModel
     CommonModule,  // structural directives (ngIf, ngFor)
-    NgIf,          // explicit import for *ngIf
     Login,
     Register
   ],

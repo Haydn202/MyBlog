@@ -29,7 +29,7 @@ public class RegisterUser(RegisterUserCommandRequest request) : IRequest<UserDto
 
             var user = new User
             {
-                UserName = request.Request.Username.ToLower(),
+                UserName = request.Request.UserName.ToLower(),
                 Email = request.Request.Email
             };
 
@@ -67,7 +67,7 @@ public class RegistrationValidator : AbstractValidator<RegisterUser>
     {
         _userManager = userManager;
 
-        RuleFor(u => u.Request.Username)
+        RuleFor(u => u.Request.UserName)
             .NotEmpty().WithMessage("Username is required.")
             .MustAsync(async (username, cancellationToken) => 
                 !await UserExists(username)).WithMessage("Username is taken");

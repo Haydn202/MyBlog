@@ -5,7 +5,7 @@ namespace API.Features.Accounts.Commands;
 public class RegisterUserCommandRequest
 {
     [Required]
-    public required string Username { get; init; }
+    public required string UserName { get; init; }
     
     [Required] 
     [EmailAddress]
