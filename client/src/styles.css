@@ -6,4 +6,40 @@
 
 @plugin "daisyui" {
   exclude: rootscrollgutter;
+  themes: light --default, dark --prefersdark, cupcake;
+}
+
+/* Quill + DaisyUI overrides without @apply */
+.quill-theme .ql-container.ql-snow,
+.quill-theme .ql-container.ql-snow .ql-editor {
+  background-color: #f6f3f6; /* matches DaisyUI bg-base-100 */
+  color: #1f2937;            /* matches DaisyUI base-content */
+  border: 1px solid #d1d5db; /* matches DaisyUI border-base-300 */
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+}
+
+.quill-theme .ql-toolbar.ql-snow {
+  background-color: #e5e7eb; /* matches DaisyUI bg-base-200 */
+  border: 1px solid #d1d5db;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
+
+.quill-theme .ql-editor.ql-blank::before {
+  color: #9ca3af; /* placeholder text color */
+  opacity: 0.55;
+}
+
+/* Dark mode (bright editor on dark site) */
+html.dark .quill-theme .ql-container.ql-snow,
+html.dark .quill-theme .ql-container.ql-snow .ql-editor {
+  background-color: #f9fafb;
+  color: #111827;
+  border-color: #e5e7eb;
+}
+
+html.dark .quill-theme .ql-toolbar.ql-snow {
+  background-color: #f3f4f6;
+  border-color: #e5e7eb;
 }
