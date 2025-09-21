@@ -5,14 +5,12 @@ import {SummaryCard} from '../../layout/summary-card/summary-card';
 import {TextEditor} from '../text-editor/text-editor';
 import {RouterLink} from '@angular/router';
 import {PostSummaryDto} from '../../Types/PostSummary';
-import {NgForOf} from '@angular/common';
 
 @Component({
   selector: 'app-home',
   imports: [
     SummaryCard,
-    RouterLink,
-    NgForOf
+    RouterLink
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',

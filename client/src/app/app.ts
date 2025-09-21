@@ -3,13 +3,10 @@ import {Router, RouterOutlet} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {Nav} from '../layout/nav/nav';
 import {AccountService} from '../core/services/account.service';
-import {Home} from '../features/home/home';
-import {TextEditor} from '../features/text-editor/text-editor';
-import {NgClass} from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [Nav, Home, RouterOutlet, NgClass],
+  imports: [Nav, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

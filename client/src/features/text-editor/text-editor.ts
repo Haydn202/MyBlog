@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import {QuillEditorComponent} from 'ngx-quill';
 import {FormsModule} from '@angular/forms';
 
@@ -12,6 +12,8 @@ import {FormsModule} from '@angular/forms';
   styleUrls: ['./text-editor.css']
 })
 export class TextEditor {
+  @Output() contentChange = new EventEmitter<string>();
+
   editorContent = '';
 
   modules = {
@@ -26,6 +28,11 @@ export class TextEditor {
       ['clean'],
     ]
   };
+
+  onContentChange(content: string) {
+    this.editorContent = content;
+    this.contentChange.emit(content);
+  }
 
   publish() {
     console.log('Blog Content:', this.editorContent);

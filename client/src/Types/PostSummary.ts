@@ -10,4 +10,5 @@ export interface PostSummaryDto {
   topics: TopicDto[];
   createdOn: string;               // DateTime → ISO string in JSON
   thumbnailUrl?: string | null;    // nullable in C#
+  status: 'Draft' | 'Published' | 'Deleted';
 }
