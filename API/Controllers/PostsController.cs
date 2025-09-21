@@ -77,6 +77,17 @@ public class PostsController(
         
         return Ok(response);
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPatch("{id:guid}/status")]
+    public async Task<ActionResult<PostSummaryDto>> UpdatePostStatus(PostStatusUpdateDto dto, [FromRoute] Guid id)
+    {
+        var commandRequest = new UpdatePostStatusCommandRequest { Id = id, Status = dto.Status };
+        var command = new UpdatePostStatus(commandRequest);
+        var response = await sender.Send(command);
+        
+        return Ok(response);
+    }
     
     [AllowAnonymous]
     [HttpGet("{postId:guid}/comments")]

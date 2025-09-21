@@ -23,7 +23,7 @@ export class TextEditor {
       ['link', 'image', 'video'],
       [{ 'align': [] }],
       [{ 'color': [] }, { 'background': [] }],
-      ['clean']
+      ['clean'],
     ]
   };
 

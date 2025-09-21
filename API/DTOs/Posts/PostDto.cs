@@ -13,4 +13,5 @@ public class PostDto
     public required string Content { get; init; }
     public List<Comment>? MainComments { get; init; }
     public string? ThumbnailUrl { get; set; }
+    public PostStatus Status { get; init; }
 }

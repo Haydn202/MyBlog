@@ -10,4 +10,5 @@ public class Post
     public DateTime CreatedOn { get; set; } = DateTime.Now;
     public required string Content { get; set; } // will change to be in blob storage.
     public List<Comment>? MainComments { get; set; }
+    public PostStatus Status { get; set; } = PostStatus.Draft;
 }

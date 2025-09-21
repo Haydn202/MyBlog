@@ -28,8 +28,10 @@ public class PostProfile : Profile
             .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Dto.ThumbnailUrl))
             .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => src.Dto.CreatedOn))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Dto.Content))
-            .ForMember(dest => dest.TopicIds, opt => opt.MapFrom(src => src.Dto.TopicIds));
+            .ForMember(dest => dest.TopicIds, opt => opt.MapFrom(src => src.Dto.TopicIds))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Dto.Status));
         CreateMap<PostCreateDto, CreatePostCommandRequest>();
+        CreateMap<PostStatusUpdateDto, UpdatePostStatusCommandRequest>();
         CreateMap<CreateCommentDto, CreateCommentCommandRequest>();
         CreateMap<CreateCommentCommandRequest, CreateCommentDto>();
     }

@@ -20,4 +20,5 @@ public class PostUpdateDto
     
     public required string Content { get; set; }
     public required List<Guid> TopicIds { get; init; }
+    public PostStatus Status { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using API.DTOs.Topics;
+using API.Entities;
 
 namespace API.DTOs.Posts;
 
@@ -10,4 +11,5 @@ public class PostSummaryDto
     public required List<TopicDto> Topics { get; set; }
     public DateTime CreatedOn { get; init; }
     public string? ThumbnailUrl { get; set; }
+    public PostStatus Status { get; init; }
 }

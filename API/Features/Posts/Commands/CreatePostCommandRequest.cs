@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using API.Entities;
 
 namespace API.Features.Posts.Commands;
 
@@ -15,4 +16,5 @@ public class CreatePostCommandRequest
     
     public required string Content { get; set; }
     public required List<Guid> TopicIds { get; init; }
+    public PostStatus Status { get; set; } = PostStatus.Draft;
 } 
