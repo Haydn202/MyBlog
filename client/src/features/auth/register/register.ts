@@ -14,6 +14,11 @@ export class Register {
   private accountService = inject(AccountService);
 
   register() {
-    this.accountService.signup(this.creds).subscribe();
+    this.accountService.signup(this.creds).subscribe({
+      next: _ => {},
+      error: error => {
+        console.error(error);
+      }
+    });
   }
 }

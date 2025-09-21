@@ -9,9 +9,9 @@
       <h3 class="text-2xl font-semibold text-white uppercase">My Blog</h3>
     </a>
     <nav class="flex gap-3 my-2 uppercase text-lg text-white">
-      <a>Posts</a>
-      <a>About</a>
-      <a>Write</a>
+      <a routerLink="/posts" routerLinkActive="text-accent">Posts</a>
+      <a routerLink="/about" routerLinkActive="text-accent">About</a>
+      <a routerLink="/admin" routerLinkActive="text-accent">Admin</a>
     </nav>
     <div class="flex align-middle ml-auto gap-3">
       @if (accountService.currentUser(); as user) {
@@ -21,7 +21,8 @@
             <span>{{user.userName}}</span>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-            <li><a>Edit profile</a></li>
+            <li><a>Edit profile</a></li><app-text-editor></app-text-editor>
+
             <li><a (click)="Logout()">Logout</a></li>
           </ul>
         </div>

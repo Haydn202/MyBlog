@@ -1,23 +1,31 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {firstValueFrom} from 'rxjs';
 import {PostsService} from '../../core/services/posts.service';
 import {SummaryCard} from '../../layout/summary-card/summary-card';
 import {TextEditor} from '../text-editor/text-editor';
+import {RouterLink} from '@angular/router';
+import {PostSummaryDto} from '../../Types/PostSummary';
+import {NgForOf} from '@angular/common';
 
 @Component({
   selector: 'app-home',
   imports: [
     SummaryCard,
-    TextEditor
+    RouterLink,
+    NgForOf
   ],
   templateUrl: './home.html',
-  styleUrl: './home.css'
+  styleUrl: './home.css',
+  standalone: true
 })
-export class Home {
-  protected postService = inject(PostsService);
+export class Home implements OnInit {
+  constructor(public postService: PostsService) {}
 
-  async ngOnInit(){
-    await this.postService.getPosts().subscribe();
+  ngOnInit() {
+    this.postService.getPosts().subscribe();
   }
 
+  trackById(index: number, post: PostSummaryDto) {
+    return post.id;
+  }
 }
