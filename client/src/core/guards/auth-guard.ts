@@ -11,22 +11,13 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   const allowedRoles = route.data?.["roles"] as string[] | undefined;
 
-  const token = accountService.currentUser()?.token;
-  if (!token) {
+  if (!accountService.currentUser()) {
     toast.error('You must be logged in');
     router.navigate(['/login']);
     return false;
   }
 
-  const payload = decodeJwt(token);
-  console.log('payload', payload);
-  if (!payload) {
-    toast.error('Invalid token');
-    router.navigate(['/login']);
-    return false;
-  }
-
-  if (allowedRoles && !allowedRoles.includes(payload.role)) {
+  if (allowedRoles && !accountService.hasRole(...allowedRoles)) {
     toast.error('You do not have permission to access this page');
     router.navigate(['/']);
     return false;
@@ -34,12 +25,3 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   return true;
 };
-
-function decodeJwt(token: string): any {
-  try {
-    const payload = token.split('.')[1];
-    return JSON.parse(atob(payload));
-  } catch {
-    return null;
-  }
-}

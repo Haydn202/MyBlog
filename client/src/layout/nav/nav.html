@@ -11,7 +11,9 @@
     <nav class="flex gap-3 my-2 uppercase text-lg text-white">
       <a routerLink="/posts" routerLinkActive="text-accent">Posts</a>
       <a routerLink="/about" routerLinkActive="text-accent">About</a>
-      <a routerLink="/admin" routerLinkActive="text-accent">Admin</a>
+      @if (this.accountService.role() === 'Admin') {
+        <a routerLink="/admin" routerLinkActive="text-accent">Admin</a>
+      }
     </nav>
     <div class="flex align-middle ml-auto gap-3">
       @if (accountService.currentUser(); as user) {
