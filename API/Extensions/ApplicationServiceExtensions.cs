@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using API.Behaviours;
 using API.Data;
 using API.Exceptions;
@@ -17,7 +19,12 @@ public static class ApplicationServiceExtensions
         this IServiceCollection services, 
         IConfiguration configuration)
     {
-        services.AddControllers();
+        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            });
         services.AddDbContext<DataContext>(opt =>
         {
             opt.UseSqlite(configuration.GetConnectionString("DefaultConnection"));

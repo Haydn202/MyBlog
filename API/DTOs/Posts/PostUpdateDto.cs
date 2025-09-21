@@ -20,5 +20,7 @@ public class PostUpdateDto
     
     public required string Content { get; set; }
     public required List<Guid> TopicIds { get; init; }
+    
+    [EnumDataType(typeof(PostStatus), ErrorMessage = "Status must be one of: Draft, Published, Deleted")]
     public PostStatus Status { get; set; }
 }
