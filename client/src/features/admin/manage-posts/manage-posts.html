@@ -1,86 +1,99 @@
-<div class="max-w-6xl mx-auto p-6">
-  <div class="flex justify-between items-center mb-8">
-    <h1 class="text-3xl font-bold text-gray-900">Manage Posts</h1>
+<div class="container mx-auto p-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+    <div>
+      <h1 class="text-4xl font-bold text-base-content">Manage Posts</h1>
+      <p class="text-base-content/70 mt-2">Create, edit, and manage your blog posts</p>
+    </div>
     <button
       (click)="createNewPost()"
-      class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      class="btn btn-primary gap-2"
     >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
       Create New Post
     </button>
   </div>
 
-  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+  <!-- Posts Table -->
+  <div class="card bg-base-100 shadow-xl">
     @if (posts().length === 0) {
-      <div class="text-center py-12">
-        <p class="text-gray-500 text-lg">No posts found</p>
-        <button
-          (click)="createNewPost()"
-          class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
-        >
-          Create Your First Post
-        </button>
+      <div class="card-body text-center py-16">
+        <div class="flex flex-col items-center gap-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h3 class="text-xl font-semibold text-base-content">No posts yet</h3>
+          <p class="text-base-content/70">Get started by creating your first blog post</p>
+          <button
+            (click)="createNewPost()"
+            class="btn btn-primary gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Create Your First Post
+          </button>
+        </div>
       </div>
     } @else {
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+        <table class="table table-zebra w-full">
+          <thead>
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Title
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Created
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Topics
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
+              <th class="text-base-content/70 font-semibold">Title</th>
+              <th class="text-base-content/70 font-semibold">Status</th>
+              <th class="text-base-content/70 font-semibold">Created</th>
+              <th class="text-base-content/70 font-semibold">Topics</th>
+              <th class="text-base-content/70 font-semibold">Actions</th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
+          <tbody>
             @for (post of posts(); track post.id) {
-              <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ post.title }}</div>
-                  <div class="text-sm text-gray-500 truncate max-w-xs">{{ post.description }}</div>
+              <tr class="hover">
+                <td>
+                  <div class="flex flex-col">
+                    <div class="font-semibold text-base-content">{{ post.title }}</div>
+                    <div class="text-sm text-base-content/70 truncate max-w-xs">{{ post.description }}</div>
+                  </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                    {{ post.status === 'Published' ? 'bg-green-100 text-green-800' :
-                       post.status === 'Draft' ? 'bg-yellow-100 text-yellow-800' :
-                       'bg-red-100 text-red-800' }}">
+                <td>
+                  <div class="badge
+                    {{ post.status === 'Published' ? 'badge-success' :
+                       post.status === 'Draft' ? 'badge-warning' :
+                       'badge-error' }}">
                     {{ post.status }}
-                  </span>
+                  </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td class="text-base-content/70">
                   {{ post.createdOn | date:'short' }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td>
                   <div class="flex flex-wrap gap-1">
                     @for (topic of post.topics; track topic.id) {
-                      <span class="inline-flex px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
-                        {{ topic.name }}
-                      </span>
+                      <div class="badge badge-outline badge-sm">{{ topic.name }}</div>
                     }
                   </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div class="flex space-x-2">
+                <td>
+                  <div class="flex gap-2">
                     <button
                       (click)="editPost(post.id)"
-                      class="text-indigo-600 hover:text-indigo-900"
+                      class="btn btn-ghost btn-sm gap-1"
                     >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
                       Edit
                     </button>
                     <button
                       (click)="deletePost(post.id)"
-                      class="text-red-600 hover:text-red-900"
+                      class="btn btn-ghost btn-sm text-error hover:bg-error/10 gap-1"
                     >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
                       Delete
                     </button>
                   </div>

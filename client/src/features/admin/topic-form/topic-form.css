@@ -1,0 +1,72 @@
+/* Custom styles for topic form - using DaisyUI classes */
+
+/* Color picker styling */
+.color-option {
+  transition: all 0.2s ease-in-out;
+}
+
+.color-option:hover {
+  transform: scale(1.05);
+}
+
+/* Preview section styling */
+.preview-topic {
+  border: 2px dashed hsl(var(--bc) / 0.2);
+  transition: border-color 0.2s ease-in-out;
+}
+
+.preview-topic:hover {
+  border-color: hsl(var(--bc) / 0.4);
+}
+
+/* Form spacing */
+.space-y-8 > * + * {
+  margin-top: 2rem;
+}
+
+/* Loading state */
+.loading-container {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive grid for color options */
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 769px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Custom radio button styling */
+.radio:checked + .label-text {
+  font-weight: 600;
+}
+
+/* Form validation styling */
+.input-error {
+  border-color: hsl(var(--er));
+}
+
+.textarea-error {
+  border-color: hsl(var(--er));
+}
+
+/* Button loading state */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

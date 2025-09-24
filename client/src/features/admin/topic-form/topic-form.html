@@ -1,0 +1,160 @@
+<div class="container mx-auto p-6">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold text-base-content">{{ getPageTitle() }}</h1>
+    <p class="text-base-content/70 mt-2">
+      {{ isEditMode() ? 'Update topic information' : 'Create a new topic for your blog posts' }}
+    </p>
+  </div>
+
+  <!-- Error Message -->
+  @if (errorMessage()) {
+    <div class="alert alert-error mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading() && isEditMode()) {
+    <div class="flex justify-center items-center py-12">
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+  } @else {
+    <form [formGroup]="topicForm" (ngSubmit)="onSubmit()" class="space-y-8">
+      <!-- Topic Details Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-2xl mb-6">Topic Information</h2>
+
+          <!-- Topic Name -->
+          <div class="form-control">
+            <label class="label" for="name">
+              <span class="label-text font-semibold">Topic Name *</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="input input-bordered w-full"
+              [class.input-error]="topicForm.get('name')?.invalid && topicForm.get('name')?.touched"
+              placeholder="Enter topic name"
+            />
+            @if (topicForm.get('name')?.invalid && topicForm.get('name')?.touched) {
+              <label class="label">
+                <span class="label-text-alt text-error">
+                  @if (topicForm.get('name')?.errors?.['required']) {
+                    Topic name is required
+                  }
+                  @if (topicForm.get('name')?.errors?.['minlength']) {
+                    Topic name must be at least 2 characters
+                  }
+                  @if (topicForm.get('name')?.errors?.['maxlength']) {
+                    Topic name must be no more than 50 characters
+                  }
+                </span>
+              </label>
+            }
+          </div>
+
+          <!-- Topic Description -->
+          <div class="form-control">
+            <label class="label" for="description">
+              <span class="label-text font-semibold">Description</span>
+            </label>
+            <textarea
+              id="description"
+              formControlName="description"
+              rows="3"
+              class="textarea textarea-bordered w-full"
+              placeholder="Enter topic description (optional)"
+            ></textarea>
+            @if (topicForm.get('description')?.invalid && topicForm.get('description')?.touched) {
+              <label class="label">
+                <span class="label-text-alt text-error">
+                  Description must be no more than 200 characters
+                </span>
+              </label>
+            }
+          </div>
+
+          <!-- Topic Color -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">Topic Color *</span>
+            </label>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              @for (color of topicColors; track color.value) {
+                <label class="cursor-pointer label">
+                  <div class="flex items-center gap-3">
+                    <div class="w-6 h-6 rounded-full {{ color.value }}"></div>
+                    <span class="label-text">{{ color.name }}</span>
+                  </div>
+                  <input
+                    type="radio"
+                    [value]="color.value"
+                    formControlName="color"
+                    class="radio radio-primary"
+                  />
+                </label>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-2xl mb-6">Preview</h2>
+          <div class="flex items-center gap-3 p-4 bg-base-200 rounded-lg">
+            <div class="w-4 h-4 rounded-full {{ topicForm.get('color')?.value || 'bg-primary' }}"></div>
+            <div>
+              <h3 class="font-semibold text-lg">
+                {{ topicForm.get('name')?.value || 'Topic Name' }}
+              </h3>
+              @if (topicForm.get('description')?.value) {
+                <p class="text-base-content/70 text-sm">
+                  {{ topicForm.get('description')?.value }}
+                </p>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex flex-col sm:flex-row justify-end gap-4">
+            <button
+              type="button"
+              (click)="onCancel()"
+              class="btn btn-outline"
+              [disabled]="isLoading()"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isLoading() || topicForm.invalid"
+            >
+              @if (isLoading()) {
+                <span class="loading loading-spinner loading-sm"></span>
+                {{ isEditMode() ? 'Updating...' : 'Creating...' }}
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                {{ getSubmitButtonText() }}
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  }
+</div>

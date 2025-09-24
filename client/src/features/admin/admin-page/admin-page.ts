@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import {ManagePosts} from '../manage-posts/manage-posts';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-page',
   imports: [
-    ManagePosts
+    RouterLink
   ],
   templateUrl: './admin-page.html',
   styleUrl: './admin-page.css'

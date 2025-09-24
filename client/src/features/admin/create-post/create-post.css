@@ -1,89 +1,36 @@
-/* Custom styles for the create post form */
+/* Custom styles for create post form - using DaisyUI classes */
+
+/* Quill editor styling to match DaisyUI theme */
 .quill-theme {
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
+  border: 1px solid hsl(var(--bc) / 0.2);
+  border-radius: 0.5rem;
 }
 
 .quill-theme .ql-toolbar {
-  border-top: 1px solid #d1d5db;
-  border-left: 1px solid #d1d5db;
-  border-right: 1px solid #d1d5db;
+  border-top: 1px solid hsl(var(--bc) / 0.2);
+  border-left: 1px solid hsl(var(--bc) / 0.2);
+  border-right: 1px solid hsl(var(--bc) / 0.2);
   border-bottom: none;
-  border-radius: 0.375rem 0.375rem 0 0;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background-color: hsl(var(--b2));
 }
 
 .quill-theme .ql-container {
-  border-bottom: 1px solid #d1d5db;
-  border-left: 1px solid #d1d5db;
-  border-right: 1px solid #d1d5db;
+  border-bottom: 1px solid hsl(var(--bc) / 0.2);
+  border-left: 1px solid hsl(var(--bc) / 0.2);
+  border-right: 1px solid hsl(var(--bc) / 0.2);
   border-top: none;
-  border-radius: 0 0 0.375rem 0.375rem;
+  border-radius: 0 0 0.5rem 0.5rem;
 }
 
 .quill-theme .ql-editor {
   min-height: 300px;
   font-size: 14px;
   line-height: 1.5;
+  color: hsl(var(--bc));
 }
 
-/* Focus states for form inputs */
-input:focus,
-textarea:focus,
-select:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* Checkbox styling */
-input[type="checkbox"]:checked {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
-}
-
-/* Loading spinner animation */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-/* Error message styling */
-.text-red-600 {
-  color: #dc2626;
-}
-
-/* Hover effects for interactive elements */
-.hover\:bg-gray-50:hover {
-  background-color: #f9fafb;
-}
-
-.hover\:bg-blue-700:hover {
-  background-color: #1d4ed8;
-}
-
-/* Responsive grid for topics */
-@media (max-width: 768px) {
-  .grid-cols-2 {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-}
-
-/* Button disabled state */
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Form validation styling */
-input.ng-invalid.ng-touched,
-textarea.ng-invalid.ng-touched,
-select.ng-invalid.ng-touched {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+/* Ensure proper spacing for form sections */
+.space-y-8 > * + * {
+  margin-top: 2rem;
 }
