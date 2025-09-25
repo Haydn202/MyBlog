@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import {QuillEditorComponent} from 'ngx-quill';
 import {FormsModule} from '@angular/forms';
 
@@ -11,10 +11,11 @@ import {FormsModule} from '@angular/forms';
   ],
   styleUrls: ['./text-editor.css']
 })
-export class TextEditor {
+export class TextEditor implements OnChanges {
+  @Input() editorContent: string = '';
   @Output() contentChange = new EventEmitter<string>();
 
-  editorContent = '';
+  internalContent = '';
 
   modules = {
     toolbar: [
@@ -29,13 +30,19 @@ export class TextEditor {
     ]
   };
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['editorContent'] && changes['editorContent'].currentValue !== this.internalContent) {
+      this.internalContent = changes['editorContent'].currentValue;
+    }
+  }
+
   onContentChange(content: string) {
-    this.editorContent = content;
+    this.internalContent = content;
     this.contentChange.emit(content);
   }
 
   publish() {
-    console.log('Blog Content:', this.editorContent);
+    console.log('Blog Content:', this.internalContent);
     alert('Published! Check the console for output.');
   }
 }

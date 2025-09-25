@@ -4,6 +4,7 @@ import {firstValueFrom, map, tap} from 'rxjs';
 import {PaginatedResult} from '../../Types/PaginatedResult';
 import {PostSummaryDto} from '../../Types/PostSummary';
 import {PostCreateDto, PostDto} from '../../Types/PostCreate';
+import {PostFilters} from '../../Types/PostFilters';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,54 @@ export class PostsService {
   baseUrl = 'http://localhost:5285';
   public posts = signal<PostSummaryDto[]>([]);
 
-  getPosts(){
-    return this.http.get<PaginatedResult<PostSummaryDto>>(`${this.baseUrl}/posts`).pipe(
+  getPosts(filters?: PostFilters){
+    let url = `${this.baseUrl}/posts/All`;
+    const params = new URLSearchParams();
+
+    if (filters) {
+      if (filters.status) {
+        params.append('status', filters.status);
+      }
+      if (filters.topicId) {
+        params.append('topicId', filters.topicId);
+      }
+      if (filters.searchTerm) {
+        params.append('searchTerm', filters.searchTerm);
+      }
+    }
+
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    return this.http.get<PaginatedResult<PostSummaryDto>>(url).pipe(
+      map(response => {
+        return response.items;
+      }),
+      tap(posts => {
+        this.posts.set(posts);
+      })
+    );
+  }
+
+  getPublicPosts(filters?: PostFilters){
+    let url = `${this.baseUrl}/posts/public`;
+    const params = new URLSearchParams();
+
+    if (filters) {
+      if (filters.topicId) {
+        params.append('topicId', filters.topicId);
+      }
+      if (filters.searchTerm) {
+        params.append('searchTerm', filters.searchTerm);
+      }
+    }
+
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    return this.http.get<PaginatedResult<PostSummaryDto>>(url).pipe(
       map(response => {
         return response.items;
       }),

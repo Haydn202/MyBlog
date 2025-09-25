@@ -33,11 +33,42 @@ public class PostsController(
         return TypedResults.Ok(response);
     }
     
-    [AllowAnonymous]
-    [HttpGet]
-    public async Task<Ok<PaginatedResult<PostSummaryDto>>> GetPosts([FromQuery]PagingParams pagingParams)
+    [Authorize(Roles = "Admin")]
+    [HttpGet("All")]
+    public async Task<Ok<PaginatedResult<PostSummaryDto>>> GetPosts(
+        [FromQuery]PagingParams pagingParams,
+        [FromQuery]PostStatus? status = null,
+        [FromQuery]string? topicId = null,
+        [FromQuery]string? searchTerm = null)
     {
-        var query = new GetPosts(pagingParams);
+        var filters = new PostFilters
+        {
+            Status = status,
+            TopicId = topicId,
+            SearchTerm = searchTerm
+        };
+        
+        var query = new GetPosts(pagingParams, filters);
+        var response = await sender.Send(query);
+
+        return TypedResults.Ok(response);
+    }
+
+    [AllowAnonymous]
+    [HttpGet()]
+    public async Task<Ok<PaginatedResult<PostSummaryDto>>> GetPublicPosts(
+        [FromQuery]PagingParams pagingParams,
+        [FromQuery]string? topicId = null,
+        [FromQuery]string? searchTerm = null)
+    {
+        var filters = new PostFilters
+        {
+            Status = PostStatus.Published,
+            TopicId = topicId,
+            SearchTerm = searchTerm
+        };
+        
+        var query = new GetPosts(pagingParams, filters);
         var response = await sender.Send(query);
 
         return TypedResults.Ok(response);
