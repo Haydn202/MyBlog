@@ -43,6 +43,7 @@ export class ManagePosts implements OnInit {
   errorMessage = signal<string | null>(null);
   editorContent = signal<string>('');
   isCreatingNew = signal(false);
+  isPreviewMode = signal(false);
 
   ngOnInit() {
     this.initializeForm();
@@ -164,6 +165,14 @@ export class ManagePosts implements OnInit {
 
   onContentChange(content: string) {
     this.editorContent.set(content);
+  }
+
+  togglePreview() {
+    this.isPreviewMode.set(!this.isPreviewMode());
+  }
+
+  editContent() {
+    this.isPreviewMode.set(false);
   }
 
   deletePost(postId: string) {
