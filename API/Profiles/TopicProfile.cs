@@ -16,6 +16,7 @@ public class TopicProfile : Profile
         CreateMap<TopicUpdateDto, UpdateTopicCommandRequest>();
         CreateMap<(TopicUpdateDto Dto, Guid Id), UpdateTopicCommandRequest>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Dto.Name));
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Dto.Name))
+            .ForMember(dest => dest.Color, opt => opt.MapFrom(src => src.Dto.Color));
     }
 }

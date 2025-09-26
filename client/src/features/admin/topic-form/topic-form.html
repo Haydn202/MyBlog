@@ -89,8 +89,8 @@
               @for (color of topicColors; track color.value) {
                 <label class="cursor-pointer label">
                   <div class="flex items-center gap-3">
-                    <div class="w-6 h-6 rounded-full {{ color.value }}"></div>
-                    <span class="label-text">{{ color.name }}</span>
+                    <div class="w-6 h-6 rounded-full" [style.background-color]="color.hex"></div>
+                    <span class="label-text">{{ color.label }}</span>
                   </div>
                   <input
                     type="radio"
@@ -110,7 +110,10 @@
         <div class="card-body">
           <h2 class="card-title text-2xl mb-6">Preview</h2>
           <div class="flex items-center gap-3 p-4 bg-base-200 rounded-lg">
-            <div class="w-4 h-4 rounded-full {{ topicForm.get('color')?.value || 'bg-primary' }}"></div>
+            <div 
+              class="w-4 h-4 rounded-full" 
+              [style.background-color]="getSelectedColorHex()">
+            </div>
             <div>
               <h3 class="font-semibold text-lg">
                 {{ topicForm.get('name')?.value || 'Topic Name' }}

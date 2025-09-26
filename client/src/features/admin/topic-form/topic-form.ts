@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, ActivatedRoute } from '@angular/router';
 import { TopicsService } from '../../../core/services/topics.service';
 import { TopicDto, TopicCreateDto, TopicUpdateDto } from '../../../Types/TopicManagement';
+import { TopicColor, TopicColorOptions } from '../../../Types/TopicColor';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -26,17 +27,8 @@ export class TopicForm implements OnInit {
   isEditMode = signal(false);
   topicId = signal<string | null>(null);
 
-  // Predefined colors for topics
-  topicColors = [
-    { name: 'Blue', value: 'bg-primary', hex: '#3b82f6' },
-    { name: 'Green', value: 'bg-success', hex: '#10b981' },
-    { name: 'Purple', value: 'bg-secondary', hex: '#8b5cf6' },
-    { name: 'Orange', value: 'bg-warning', hex: '#f59e0b' },
-    { name: 'Red', value: 'bg-error', hex: '#ef4444' },
-    { name: 'Teal', value: 'bg-info', hex: '#06b6d4' },
-    { name: 'Pink', value: 'bg-accent', hex: '#ec4899' },
-    { name: 'Gray', value: 'bg-base-300', hex: '#6b7280' }
-  ];
+  // Color options from enum
+  topicColors = TopicColorOptions;
 
   ngOnInit() {
     this.initializeForm();
@@ -47,7 +39,7 @@ export class TopicForm implements OnInit {
     this.topicForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       description: ['', [Validators.maxLength(200)]],
-      color: ['bg-primary', Validators.required]
+      color: [TopicColor.None, Validators.required]
     });
   }
 
@@ -139,5 +131,11 @@ export class TopicForm implements OnInit {
 
   getSubmitButtonText(): string {
     return this.isEditMode() ? 'Update Topic' : 'Create Topic';
+  }
+
+  getSelectedColorHex(): string {
+    const selectedColor = this.topicForm.get('color')?.value;
+    const colorOption = this.topicColors.find(c => c.value === selectedColor);
+    return colorOption?.hex || '#6b7280';
   }
 }

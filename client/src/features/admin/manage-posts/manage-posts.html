@@ -145,29 +145,58 @@
                 {{ isCreatingNew() ? 'Create New Post' : 'Edit Post' }}
               </h2>
               <div class="flex gap-2">
-                <button
-                  (click)="savePost()"
-                  [disabled]="!postForm.valid || !editorContent() || isLoading()"
-                  class="btn btn-primary btn-sm">
-                  @if (isLoading()) {
-                    <span class="loading loading-spinner loading-xs"></span>
-                  } @else {
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                  }
-                  {{ isCreatingNew() ? 'Create Post' : 'Save Changes' }}
-                </button>
-                @if (selectedPost() && !isCreatingNew()) {
+                <!-- Split Button for Post Actions -->
+                <div class="btn-group shadow-sm">
+                  <!-- Main Action Button -->
                   <button
-                    (click)="deletePost(selectedPost()!.id)"
-                    class="btn btn-error btn-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    Delete
+                    (click)="saveAsDraft()"
+                    [disabled]="!postForm.valid || !editorContent() || isLoading()"
+                    class="btn btn-primary btn-sm rounded-r-none shadow-none">
+                    @if (isLoading()) {
+                      <span class="loading loading-spinner loading-xs"></span>
+                    } @else {
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                    }
+                    {{ isCreatingNew() ? 'Save as Draft' : 'Save as Draft' }}
                   </button>
-                }
+                  
+                  <!-- Dropdown Toggle -->
+                  <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button" class="btn btn-primary btn-sm rounded-l-none shadow-none">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                      <li>
+                        <button 
+                          (click)="publishPost()"
+                          [disabled]="!postForm.valid || !editorContent() || isLoading()"
+                          class="gap-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                          </svg>
+                          Publish
+                        </button>
+                      </li>
+                      @if (selectedPost() && !isCreatingNew()) {
+                        <li>
+                          <button 
+                            (click)="deletePost(selectedPost()!.id)"
+                            class="text-error gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete
+                          </button>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                </div>
+                
                 <button
                   (click)="cancelEdit()"
                   class="btn btn-outline btn-sm">
@@ -217,19 +246,7 @@
               </div>
 
               <!-- Status and Topics Row -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Status -->
-                <div class="form-control">
-                  <label class="label">
-                    <span class="label-text font-semibold">Status</span>
-                  </label>
-                  <select formControlName="status" class="select select-bordered w-full">
-                    <option value="Draft">Draft</option>
-                    <option value="Published">Published</option>
-                    <option value="Deleted">Deleted</option>
-                  </select>
-                </div>
-
+              <div class="grid grid-cols-1 gap-4">
                 <!-- Topics -->
                 <div class="form-control">
                   <label class="label">
@@ -238,13 +255,19 @@
                   <div class="flex flex-wrap gap-2">
                     @for (topic of topics(); track topic.id) {
                       <label class="cursor-pointer label">
-                        <input
-                          type="checkbox"
-                          class="checkbox checkbox-sm mr-2"
-                          [value]="topic.id"
-                          (change)="onTopicChange(topic.id, $event)"
-                          [checked]="postForm.get('topicIds')?.value?.includes(topic.id)" />
-                        <span class="label-text text-sm">{{ topic.name }}</span>
+                        <div class="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            class="checkbox checkbox-sm"
+                            [value]="topic.id"
+                            (change)="onTopicChange(topic.id, $event)"
+                            [checked]="postForm.get('topicIds')?.value?.includes(topic.id)" />
+                          <div 
+                            class="w-4 h-4 rounded-full" 
+                            [style.background-color]="getTopicColorHex(topic)">
+                          </div>
+                          <span class="label-text text-sm">{{ topic.name }}</span>
+                        </div>
                       </label>
                     }
                   </div>

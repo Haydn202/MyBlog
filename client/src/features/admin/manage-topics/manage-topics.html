@@ -64,7 +64,10 @@
               <!-- Topic Header -->
               <div class="flex items-start justify-between mb-4">
                 <div class="flex items-center gap-3">
-                  <div class="w-4 h-4 rounded-full {{ getTopicColor(topic) }}"></div>
+                  <div 
+                    class="w-4 h-4 rounded-full" 
+                    [style.background-color]="getTopicColorHex(topic)">
+                  </div>
                   <h3 class="card-title text-lg">{{ topic.name }}</h3>
                 </div>
                 <div class="dropdown dropdown-end">

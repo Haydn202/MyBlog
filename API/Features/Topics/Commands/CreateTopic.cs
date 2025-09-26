@@ -21,6 +21,7 @@ public class CreateTopic(CreateTopicCommandRequest request) : IRequest<TopicDto>
             {
                 Id = Guid.NewGuid(),
                 Name = request.Request.Name,
+                Color = request.Request.Color,
                 Posts = []
             };
 

@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {firstValueFrom, map, tap} from 'rxjs';
 import {PaginatedResult} from '../../Types/PaginatedResult';
 import {PostSummaryDto} from '../../Types/PostSummary';
-import {PostCreateDto, PostDto} from '../../Types/PostCreate';
+import {PostCreateDto, PostDto, PostUpdateDto} from '../../Types/PostCreate';
 import {PostFilters} from '../../Types/PostFilters';
 
 @Injectable({
@@ -77,5 +77,9 @@ export class PostsService {
 
   getPost(id: string) {
     return this.http.get<PostDto>(`${this.baseUrl}/posts/${id}`);
+  }
+
+  updatePost(id: string, postData: PostUpdateDto) {
+    return this.http.put<PostSummaryDto>(`${this.baseUrl}/posts/${id}`, postData);
   }
 }

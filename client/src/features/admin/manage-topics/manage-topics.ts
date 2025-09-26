@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopicsService } from '../../../core/services/topics.service';
 import { TopicDto } from '../../../Types/TopicManagement';
+import { TopicColor, TopicColorOptions } from '../../../Types/TopicColor';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -79,16 +80,8 @@ export class ManageTopics implements OnInit {
     });
   }
 
-  getTopicColor(topic: TopicDto): string {
-    if (topic.color) {
-      return topic.color;
-    }
-    // Generate a color based on the topic name
-    const colors = [
-      'bg-primary', 'bg-secondary', 'bg-accent', 'bg-info',
-      'bg-success', 'bg-warning', 'bg-error'
-    ];
-    const index = topic.name.length % colors.length;
-    return colors[index];
+  getTopicColorHex(topic: TopicDto): string {
+    const colorOption = TopicColorOptions.find(c => c.value === topic.color);
+    return colorOption?.hex || '#6b7280';
   }
 }

@@ -5,10 +5,12 @@ import { PostSummaryDto } from '../../../Types/PostSummary';
 import { PostFilters } from '../../../Types/PostFilters';
 import { TopicsService } from '../../../core/services/topics.service';
 import { TopicDto } from '../../../Types/TopicManagement';
-import { PostDto } from '../../../Types/PostCreate';
+import { PostDto, PostUpdateDto } from '../../../Types/PostCreate';
 import { TextEditor } from '../../text-editor/text-editor';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TopicColorOptions } from '../../../Types/TopicColor';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-manage-posts',
@@ -26,6 +28,7 @@ export class ManagePosts implements OnInit {
   private topicsService = inject(TopicsService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+  private toast = inject(ToastService);
 
   posts = this.postsService.posts;
   topics = this.topicsService.topics;
@@ -55,7 +58,6 @@ export class ManagePosts implements OnInit {
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       description: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(1000)]],
-      status: ['Draft', Validators.required],
       topicIds: [[], Validators.required]
     });
   }
@@ -75,7 +77,6 @@ export class ManagePosts implements OnInit {
     this.postForm.reset({
       title: '',
       description: '',
-      status: 'Draft',
       topicIds: []
     });
     this.errorMessage.set(null);
@@ -104,19 +105,26 @@ export class ManagePosts implements OnInit {
     this.postForm.patchValue({
       title: post.title,
       description: post.description,
-      status: post.status,
       topicIds: post.topics.map(t => t.id)
     });
     this.editorContent.set(post.content);
   }
 
-  savePost() {
+  saveAsDraft() {
+    this.savePost('Draft');
+  }
+
+  publishPost() {
+    this.savePost('Published');
+  }
+
+  private savePost(status: 'Draft' | 'Published') {
     if (this.postForm.valid && this.editorContent()) {
       this.isLoading.set(true);
       this.errorMessage.set(null);
 
       const formData = this.postForm.value;
-      const postData = { ...formData, content: this.editorContent() };
+      const postData = { ...formData, content: this.editorContent(), status };
 
       if (this.isCreatingNew()) {
         // Create new post
@@ -124,9 +132,12 @@ export class ManagePosts implements OnInit {
           next: (createdPost) => {
             this.isLoading.set(false);
             this.isCreatingNew.set(false);
-            this.selectedPost.set(null);
+            // Fetch the full post details to keep editing
+            this.postsService.getPost(createdPost.id).subscribe(fullPost => {
+              this.selectedPost.set(fullPost);
+            });
             this.loadPosts(); // Refresh the list
-            alert('Post created successfully!');
+            this.toast.success(`Post ${status === 'Draft' ? 'saved as draft' : 'published'} successfully!`);
           },
           error: (error) => {
             console.error('Error creating post:', error);
@@ -137,13 +148,26 @@ export class ManagePosts implements OnInit {
       } else if (this.selectedPost()) {
         // Update existing post
         const postId = this.selectedPost()!.id;
+        const updateData: PostUpdateDto = {
+          id: postId,
+          ...postData
+        };
 
-        // TODO: Implement update post API call
-        console.log('Update post:', postId, postData);
-
-        // For now, just show success
-        this.isLoading.set(false);
-        alert('Post updated successfully!');
+        this.postsService.updatePost(postId, updateData).subscribe({
+          next: (updatedPost) => {
+            this.isLoading.set(false);
+            this.postsService.getPost(updatedPost.id).subscribe(fullPost => {
+              this.selectedPost.set(fullPost);
+            });
+            this.loadPosts(); // Refresh the list
+            this.toast.success(`Post ${status === 'Draft' ? 'saved as draft' : 'published'} successfully!`);
+          },
+          error: (error) => {
+            console.error('Error updating post:', error);
+            this.errorMessage.set('Failed to update post. Please try again.');
+            this.isLoading.set(false);
+          }
+        });
       }
     } else {
       this.errorMessage.set('Please fill in all required fields and add content.');
@@ -157,7 +181,6 @@ export class ManagePosts implements OnInit {
     this.postForm.reset({
       title: '',
       description: '',
-      status: 'Draft',
       topicIds: []
     });
     this.errorMessage.set(null);
@@ -179,7 +202,7 @@ export class ManagePosts implements OnInit {
     if (confirm('Are you sure you want to delete this post?')) {
       // TODO: Implement delete post API call
       console.log('Delete post:', postId);
-      alert('Post deleted successfully!');
+      this.toast.success('Post deleted successfully!');
     }
   }
 
@@ -223,5 +246,10 @@ export class ManagePosts implements OnInit {
     this.searchFilter.set('');
     this.currentFilters.set({});
     this.loadPosts();
+  }
+
+  getTopicColorHex(topic: TopicDto): string {
+    const colorOption = TopicColorOptions.find(c => c.value === topic.color);
+    return colorOption?.hex || '#6b7280';
   }
 }

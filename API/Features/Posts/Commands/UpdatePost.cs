@@ -17,9 +17,28 @@ public class UpdatePost(UpdatePostCommandRequest request) : IRequest<PostSummary
     {
         public async Task<PostSummaryDto> Handle(UpdatePost request, CancellationToken cancellationToken)
         {
-            var post = await dbContext.Posts.FirstOrDefaultAsync(x => x.Id == request.Request.Id, cancellationToken);
+            var post = await dbContext.Posts
+                .Include(p => p.Topics)
+                .FirstOrDefaultAsync(x => x.Id == request.Request.Id, cancellationToken);
             
-            post = mapper.Map(request.Request, post);
+            if (post == null)
+            {
+                throw new InvalidOperationException("Post not found.");
+            }
+            
+            // Update basic properties
+            post.Title = request.Request.Title;
+            post.Description = request.Request.Description;
+            post.ThumbnailUrl = request.Request.ThumbnailUrl;
+            post.Content = request.Request.Content;
+            post.Status = request.Request.Status;
+            
+            // Update topics
+            var topics = await dbContext.Topics
+                .Where(t => request.Request.TopicIds.Contains(t.Id))
+                .ToListAsync(cancellationToken);
+            
+            post.Topics = topics;
             
             await dbContext.SaveChangesAsync(cancellationToken);
             

@@ -7,6 +7,16 @@ export interface PostCreateDto {
   status: PostStatus;
 }
 
+export interface PostUpdateDto {
+  id: string;
+  title: string;
+  description: string;
+  thumbnailUrl?: string | null;
+  content: string;
+  topicIds: string[];
+  status: PostStatus;
+}
+
 export interface PostDto {
   id: string;
   title: string;
