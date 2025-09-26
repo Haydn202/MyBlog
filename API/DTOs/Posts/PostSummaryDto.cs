@@ -1,5 +1,6 @@
 ﻿using API.DTOs.Topics;
 using API.Entities;
+using System.Text.Json.Serialization;
 
 namespace API.DTOs.Posts;
 
@@ -11,5 +12,6 @@ public class PostSummaryDto
     public required List<TopicDto> Topics { get; set; }
     public DateTime CreatedOn { get; init; }
     public string? ThumbnailUrl { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public PostStatus Status { get; init; }
 }

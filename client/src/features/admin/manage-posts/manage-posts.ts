@@ -9,8 +9,9 @@ import { PostDto, PostUpdateDto } from '../../../Types/PostCreate';
 import { TextEditor } from '../../text-editor/text-editor';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TopicColorOptions } from '../../../Types/TopicColor';
 import { ToastService } from '../../../core/services/toast.service';
+import { TopicPill } from '../../../shared/components/topic-pill/topic-pill';
+import { TopicColorOptions } from '../../../Types/TopicColor';
 
 @Component({
   selector: 'app-manage-posts',
@@ -18,7 +19,8 @@ import { ToastService } from '../../../core/services/toast.service';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    TextEditor
+    TextEditor,
+    TopicPill
   ],
   templateUrl: './manage-posts.html',
   styleUrl: './manage-posts.css'
@@ -252,4 +254,5 @@ export class ManagePosts implements OnInit {
     const colorOption = TopicColorOptions.find(c => c.value === topic.color);
     return colorOption?.hex || '#6b7280';
   }
+
 }

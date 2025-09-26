@@ -120,7 +120,7 @@
                 <p class="text-xs text-base-content/70 mb-2 line-clamp-2">{{ post.description }}</p>
                 <div class="flex flex-wrap gap-1 mb-2">
                   @for (topic of post.topics; track topic.id) {
-                    <div class="badge badge-outline badge-xs">{{ topic.name }}</div>
+                    <app-topic-pill [topic]="topic"></app-topic-pill>
                   }
                 </div>
                 <div class="text-xs text-base-content/50">

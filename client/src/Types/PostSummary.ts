@@ -1,6 +1,9 @@
+import { TopicColor } from './TopicColor';
+
 export interface TopicDto {
   id: string;       // adjust type depending on your C# TopicDto definition
   name: string;
+  color: TopicColor;
 }
 
 export interface PostSummaryDto {
