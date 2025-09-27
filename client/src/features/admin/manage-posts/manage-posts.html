@@ -313,7 +313,9 @@
                   <!-- Content Preview -->
                   <div class="border border-base-300 rounded-lg p-4 bg-base-100 min-h-[500px]">
                     @if (editorContent()) {
-                      <div class="prose prose-sm max-w-none" [innerHTML]="editorContent()"></div>
+                      <article class="prose lg:prose-xl">
+                        <div [innerHTML]="editorContent()"></div>
+                      </article>
                     } @else {
                       <div class="text-center text-base-content/50 py-8">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

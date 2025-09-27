@@ -12,6 +12,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { ToastService } from '../../../core/services/toast.service';
 import { TopicPill } from '../../../shared/components/topic-pill/topic-pill';
 import { TopicColorOptions } from '../../../Types/TopicColor';
+import { ConfirmationService } from '../../../core/services/confirmation.service';
 
 @Component({
   selector: 'app-manage-posts',
@@ -31,6 +32,7 @@ export class ManagePosts implements OnInit {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private toast = inject(ToastService);
+  private confirmationService = inject(ConfirmationService);
 
   posts = this.postsService.posts;
   topics = this.topicsService.topics;
@@ -200,8 +202,16 @@ export class ManagePosts implements OnInit {
     this.isPreviewMode.set(false);
   }
 
-  deletePost(postId: string) {
-    if (confirm('Are you sure you want to delete this post?')) {
+  async deletePost(postId: string) {
+    const confirmed = await this.confirmationService.confirm({
+      title: 'Delete Post',
+      message: 'Are you sure you want to delete this post? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      confirmButtonClass: 'btn-error'
+    });
+
+    if (confirmed) {
       this.isLoading.set(true);
       
       this.postsService.deletePost(postId).subscribe({
