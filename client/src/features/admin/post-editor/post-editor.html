@@ -117,9 +117,9 @@
         <label class="label">
           <span class="label-text font-semibold">Topics</span>
         </label>
-        <div class="grid grid-cols-2 gap-2 max-h-32 border border-base-300 rounded-lg p-3">
+        <div class="gap-2 max-h-32 border border-base-300 rounded-lg p-3">
           @for (topic of topics(); track topic.id) {
-            <label class="cursor-pointer label">
+            <label class="cursor-pointer label px-2">
               <div class="flex items-center gap-2">
                 <input
                   type="checkbox"
