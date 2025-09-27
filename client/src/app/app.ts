@@ -3,10 +3,11 @@ import {Router, RouterOutlet} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {Nav} from '../layout/nav/nav';
 import {AccountService} from '../core/services/account.service';
+import {ConfirmationModal} from '../shared/components/confirmation-modal/confirmation-modal';
 
 @Component({
   selector: 'app-root',
-  imports: [Nav, RouterOutlet],
+  imports: [Nav, RouterOutlet, ConfirmationModal],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

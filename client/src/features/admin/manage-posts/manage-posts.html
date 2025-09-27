@@ -7,7 +7,7 @@
         <p class="text-base-content/70 text-sm">Create, edit, and manage your blog posts</p>
       </div>
       <button
-        (click)="createNewPost()"
+        (click)="onCreateNewPost()"
         class="btn btn-primary btn-sm gap-2"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -19,362 +19,37 @@
   </div>
 
   <!-- Main Content -->
-  <div class="flex-1 flex overflow-hidden">
-    <!-- Left Sidebar - Posts List -->
-    <div class="w-1/3 bg-base-200 border-r border-base-300 flex flex-col">
-      <!-- Filters -->
-      <div class="p-4 border-b border-base-300">
-        <h3 class="font-semibold text-base-content mb-3">Filter Posts</h3>
-        <div class="space-y-3">
-          <!-- Status Filter -->
-          <div class="form-control">
-            <label class="label py-1">
-              <span class="label-text text-sm">Status</span>
-            </label>
-            <select
-              class="select select-bordered select-sm w-full"
-              [ngModel]="statusFilter()"
-              (ngModelChange)="statusFilter.set($event)">
-              <option value="">All Statuses</option>
-              <option value="Draft">Draft</option>
-              <option value="Published">Published</option>
-              <option value="Deleted">Deleted</option>
-            </select>
-          </div>
-
-          <!-- Topic Filter -->
-          <div class="form-control">
-            <label class="label py-1">
-              <span class="label-text text-sm">Topic</span>
-            </label>
-            <select
-              class="select select-bordered select-sm w-full"
-              [ngModel]="topicFilter()"
-              (ngModelChange)="topicFilter.set($event)">
-              <option value="">All Topics</option>
-              @for (topic of topics(); track topic.id) {
-                <option [value]="topic.id">{{ topic.name }}</option>
-              }
-            </select>
-          </div>
-
-          <!-- Search Filter -->
-          <div class="form-control">
-            <label class="label py-1">
-              <span class="label-text text-sm">Search</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Search posts..."
-              class="input input-bordered input-sm w-full"
-              [ngModel]="searchFilter()"
-              (ngModelChange)="searchFilter.set($event)" />
-          </div>
-
-          <!-- Filter Actions -->
-          <div class="flex gap-2">
-            <button (click)="applyFilters()" class="btn btn-primary btn-sm flex-1">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
-              </svg>
-              Filter
-            </button>
-            <button (click)="clearFilters()" class="btn btn-outline btn-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Posts List -->
-      <div class="flex-1 overflow-y-auto">
-        @if (posts().length === 0) {
-          <div class="p-4 text-center">
-            <div class="text-base-content/50 mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <p class="text-sm text-base-content/70">No posts found</p>
-          </div>
-        } @else {
-          <div class="p-2 space-y-2">
-            @for (post of posts(); track post.id) {
-              <div
-                (click)="selectPost(post)"
-                class="p-3 rounded-lg cursor-pointer transition-colors hover:bg-base-300"
-                [class.bg-primary/10]="selectedPost()?.id === post.id"
-                [class.border-l-4]="selectedPost()?.id === post.id"
-                [class.border-primary]="selectedPost()?.id === post.id">
-                <div class="flex items-start justify-between mb-2">
-                  <h4 class="font-semibold text-sm text-base-content line-clamp-2">{{ post.title }}</h4>
-                  <div class="badge badge-sm ml-2
-                    {{ post.status === 'Published' ? 'badge-success' :
-                       post.status === 'Draft' ? 'badge-warning' :
-                       'badge-error' }}">
-                    {{ post.status }}
-                  </div>
-                </div>
-                <p class="text-xs text-base-content/70 mb-2 line-clamp-2">{{ post.description }}</p>
-                <div class="flex flex-wrap gap-1 mb-2">
-                  @for (topic of post.topics; track topic.id) {
-                    <app-topic-pill [topic]="topic"></app-topic-pill>
-                  }
-                </div>
-                <div class="text-xs text-base-content/50">
-                  {{ post.createdOn | date:'short' }}
-                </div>
-              </div>
-            }
-          </div>
-        }
-      </div>
+  <div class="flex-1 flex">
+    <!-- Posts List -->
+    <div class="w-1/3">
+      <app-posts-list
+        (postSelected)="onPostSelected($event)"
+        (createNewPost)="onCreateNewPost()">
+      </app-posts-list>
     </div>
 
-    <!-- Right Panel - Post Editor -->
-    <div class="flex-1 flex flex-col">
-      @if (selectedPost() || isCreatingNew()) {
-        <!-- Post Editor -->
-        <div class="flex-1 flex flex-col">
-          <!-- Editor Header -->
-          <div class="flex-shrink-0 bg-base-100 border-b border-base-300 p-4">
-            <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-base-content">
-                {{ isCreatingNew() ? 'Create New Post' : 'Edit Post' }}
-              </h2>
-              <div class="flex gap-2">
-                <!-- Split Button for Post Actions -->
-                <div class="btn-group shadow-sm">
-                  <!-- Main Action Button -->
-                  <button
-                    (click)="saveAsDraft()"
-                    [disabled]="!postForm.valid || !editorContent() || isLoading()"
-                    class="btn btn-primary btn-sm rounded-r-none shadow-none">
-                    @if (isLoading()) {
-                      <span class="loading loading-spinner loading-xs"></span>
-                    } @else {
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
-                      </svg>
-                    }
-                    {{ isCreatingNew() ? 'Save as Draft' : 'Save as Draft' }}
-                  </button>
-                  
-                  <!-- Dropdown Toggle -->
-                  <div class="dropdown dropdown-end">
-                    <div tabindex="0" role="button" class="btn btn-primary btn-sm rounded-l-none shadow-none">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-                      <li>
-                        <button 
-                          (click)="publishPost()"
-                          [disabled]="!postForm.valid || !editorContent() || isLoading()"
-                          class="gap-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                          </svg>
-                          Publish
-                        </button>
-                      </li>
-                      @if (selectedPost() && !isCreatingNew()) {
-                        <li>
-                          <button 
-                            (click)="deletePost(selectedPost()!.id)"
-                            [disabled]="isLoading()"
-                            class="text-error gap-2">
-                            @if (isLoading()) {
-                              <span class="loading loading-spinner loading-xs"></span>
-                            } @else {
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            }
-                            Delete
-                          </button>
-                        </li>
-                      }
-                    </ul>
-                  </div>
-                </div>
-                
-                <button
-                  (click)="cancelEdit()"
-                  class="btn btn-outline btn-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Editor Form -->
-          <div class="flex-1 overflow-y-auto p-4">
-            <form [formGroup]="postForm" class="space-y-6">
-              <!-- Title -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text font-semibold">Title</span>
-                </label>
-                <input
-                  type="text"
-                  formControlName="title"
-                  class="input input-bordered w-full"
-                  placeholder="Enter post title..." />
-                @if (postForm.get('title')?.invalid && postForm.get('title')?.touched) {
-                  <label class="label">
-                    <span class="label-text-alt text-error">Title is required (3-100 characters)</span>
-                  </label>
-                }
-              </div>
-
-              <!-- Description -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text font-semibold">Description</span>
-                </label>
-                <textarea
-                  formControlName="description"
-                  class="textarea textarea-bordered w-full h-20"
-                  placeholder="Enter post description..."></textarea>
-                @if (postForm.get('description')?.invalid && postForm.get('description')?.touched) {
-                  <label class="label">
-                    <span class="label-text-alt text-error">Description is required (3-1000 characters)</span>
-                  </label>
-                }
-              </div>
-
-              <!-- Status and Topics Row -->
-              <div class="grid grid-cols-1 gap-4">
-                <!-- Topics -->
-                <div class="form-control">
-                  <label class="label">
-                    <span class="label-text font-semibold">Topics</span>
-                  </label>
-                  <div class="flex flex-wrap gap-2">
-                    @for (topic of topics(); track topic.id) {
-                      <label class="cursor-pointer label">
-                        <div class="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            class="checkbox checkbox-sm"
-                            [value]="topic.id"
-                            (change)="onTopicChange(topic.id, $event)"
-                            [checked]="postForm.get('topicIds')?.value?.includes(topic.id)" />
-                          <div 
-                            class="w-4 h-4 rounded-full" 
-                            [style.background-color]="getTopicColorHex(topic)">
-                          </div>
-                          <span class="label-text text-sm">{{ topic.name }}</span>
-                        </div>
-                      </label>
-                    }
-                  </div>
-                </div>
-              </div>
-
-              <!-- Content -->
-              <div class="form-control">
-                <div class="flex items-center justify-between mb-2">
-                  <label class="label">
-                    <span class="label-text font-semibold">Content</span>
-                  </label>
-                  <div class="flex gap-2">
-                    @if (isPreviewMode()) {
-                      <button
-                        (click)="editContent()"
-                        class="btn btn-outline btn-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                        Edit
-                      </button>
-                    } @else {
-                      <button
-                        (click)="togglePreview()"
-                        class="btn btn-outline btn-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        Preview
-                      </button>
-                    }
-                  </div>
-                </div>
-
-                @if (isPreviewMode()) {
-                  <!-- Content Preview -->
-                  <div class="border border-base-300 rounded-lg p-4 bg-base-100 min-h-[500px]">
-                    @if (editorContent()) {
-                      <div class="prose prose-sm max-w-none" [innerHTML]="editorContent()"></div>
-                    } @else {
-                      <div class="text-center text-base-content/50 py-8">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <p>No content to preview</p>
-                        <button
-                          (click)="editContent()"
-                          class="btn btn-primary btn-sm mt-2">
-                          Add Content
-                        </button>
-                      </div>
-                    }
-                  </div>
-                } @else {
-                  <!-- Text Editor -->
-                  <app-text-editor
-                    [editorContent]="editorContent()"
-                    (contentChange)="onContentChange($event)">
-                  </app-text-editor>
-                }
-
-                @if (!editorContent() && postForm.touched) {
-                  <label class="label">
-                    <span class="label-text-alt text-error">Content is required</span>
-                  </label>
-                }
-              </div>
-
-              <!-- Error Message -->
-              @if (errorMessage()) {
-                <div class="alert alert-error">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>{{ errorMessage() }}</span>
-                </div>
-              }
-            </form>
-          </div>
+    <!-- Post Editor -->
+    @if (selectedPost() || isCreatingNew()) {
+      <div class="flex-1 flex flex-col">
+        <app-post-editor
+          [selectedPost]="selectedPost"
+          [isCreatingNew]="isCreatingNew"
+          (postSaved)="onPostSaved()"
+          (postDeleted)="onPostDeleted()"
+          (editCancelled)="onEditCancelled()">
+        </app-post-editor>
+      </div>
+    } @else {
+      <!-- Empty State -->
+      <div class="flex-1 flex items-center justify-center bg-base-200">
+        <div class="text-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-base-content/30 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h3 class="text-lg font-semibold text-base-content/70 mb-2">Select a Post to Edit</h3>
+          <p class="text-base-content/50 text-sm">Choose a post from the list or create a new one</p>
         </div>
-      } @else {
-        <!-- No Post Selected -->
-        <div class="flex-1 flex items-center justify-center">
-          <div class="text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-base-content/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h3 class="text-xl font-semibold text-base-content mb-2">Select a Post</h3>
-            <p class="text-base-content/70">Choose a post from the list to edit it, or create a new one</p>
-            <button
-              (click)="createNewPost()"
-              class="btn btn-primary btn-sm mt-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              Create New Post
-            </button>
-          </div>
-        </div>
-      }
-    </div>
+      </div>
+    }
   </div>
 </div>

@@ -1,0 +1,25 @@
+/* Auto-resize editor styles */
+.auto-resize-editor {
+  min-height: 200px;
+}
+
+.auto-resize-editor .ql-editor {
+  min-height: 150px;
+  resize: none;
+}
+
+.auto-resize-editor .ql-container {
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+/* Ensure the editor container grows with content */
+.quill-theme {
+  display: flex;
+  flex-direction: column;
+}
+
+.quill-theme .ql-toolbar {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}

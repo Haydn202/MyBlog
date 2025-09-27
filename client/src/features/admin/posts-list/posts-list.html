@@ -1,0 +1,120 @@
+<!-- Posts List -->
+<div class="bg-base-200 border-r border-base-300 flex flex-col h-full">
+  <!-- Filters -->
+  <div class="p-4 border-b border-base-300">
+    <h3 class="font-semibold text-base-content mb-3">Filter Posts</h3>
+    <div class="space-y-3">
+      <!-- Status Filter -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-sm">Status</span>
+        </label>
+        <select 
+          class="select select-bordered select-sm w-full"
+          [value]="statusFilter()"
+          (change)="onStatusFilterChange($event)">
+          <option value="">All Status</option>
+          <option value="Draft">Draft</option>
+          <option value="Published">Published</option>
+          <option value="Deleted">Deleted</option>
+        </select>
+      </div>
+
+      <!-- Topic Filter -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-sm">Topic</span>
+        </label>
+        <select 
+          class="select select-bordered select-sm w-full"
+          [value]="topicFilter()"
+          (change)="onTopicFilterChange($event)">
+          <option value="">All Topics</option>
+          @for (topic of topics(); track topic.id) {
+            <option [value]="topic.id">{{ topic.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Search Filter -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-sm">Search</span>
+        </label>
+        <input
+          type="text"
+          class="input input-bordered input-sm w-full"
+          placeholder="Search posts..."
+          [value]="searchFilter()"
+          (input)="onSearchFilterChange($event)"
+          (keyup.enter)="applyFilters()" />
+      </div>
+
+      <!-- Filter Actions -->
+      <div class="flex gap-2">
+        <button 
+          (click)="applyFilters()"
+          class="btn btn-primary btn-sm flex-1">
+          Apply
+        </button>
+        <button 
+          (click)="clearFilters()"
+          class="btn btn-outline btn-sm flex-1">
+          Clear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Posts List -->
+  <div class="flex-1 overflow-y-auto">
+    @if (posts().length === 0) {
+      <div class="p-4 text-center">
+        <div class="text-base-content/50 mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <p class="text-sm text-base-content/70">No posts found</p>
+        <p class="text-xs text-base-content/50 mt-1">Try adjusting your filters</p>
+      </div>
+    } @else {
+      <div class="p-2 space-y-2">
+        @for (post of posts(); track post.id) {
+          <div 
+            (click)="selectPost(post)"
+            class="card card-compact bg-base-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-base-300 hover:border-primary/30">
+            <div class="card-body p-3">
+              <!-- Post Header -->
+              <div class="flex items-start justify-between mb-2">
+                <h4 class="font-medium text-sm line-clamp-2 flex-1">{{ post.title }}</h4>
+                <div class="badge badge-sm ml-2
+                  {{ post.status === 'Published' ? 'badge-success' :
+                     post.status === 'Draft' ? 'badge-warning' :
+                     'badge-error' }}">
+                  {{ post.status }}
+                </div>
+              </div>
+
+              <!-- Post Description -->
+              <p class="text-xs text-base-content/70 line-clamp-2 mb-2">{{ post.description }}</p>
+
+              <!-- Topics -->
+              <div class="flex flex-wrap gap-1 mb-2">
+                @for (topic of post.topics; track topic.id) {
+                  <app-topic-pill [topic]="topic"></app-topic-pill>
+                }
+              </div>
+
+              <!-- Post Meta -->
+              <div class="flex items-center justify-between text-xs text-base-content/50">
+                <span>{{ post.createdOn | date:'short' }}</span>
+                <span>{{ post.topics.length }} topic{{ post.topics.length !== 1 ? 's' : '' }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

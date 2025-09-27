@@ -4,6 +4,14 @@
 @import 'quill/dist/quill.snow.css';
 @import 'quill/dist/quill.bubble.css';
 
+/* Reset body and html to prevent unwanted scrolling */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-y: hidden;
+}
+
 @plugin "daisyui" {
   exclude: rootscrollgutter;
   themes: light --default, dark --prefersdark, cupcake;
