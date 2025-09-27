@@ -43,10 +43,19 @@ public class DeleteTopicValidator : AbstractValidator<DeleteTopic>
         RuleFor(u => u.Id)
             .MustAsync(TopicExists)
             .WithMessage("Topic not found.");
+
+        RuleFor(u => u.Id)
+            .MustAsync(TopicIsNotUsed)
+            .WithMessage("Topic is used by a post.");
     }
 
     private async Task<bool> TopicExists(Guid id, CancellationToken cancellationToken)
     {
         return await _dbContext.Topics.AnyAsync(t => t.Id == id, cancellationToken);
+    }
+
+    private async Task<bool> TopicIsNotUsed(Guid id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Topics.AnyAsync(t => t.Id == id && t.Posts.Count == 0, cancellationToken);
     }
 }

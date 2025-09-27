@@ -1,4 +1,5 @@
 using API.Data;
+using API.Entities;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
@@ -22,7 +23,7 @@ public class DeletePost(Guid postId) : IRequest<bool>
                 return false;
             }
             
-            dbContext.Posts.Remove(post);
+            post.Status = PostStatus.Deleted;
             await dbContext.SaveChangesAsync(cancellationToken);
             
             return true;

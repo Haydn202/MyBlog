@@ -202,9 +202,21 @@ export class ManagePosts implements OnInit {
 
   deletePost(postId: string) {
     if (confirm('Are you sure you want to delete this post?')) {
-      // TODO: Implement delete post API call
-      console.log('Delete post:', postId);
-      this.toast.success('Post deleted successfully!');
+      this.isLoading.set(true);
+      
+      this.postsService.deletePost(postId).subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          this.selectedPost.set(null); // Clear the selected post
+          this.loadPosts(); // Refresh the list
+          this.toast.success('Post deleted successfully!');
+        },
+        error: (error) => {
+          console.error('Error deleting post:', error);
+          this.isLoading.set(false);
+          this.toast.error('Failed to delete post. Please try again.');
+        }
+      });
     }
   }
 
@@ -254,5 +266,4 @@ export class ManagePosts implements OnInit {
     const colorOption = TopicColorOptions.find(c => c.value === topic.color);
     return colorOption?.hex || '#6b7280';
   }
-
 }

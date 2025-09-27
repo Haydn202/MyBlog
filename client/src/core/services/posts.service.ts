@@ -82,4 +82,8 @@ export class PostsService {
   updatePost(id: string, postData: PostUpdateDto) {
     return this.http.put<PostSummaryDto>(`${this.baseUrl}/posts/${id}`, postData);
   }
+
+  deletePost(id: string) {
+    return this.http.delete(`${this.baseUrl}/posts/${id}`);
+  }
 }
