@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import {QuillEditorComponent} from 'ngx-quill';
 import {FormsModule} from '@angular/forms';
+import hljs from 'highlight.js';
 
 @Component({
   selector: 'app-text-editor',
@@ -27,7 +28,8 @@ export class TextEditor implements OnChanges {
       [{ 'align': [] }],
       [{ 'color': [] }, { 'background': [] }],
       ['clean'],
-    ]
+    ],
+    syntax: { hljs },
   };
 
   ngOnChanges(changes: SimpleChanges) {

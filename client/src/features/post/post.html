@@ -91,7 +91,7 @@
 
         <!-- Content -->
         <div class="prose prose-base max-w-none">
-          <div [innerHTML]="post()!.content"></div>
+          <div #postContent [innerHTML]="postContentSafe"></div>
         </div>
       </article>
     </div>

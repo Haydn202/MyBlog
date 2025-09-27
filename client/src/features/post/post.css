@@ -32,6 +32,9 @@
   border-radius: 0.5rem;
   padding: 1.5rem;
   overflow-x: auto;
+  width: 100%;
+  max-width: none;
+  margin: 1.5rem 0;
 }
 
 .prose pre code {
@@ -62,6 +65,10 @@
   background: #2d3748 !important; /* Dark background for code blocks */
   color: #e2e8f0 !important;
   border: 1px solid #4a5568;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 1.5rem 0 !important;
+  padding: 1.5rem !important;
 }
 
 .prose pre[class*="language-"] code {
@@ -73,4 +80,24 @@
 .prose pre code[class*="language-"] {
   background: transparent !important;
   color: inherit !important;
+}
+
+/* Make code blocks wider and more prominent */
+.prose pre[data-language] {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: -2rem !important;
+  margin-right: -2rem !important;
+  padding: 2rem !important;
+  font-size: 0.9rem !important;
+  line-height: 1.6 !important;
+}
+
+/* Responsive code blocks */
+@media (min-width: 768px) {
+  .prose pre[data-language] {
+    margin-left: -4rem !important;
+    margin-right: -4rem !important;
+    padding: 2.5rem !important;
+  }
 }
