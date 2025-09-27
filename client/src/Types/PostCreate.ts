@@ -1,3 +1,5 @@
+import { TopicColor } from './TopicColor';
+
 export interface PostCreateDto {
   title: string;
   description: string;
@@ -34,4 +36,5 @@ export type PostStatus = 'Draft' | 'Published' | 'Deleted';
 export interface TopicDto {
   id: string;
   name: string;
+  color: TopicColor;
 }

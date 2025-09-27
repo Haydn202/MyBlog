@@ -45,7 +45,7 @@ export class PostsService {
   }
 
   getPublicPosts(filters?: PostFilters){
-    let url = `${this.baseUrl}/posts/public`;
+    let url = `${this.baseUrl}/posts`;
     const params = new URLSearchParams();
 
     if (filters) {

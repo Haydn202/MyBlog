@@ -20,7 +20,7 @@ export class Home implements OnInit {
   constructor(public postService: PostsService) {}
 
   ngOnInit() {
-    this.postService.getPosts().subscribe();
+    this.postService.getPublicPosts().subscribe();
   }
 
   trackById(index: number, post: PostSummaryDto) {

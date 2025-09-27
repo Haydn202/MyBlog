@@ -1,0 +1,76 @@
+/* Post view styles - Enhanced with Tailwind Typography */
+.prose {
+  color: inherit;
+  max-width: none;
+}
+
+/* Override typography plugin colors to match DaisyUI theme */
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  color: inherit;
+}
+
+.prose p {
+  color: inherit;
+}
+
+.prose strong {
+  color: inherit;
+}
+
+.prose code {
+  background: hsl(var(--b2));
+  color: inherit;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875em;
+}
+
+.prose pre {
+  background: hsl(var(--b2));
+  color: inherit;
+  border: 1px solid hsl(var(--b3));
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  overflow-x: auto;
+}
+
+.prose pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+.prose blockquote {
+  border-left: 4px solid hsl(var(--p));
+  background: hsl(var(--b2));
+  color: inherit;
+}
+
+.prose a {
+  color: hsl(var(--p));
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.prose a:hover {
+  text-decoration: underline;
+}
+
+/* Syntax highlighting overrides for better theme integration */
+.prose pre[class*="language-"] {
+  background: #2d3748 !important; /* Dark background for code blocks */
+  color: #e2e8f0 !important;
+  border: 1px solid #4a5568;
+}
+
+.prose pre[class*="language-"] code {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* Ensure Prism.js styles work well with our theme */
+.prose pre code[class*="language-"] {
+  background: transparent !important;
+  color: inherit !important;
+}

@@ -1,1 +1,99 @@
-<p>post works!</p>
+<!-- Post View -->
+<div class="min-h-screen bg-base-100">
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="text-center">
+        <span class="loading loading-spinner loading-lg"></span>
+        <p class="mt-4 text-base-content/70">Loading post...</p>
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (errorMessage() && !isLoading()) {
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="text-center max-w-md mx-auto p-6">
+        <div class="alert alert-error mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{{ errorMessage() }}</span>
+        </div>
+        <button (click)="goBack()" class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to Posts
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Post Content -->
+  @if (post() && !isLoading()) {
+    <div class="max-w-4xl mx-auto px-4 py-8">
+      <!-- Back Button -->
+      <button (click)="goBack()" class="btn btn-ghost btn-sm mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Posts
+      </button>
+
+      <!-- Post Header -->
+      <article class="prose prose-base max-w-none">
+        <!-- Title -->
+        <h1 class="text-4xl font-bold text-base-content mb-6 leading-tight">
+          {{ post()!.title }}
+        </h1>
+
+        <!-- Meta Information -->
+        <div class="flex flex-wrap items-center gap-4 mb-6 text-sm text-base-content/70">
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>{{ post()!.createdOn | date:'medium' }}</span>
+          </div>
+          
+          <!-- Topics -->
+          @if (post()!.topics && post()!.topics.length > 0) {
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+              <div class="flex flex-wrap gap-1">
+                @for (topic of post()!.topics; track topic.id) {
+                  <app-topic-pill [topic]="topic"></app-topic-pill>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Description -->
+        @if (post()!.description) {
+          <p class="text-xl text-base-content/80 mb-8 leading-relaxed">
+            {{ post()!.description }}
+          </p>
+        }
+
+        <!-- Thumbnail -->
+        @if (post()!.thumbnailUrl) {
+          <div class="mb-8">
+            <img 
+              [src]="post()!.thumbnailUrl" 
+              [alt]="post()!.title"
+              class="w-full h-auto rounded-lg shadow-lg object-cover max-h-96">
+          </div>
+        }
+
+        <!-- Content -->
+        <div class="prose prose-base max-w-none">
+          <div [innerHTML]="post()!.content"></div>
+        </div>
+      </article>
+    </div>
+  }
+</div>
