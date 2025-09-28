@@ -3,14 +3,12 @@ import {firstValueFrom} from 'rxjs';
 import {PostsService} from '../../core/services/posts.service';
 import {SummaryCard} from '../../layout/summary-card/summary-card';
 import {TextEditor} from '../text-editor/text-editor';
-import {RouterLink} from '@angular/router';
 import {PostSummaryDto} from '../../Types/PostSummary';
 
 @Component({
   selector: 'app-home',
   imports: [
-    SummaryCard,
-    RouterLink
+    SummaryCard
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',

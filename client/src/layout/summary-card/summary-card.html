@@ -1,23 +1,80 @@
-<div class="card bg-base-100 w-3/4 mb-12 mx-auto p-6 shadow-xl">
-  <div class="flex gap-6 items-start">
-    <!-- Thumbnail -->
-    <app-thumbnail 
-      [thumbnail]="post?.thumbnail" 
-      [alt]="post?.title + ' thumbnail'"
-      size="md">
-    </app-thumbnail>
+<div class="card bg-base-100 w-3/4 mb-12 mx-auto shadow-xl transition-all duration-300" 
+     [class.expanded]="isExpanded()">
+  
+  <!-- Summary Section (Always Visible) -->
+  <div class="p-6 cursor-pointer" (click)="toggleExpansion()">
+    <div class="flex gap-6 items-start">
+      <!-- Thumbnail -->
+      <app-thumbnail 
+        [thumbnail]="post?.thumbnail" 
+        [alt]="post?.title + ' thumbnail'"
+        size="md">
+      </app-thumbnail>
 
-    <!-- Text content -->
-    <div class="flex flex-col">
-      <!-- Title -->
-      <h2 class="card-title text-lg font-bold mb-2">
-        {{ post?.title }}
-      </h2>
+      <!-- Text content -->
+      <div class="flex flex-col flex-1">
+        <!-- Title -->
+        <h1 class="text-3xl font-bold text-base-content mb-4">
+          {{ post?.title }}
+        </h1>
 
-      <!-- Description -->
-      <p class="text-base text-gray-600">
-        {{ post?.description }}
-      </p>
+        <!-- Description -->
+        <p class="text-base text-gray-600 mb-4">
+          {{ post?.description }}
+        </p>
+        
+        <!-- Meta Information -->
+        <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mb-4">
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>{{ post?.createdOn | date:'medium' }}</span>
+          </div>
+          
+          <!-- Topics -->
+          @if (post?.topics?.length) {
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+              <div class="flex flex-wrap gap-1">
+                @for (topic of post?.topics; track topic.id) {
+                  <app-topic-pill [topic]="topic"></app-topic-pill>
+                }
+              </div>
+            </div>
+          }
+        </div>
+        
+        <!-- Expand/Collapse Indicator -->
+        <div class="flex items-center justify-end">
+          <!-- Expand/Collapse Icon -->
+          <div class="transition-transform duration-200" [class.rotate-180]="isExpanded()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- Expanded Content Section -->
+  <div class="expanded-content border-t border-base-300" [class.hidden]="!isExpanded()">
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="p-6 text-center">
+        <span class="loading loading-spinner loading-md"></span>
+        <p class="mt-2 text-base-content/70">Loading post content...</p>
+      </div>
+    } @else if (fullPost()) {
+      <div class="p-6"> 
+        <!-- Post Content -->
+        <article class="prose prose-base max-w-none">
+          <div [innerHTML]="postContentSafe"></div>
+        </article>
+      </div>
+    }
   </div>
 </div>
