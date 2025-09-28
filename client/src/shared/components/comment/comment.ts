@@ -37,6 +37,11 @@ export class Comment {
     this.initializeForms();
   }
   
+  isCurrentUserAuthor(): boolean {
+    const currentUser = this.accountService.currentUser();
+    return currentUser?.id === this.comment.userId;
+  }
+  
   private initializeForms() {
     this.replyForm = this.fb.group({
       message: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(1000)]]

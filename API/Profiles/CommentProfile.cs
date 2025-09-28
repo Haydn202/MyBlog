@@ -12,10 +12,12 @@ public class CommentProfile: Profile
     public CommentProfile()
     {
         CreateMap<Comment, CommentDto>()
-            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.CreatedBy.UserName));
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.CreatedBy.UserName))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.CreatedBy.Id));
         CreateMap<CommentDto, Comment>();
         CreateMap<Reply, ReplyDto>()
-            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.CreatedBy.UserName));
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.CreatedBy.UserName))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.CreatedBy.Id));
         CreateMap<CreateCommentDto, Comment>()
             .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom<CreatedByResolver>());
         CreateMap<CreateCommentCommandRequest, Comment>()

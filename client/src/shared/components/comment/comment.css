@@ -38,12 +38,8 @@
 .comment-actions {
   display: flex;
   gap: 0.5rem;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.comment-container:hover .comment-actions {
   opacity: 1;
+  transition: opacity 0.2s ease;
 }
 
 .comment-text {
@@ -88,7 +84,6 @@
   }
   
   .comment-actions {
-    opacity: 1;
     justify-content: flex-start;
   }
   

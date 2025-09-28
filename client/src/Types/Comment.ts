@@ -2,6 +2,7 @@ export interface CommentDto {
   id: string;
   message: string;
   userName: string;
+  userId: string;
   createdOn: string;
   replies?: ReplyDto[];
 }
@@ -10,6 +11,7 @@ export interface ReplyDto {
   id: string;
   message: string;
   userName: string;
+  userId: string;
   createdOn: string;
 }
 
