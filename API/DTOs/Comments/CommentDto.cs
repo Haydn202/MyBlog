@@ -4,5 +4,5 @@ namespace API.DTOs.Comments;
 
 public class CommentDto: CommentBaseDto
 {
-    public List<ReplyDto>? SubComments { get; set; }
+    public List<ReplyDto>? Replies { get; set; }
 }

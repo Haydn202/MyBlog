@@ -23,6 +23,8 @@ public class GetComments(Guid id, PagingParams pagingParams) : IRequest<Paginate
             var query = dbContext.Comments
                 .Where(c => c.PostId == request.Id)
                 .Include(c => c.CreatedBy)
+                .Include(c => c.Replies!)
+                    .ThenInclude(r => r.CreatedBy)
                 .ProjectTo<CommentDto>(mapper.ConfigurationProvider)
                 .AsQueryable();
             

@@ -14,10 +14,13 @@ public class CommentProfile: Profile
         CreateMap<Comment, CommentDto>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.CreatedBy.UserName));
         CreateMap<CommentDto, Comment>();
-        CreateMap<Reply, ReplyDto>();
+        CreateMap<Reply, ReplyDto>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.CreatedBy.UserName));
         CreateMap<CreateCommentDto, Comment>()
             .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom<CreatedByResolver>());
         CreateMap<CreateCommentCommandRequest, Comment>()
             .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom<CreatedByCommandResolver>());
+        CreateMap<CreateReplyDto, Reply>();
+        CreateMap<CreateReplyCommandRequest, Reply>();
     }
 }

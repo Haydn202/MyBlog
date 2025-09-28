@@ -74,6 +74,9 @@
         <article class="prose prose-base max-w-none">
           <div [innerHTML]="postContentSafe"></div>
         </article>
+        
+        <!-- Comments Section -->
+        <app-comments-section [postId]="fullPost()!.id"></app-comments-section>
       </div>
     }
   </div>

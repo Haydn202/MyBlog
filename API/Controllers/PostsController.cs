@@ -129,7 +129,7 @@ public class PostsController(
         return TypedResults.Ok(response);
     }
     
-    [AllowAnonymous]
+    [Authorize]
     [HttpPost("{postId:guid}/comments")]
     public async Task<ActionResult<CommentDto>> CreateComment(CreateCommentDto request)
     {
@@ -140,5 +140,66 @@ public class PostsController(
         return Ok(response);
     }
     
-    // TODO add logic for replies.
+    [Authorize]
+    [HttpPut("{postId:guid}/comments/{commentId:guid}")]
+    public async Task<ActionResult<CommentDto>> UpdateComment(UpdateCommentDto request, [FromRoute] Guid commentId)
+    {
+        var commandRequest = new UpdateCommentCommandRequest { CommentId = commentId, Message = request.Message };
+        var command = new UpdateComment(commandRequest);
+        var response = await sender.Send(command);
+        
+        return Ok(response);
+    }
+    
+    [Authorize]
+    [HttpDelete("{postId:guid}/comments/{commentId:guid}")]
+    public async Task<Results<NoContent, NotFound>> DeleteComment([FromRoute] Guid commentId)
+    {
+        var command = new DeleteComment(commentId);
+        var response = await sender.Send(command);
+
+        if (response is false)
+        {
+            return TypedResults.NotFound();
+        }
+        
+        return TypedResults.NoContent();
+    }
+    
+    [Authorize]
+    [HttpPost("{postId:guid}/comments/{commentId:guid}/replies")]
+    public async Task<ActionResult<ReplyDto>> CreateReply(CreateReplyDto request)
+    {
+        var commandRequest = mapper.Map<CreateReplyCommandRequest>(request);
+        var command = new CreateReply(commandRequest);
+        var response = await sender.Send(command);
+        
+        return Ok(response);
+    }
+    
+    [Authorize]
+    [HttpPut("{postId:guid}/comments/{commentId:guid}/replies/{replyId:guid}")]
+    public async Task<ActionResult<ReplyDto>> UpdateReply(UpdateReplyDto request, [FromRoute] Guid replyId)
+    {
+        var commandRequest = new UpdateReplyCommandRequest { ReplyId = replyId, Message = request.Message };
+        var command = new UpdateReply(commandRequest);
+        var response = await sender.Send(command);
+        
+        return Ok(response);
+    }
+    
+    [Authorize]
+    [HttpDelete("{postId:guid}/comments/{commentId:guid}/replies/{replyId:guid}")]
+    public async Task<Results<NoContent, NotFound>> DeleteReply([FromRoute] Guid replyId)
+    {
+        var command = new DeleteReply(replyId);
+        var response = await sender.Send(command);
+
+        if (response is false)
+        {
+            return TypedResults.NotFound();
+        }
+        
+        return TypedResults.NoContent();
+    }
 }

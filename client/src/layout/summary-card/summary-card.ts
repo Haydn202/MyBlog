@@ -6,6 +6,7 @@ import {PostDto} from '../../Types/PostCreate';
 import {CommonModule} from '@angular/common';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {TopicPill} from '../../shared/components/topic-pill/topic-pill';
+import {CommentsSection} from '../../shared/components/comments-section/comments-section';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-typescript';
@@ -18,7 +19,7 @@ import 'prismjs/themes/prism-tomorrow.css';
 
 @Component({
   selector: 'app-summary-card',
-  imports: [Thumbnail, CommonModule, TopicPill],
+  imports: [Thumbnail, CommonModule, TopicPill, CommentsSection],
   templateUrl: './summary-card.html',
   styleUrl: './summary-card.css'
 })
