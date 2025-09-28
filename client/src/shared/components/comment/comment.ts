@@ -18,6 +18,7 @@ export class Comment {
   @Input({ required: true }) comment!: CommentDto;
   @Input() postId!: string;
   @Input() isReply: boolean = false;
+  @Input() parentCommentId?: string; // For nested replies
   @Output() commentUpdated = new EventEmitter<void>();
   @Output() commentDeleted = new EventEmitter<void>();
   
@@ -83,13 +84,16 @@ export class Comment {
         return;
       }
       
+      // Use parent comment ID if this is a reply to a reply, otherwise use current comment ID
+      const targetCommentId = this.parentCommentId || this.comment.id;
+      
       const replyData: CreateReplyDto = {
         message: this.replyForm.value.message,
-        commentId: this.comment.id,
+        commentId: targetCommentId,
         userId: currentUser.id
       };
       
-      this.commentsService.createReply(this.postId, this.comment.id, replyData).subscribe({
+      this.commentsService.createReply(this.postId, targetCommentId, replyData).subscribe({
         next: (newReply) => {
           this.toastService.success('Reply posted successfully!');
           this.isReplying.set(false);

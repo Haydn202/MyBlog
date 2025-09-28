@@ -1,111 +1,100 @@
-<div class="card bg-base-100 shadow-sm border border-base-300 mb-4 transition-all duration-200" [class.reply]="isReply">
-  <!-- Comment Content -->
-  <div class="comment-content">
-    <div class="comment-header">
-      <div class="comment-author">
-        <div class="avatar placeholder">
-          <div class="bg-primary text-primary-content rounded-full w-10">
-            <span class="text-sm font-semibold">{{ (comment.userName || 'Anonymous').charAt(0) }}</span>
-          </div>
-        </div>
-        <div class="comment-meta">
-          <span class="author-name">{{ comment.userName || 'Anonymous' }}</span>
-          <span class="comment-date">{{ formatDate(comment.createdOn) }}</span>
+<div class="comment-item" [class.reply]="isReply">
+  <!-- Comment Header -->
+  <div class="flex items-start justify-between mb-2">
+    <div class="flex items-center gap-2">
+      <div class="avatar placeholder">
+        <div class="bg-neutral text-neutral-content rounded-full w-8 h-8">
+          <span class="text-xs">{{ (comment.userName || 'A').charAt(0) }}</span>
         </div>
       </div>
-      
-      <!-- Comment Actions -->
-      <div class="comment-actions">
-        <button 
-          class="btn btn-ghost btn-sm"
-          (click)="startReply()"
-          [disabled]="isLoading()">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-          </svg>
-          Reply
-        </button>
-        @if (isCurrentUserAuthor()) {
-          <button 
-            class="btn btn-ghost btn-sm"
-            (click)="startEdit()"
-            [disabled]="isLoading()">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            Edit
-          </button>
-          <button 
-            class="btn btn-ghost btn-sm text-error hover:bg-error hover:text-error-content"
-            (click)="deleteComment()"
-            [disabled]="isLoading()">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            Delete
-          </button>
-        }
+      <div class="flex flex-col">
+        <span class="text-sm font-medium text-base-content">{{ comment.userName || 'Anonymous' }}</span>
+        <span class="text-xs text-base-content/60">{{ formatDate(comment.createdOn) }}</span>
       </div>
     </div>
     
-    <!-- Comment Text -->
-    <div class="comment-text">
-      @if (isEditing()) {
-        <form [formGroup]="editForm" (ngSubmit)="submitEdit()">
-          <textarea
-            formControlName="message"
-            class="textarea textarea-bordered w-full"
-            rows="3"
-            placeholder="Edit your comment..."></textarea>
-          <div class="form-actions mt-2">
-            <button 
-              type="submit" 
-              class="btn btn-primary btn-sm"
-              [disabled]="editForm.invalid || isLoading()">
-              @if (isLoading()) {
-                <span class="loading loading-spinner loading-xs"></span>
-              }
-              Save
-            </button>
-            <button 
-              type="button" 
-              class="btn btn-ghost btn-sm"
-              (click)="cancelEdit()"
-              [disabled]="isLoading()">
-              Cancel
-            </button>
-          </div>
-        </form>
-      } @else {
-        <div class="prose prose-sm max-w-none">
-          <p class="whitespace-pre-wrap">{{ comment.message }}</p>
-        </div>
+    <!-- Actions -->
+    <div class="flex gap-1">
+      <button 
+        class="btn btn-ghost btn-xs"
+        (click)="startReply()"
+        [disabled]="isLoading()">
+        Reply
+      </button>
+      @if (isCurrentUserAuthor()) {
+        <button 
+          class="btn btn-ghost btn-xs"
+          (click)="startEdit()"
+          [disabled]="isLoading()">
+          Edit
+        </button>
+        <button 
+          class="btn btn-ghost btn-xs text-error hover:bg-error hover:text-error-content"
+          (click)="deleteComment()"
+          [disabled]="isLoading()">
+          Delete
+        </button>
       }
     </div>
   </div>
   
-  <!-- Reply Form -->
-  @if (isReplying()) {
-    <div class="reply-form">
-      <form [formGroup]="replyForm" (ngSubmit)="submitReply()">
+  <!-- Comment Content -->
+  <div class="mb-3">
+    @if (isEditing()) {
+      <form [formGroup]="editForm" (ngSubmit)="submitEdit()">
         <textarea
           formControlName="message"
-          class="textarea textarea-bordered w-full"
-          rows="3"
-          placeholder="Write a reply..."></textarea>
-        <div class="form-actions mt-2">
+          class="textarea textarea-bordered textarea-sm w-full"
+          rows="2"
+          placeholder="Edit your comment..."></textarea>
+        <div class="flex gap-2 mt-2">
           <button 
             type="submit" 
-            class="btn btn-primary btn-sm"
-            [disabled]="replyForm.invalid || isLoading()">
+            class="btn btn-primary btn-xs"
+            [disabled]="editForm.invalid || isLoading()">
             @if (isLoading()) {
               <span class="loading loading-spinner loading-xs"></span>
+            } @else {
+              Save
             }
-            Post Reply
           </button>
           <button 
             type="button" 
-            class="btn btn-ghost btn-sm"
+            class="btn btn-ghost btn-xs"
+            (click)="cancelEdit()"
+            [disabled]="isLoading()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    } @else {
+      <p class="text-sm text-base-content whitespace-pre-wrap">{{ comment.message }}</p>
+    }
+  </div>
+  
+  <!-- Reply Form -->
+  @if (isReplying()) {
+    <div class="bg-base-200 rounded-lg p-3 mb-3">
+      <form [formGroup]="replyForm" (ngSubmit)="submitReply()">
+        <textarea
+          formControlName="message"
+          class="textarea textarea-bordered textarea-sm w-full"
+          rows="2"
+          placeholder="Write a reply..."></textarea>
+        <div class="flex gap-2 mt-2">
+          <button 
+            type="submit" 
+            class="btn btn-primary btn-xs"
+            [disabled]="replyForm.invalid || isLoading()">
+            @if (isLoading()) {
+              <span class="loading loading-spinner loading-xs"></span>
+            } @else {
+              Post Reply
+            }
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-ghost btn-xs"
             (click)="cancelReply()"
             [disabled]="isLoading()">
             Cancel
@@ -117,12 +106,13 @@
   
   <!-- Nested Replies -->
   @if (comment.replies && comment.replies.length > 0) {
-    <div class="replies">
+    <div class="ml-4 space-y-3">
       @for (reply of comment.replies; track reply.id) {
         <app-comment 
           [comment]="reply" 
           [postId]="postId"
           [isReply]="true"
+          [parentCommentId]="isReply ? parentCommentId : comment.id"
           (commentUpdated)="commentUpdated.emit()"
           (commentDeleted)="commentDeleted.emit()">
         </app-comment>
