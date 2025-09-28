@@ -8,9 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Posts.Commands;
 
-public class CreateReply(CreateReplyCommandRequest request) : IRequest<ReplyDto>
+public class CreateReply(string userId, CreateReplyCommandRequest request) : IRequest<ReplyDto>
 {
     public CreateReplyCommandRequest Request { get; set; } = request;
+    public string UserId { get; set; } = userId;
     
     private sealed class CreateReplyHandler(
         DataContext dbContext,
@@ -18,7 +19,21 @@ public class CreateReply(CreateReplyCommandRequest request) : IRequest<ReplyDto>
     {
         public async Task<ReplyDto> Handle(CreateReply request, CancellationToken cancellationToken)
         {
-            var reply = mapper.Map<Reply>(request.Request);
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("User not found");
+            }
+
+            var comment = await dbContext.Comments.FirstAsync(c => c.Id == request.Request.CommentId, cancellationToken);
+            
+            var reply = new Reply
+            {
+                Message = request.Request.Message,
+                Comment = comment,
+                CreatedBy = user,
+                CreatedOn = DateTime.UtcNow
+            };
 
             await dbContext.Replies.AddAsync(reply, cancellationToken);
         
@@ -44,15 +59,6 @@ public class CreateReplyValidator : AbstractValidator<CreateReply>
         RuleFor(u => u.Request.CommentId)
             .MustAsync(CommentExists)
             .WithMessage("Comment not found");
-        
-        RuleFor(u => u.Request.UserId)
-            .MustAsync(UserExists)
-            .WithMessage("User not found");
-    }
-
-    private async Task<bool> UserExists(string userId, CancellationToken cancellationToken)
-    {
-        return await _dbContext.Users.AnyAsync(u => u.Id == userId, cancellationToken);
     }
 
     private async Task<bool> CommentExists(Guid commentId, CancellationToken cancellationToken)

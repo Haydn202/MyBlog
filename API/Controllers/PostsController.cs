@@ -131,10 +131,11 @@ public class PostsController(
     
     [Authorize]
     [HttpPost("{postId:guid}/comments")]
-    public async Task<ActionResult<CommentDto>> CreateComment(CreateCommentDto request)
+    public async Task<ActionResult<CommentDto>> CreateComment(Guid postId, CreateCommentDto request)
     {
+        var userId = GetCurrentUserId();
         var commandRequest = mapper.Map<CreateCommentCommandRequest>(request);
-        var command = new CreateComment(commandRequest);
+        var command = new CreateComment(postId, userId, commandRequest);
         var response = await sender.Send(command);
         
         return Ok(response);
@@ -170,8 +171,9 @@ public class PostsController(
     [HttpPost("{postId:guid}/comments/{commentId:guid}/replies")]
     public async Task<ActionResult<ReplyDto>> CreateReply(CreateReplyDto request)
     {
+        var userId = GetCurrentUserId();
         var commandRequest = mapper.Map<CreateReplyCommandRequest>(request);
-        var command = new CreateReply(commandRequest);
+        var command = new CreateReply(userId, commandRequest);
         var response = await sender.Send(command);
         
         return Ok(response);

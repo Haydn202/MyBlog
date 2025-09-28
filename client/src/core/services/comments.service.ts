@@ -9,7 +9,7 @@ import { PaginatedResult } from '../../Types/PaginatedResult';
 })
 export class CommentsService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:5285/api/posts';
+  private baseUrl = 'http://localhost:5285/Posts';
 
   getCommentsByPostId(postId: string, pageNumber: number = 1, pageSize: number = 10): Observable<PaginatedResult<CommentDto>> {
     return this.http.get<PaginatedResult<CommentDto>>(`${this.baseUrl}/${postId}/comments?pageNumber=${pageNumber}&pageSize=${pageSize}`);

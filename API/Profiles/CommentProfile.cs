@@ -20,6 +20,7 @@ public class CommentProfile: Profile
             .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom<CreatedByResolver>());
         CreateMap<CreateCommentCommandRequest, Comment>()
             .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom<CreatedByCommandResolver>());
+        CreateMap<CreateReplyDto, CreateReplyCommandRequest>();
         CreateMap<CreateReplyDto, Reply>();
         CreateMap<CreateReplyCommandRequest, Reply>();
     }

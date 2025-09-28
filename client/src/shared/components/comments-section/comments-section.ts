@@ -68,7 +68,6 @@ export class CommentsSection implements OnInit {
       
       const commentData: CreateCommentDto = {
         message: this.commentForm.value.message,
-        postId: this.postId,
         userId: currentUser.id
       };
       

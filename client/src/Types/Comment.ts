@@ -15,7 +15,6 @@ export interface ReplyDto {
 
 export interface CreateCommentDto {
   message: string;
-  postId: string;
   userId: string;
 }
 

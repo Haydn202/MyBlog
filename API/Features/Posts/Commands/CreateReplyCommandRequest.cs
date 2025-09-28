@@ -9,7 +9,4 @@ public class CreateReplyCommandRequest
     
     [Required]
     public required string Message { get; set; }
-    
-    [Required]
-    public required string UserId { get; set; }
 }

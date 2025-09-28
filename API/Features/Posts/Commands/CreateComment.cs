@@ -5,12 +5,15 @@ using AutoMapper;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace API.Features.Posts.Commands;
 
-public class CreateComment(CreateCommentCommandRequest request) : IRequest<CommentDto>
+public class CreateComment(Guid postId, string userId, CreateCommentCommandRequest request) : IRequest<CommentDto>
 {
     public CreateCommentCommandRequest Request { get; set; } = request;
+    public Guid PostId { get; set; } = postId;
+    public string UserId { get; set; } = userId;
     
     private sealed class CreateCommentHandler(
         DataContext dbContext,
@@ -18,7 +21,19 @@ public class CreateComment(CreateCommentCommandRequest request) : IRequest<Comme
     {
         public async Task<CommentDto> Handle(CreateComment request, CancellationToken cancellationToken)
         {
-            var comment = mapper.Map<Comment>(request.Request);
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("User not found");
+            }
+            
+            var comment = new Comment
+            {
+                Message = request.Request.Message,
+                PostId = request.PostId,
+                CreatedBy = user,
+                CreatedOn = DateTime.UtcNow
+            };
 
             await dbContext.Comments.AddAsync(comment, cancellationToken);
         
@@ -41,23 +56,14 @@ public class CreateCommentValidator : AbstractValidator<CreateComment>
             .NotEmpty()
             .WithMessage("Message cannot be empty");
         
-        RuleFor(u => u.Request)
+        RuleFor(u => u.PostId)
             .MustAsync(PostExists)
             .WithMessage("Post not found");
-        
-        RuleFor(u => u.Request.UserId)
-            .MustAsync(UserExists)
-            .WithMessage("User not found");
     }
 
-    private async Task<bool> UserExists(string userId, CancellationToken cancellationToken)
-    {
-        return await _dbContext.Users.AnyAsync(u => u.Id == userId, cancellationToken);
-    }
-
-    private async Task<bool> PostExists(CreateCommentCommandRequest request, CancellationToken cancellationToken)
+    private async Task<bool> PostExists(Guid postId, CancellationToken cancellationToken)
     {
         return await _dbContext.Posts
-            .AnyAsync(post => post.Id == request.PostId, cancellationToken: cancellationToken);
+            .AnyAsync(post => post.Id == postId, cancellationToken: cancellationToken);
     }
 }
