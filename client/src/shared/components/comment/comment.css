@@ -1,1 +1,41 @@
+/* Minimal Comment Styles */
+.comment-item {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: hsl(var(--b1));
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--b3));
+}
 
+.comment-item.reply {
+  margin-left: 1rem;
+  border-left: 2px solid hsl(var(--p) / 0.2);
+  background-color: hsl(var(--b2));
+}
+
+/* Hide actions by default, show on hover for specific comment */
+.comment-item .flex.gap-1 {
+  display: none;
+}
+
+/* Show actions on hover - but only for the direct comment being hovered */
+.comment-item:hover .flex.gap-1 {
+  display: flex;
+}
+
+/* Hide actions when hovering over nested comments */
+.comment-item:hover .comment-item .flex.gap-1 {
+  display: none;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .comment-item.reply {
+    margin-left: 0.5rem;
+  }
+  
+  /* Always show actions on mobile */
+  .comment-item .flex.gap-1 {
+    display: flex;
+  }
+}
