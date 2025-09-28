@@ -8,6 +8,11 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {TopicPill} from '../../shared/components/topic-pill/topic-pill';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-csharp';
+import 'prismjs/components/prism-go';
+import 'prismjs/components/prism-python';
+
 import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism-tomorrow.css';
 
