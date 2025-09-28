@@ -11,7 +11,7 @@ public class PostSummaryDto
     public required string Description { get; init; }
     public required List<TopicDto> Topics { get; set; }
     public DateTime CreatedOn { get; init; }
-    public string? ThumbnailUrl { get; set; }
+    public string? Thumbnail { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public PostStatus Status { get; init; }
 }

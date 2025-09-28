@@ -12,6 +12,6 @@ public class PostDto
     public DateTime CreatedOn { get; init; }
     public required string Content { get; init; }
     public List<Comment>? MainComments { get; init; }
-    public string? ThumbnailUrl { get; set; }
+    public string? Thumbnail { get; set; }
     public PostStatus Status { get; init; }
 }

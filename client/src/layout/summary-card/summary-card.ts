@@ -9,4 +9,10 @@ import {PostSummaryDto} from '../../Types/PostSummary';
 })
 export class SummaryCard {
   @Input({required: true}) post: PostSummaryDto | undefined;
+
+  onImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    // The fallback placeholder will be shown instead
+  }
 }

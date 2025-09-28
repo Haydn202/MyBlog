@@ -29,7 +29,7 @@ public class UpdatePost(UpdatePostCommandRequest request) : IRequest<PostSummary
             // Update basic properties
             post.Title = request.Request.Title;
             post.Description = request.Request.Description;
-            post.ThumbnailUrl = request.Request.ThumbnailUrl;
+            post.Thumbnail = request.Request.Thumbnail;
             post.Content = request.Request.Content;
             post.Status = request.Request.Status;
             

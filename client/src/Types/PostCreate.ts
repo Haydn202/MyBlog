@@ -3,7 +3,7 @@ import { TopicColor } from './TopicColor';
 export interface PostCreateDto {
   title: string;
   description: string;
-  thumbnailUrl?: string | null;
+  thumbnail?: string | null;
   content: string;
   topicIds: string[];
   status: PostStatus;
@@ -13,7 +13,7 @@ export interface PostUpdateDto {
   id: string;
   title: string;
   description: string;
-  thumbnailUrl?: string | null;
+  thumbnail?: string | null;
   content: string;
   topicIds: string[];
   status: PostStatus;
@@ -27,7 +27,7 @@ export interface PostDto {
   createdOn: string;
   content: string;
   mainComments?: any[] | null;
-  thumbnailUrl?: string | null;
+  thumbnail?: string | null;
   status: PostStatus;
 }
 

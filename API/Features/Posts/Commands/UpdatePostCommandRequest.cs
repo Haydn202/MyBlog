@@ -14,7 +14,7 @@ public class UpdatePostCommandRequest
     [StringLength(1000, MinimumLength = 3)]
     public required string Description { get; set; } 
     
-    public string? ThumbnailUrl { get; set; }
+    public string? Thumbnail { get; set; }
     public DateTime CreatedOn { get; set; } = DateTime.Now;
     
     public required string Content { get; set; }

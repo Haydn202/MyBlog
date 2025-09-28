@@ -250,6 +250,33 @@
                 }
               </div>
 
+              <!-- Thumbnail Image -->
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text font-semibold">Thumbnail Image</span>
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  (change)="onThumbnailChange($event)"
+                  class="file-input file-input-bordered w-full" />
+                
+                <!-- Thumbnail Preview -->
+                @if (postForm.get('thumbnail')?.value) {
+                  <div class="mt-4">
+                    <label class="label">
+                      <span class="label-text-alt">Preview:</span>
+                    </label>
+                    <div class="w-full max-w-xs">
+                      <img 
+                        [src]="postForm.get('thumbnail')?.value" 
+                        [alt]="postForm.get('title')?.value || 'Thumbnail preview'"
+                        class="w-full h-auto rounded-lg shadow-sm object-cover max-h-48">
+                    </div>
+                  </div>
+                }
+              </div>
+
               <!-- Status and Topics Row -->
               <div class="grid grid-cols-1 gap-4">
                 <!-- Topics -->

@@ -15,7 +15,7 @@ import 'prismjs/themes/prism-tomorrow.css';
   selector: 'app-post',
   imports: [CommonModule, TopicPill],
   templateUrl: './post.html',
-  styleUrls: ['./post.css'] // note: fixed typo from styleUrl -> styleUrls
+  styleUrls: ['./post.css']
 })
 export class Post implements OnInit, AfterViewInit {
   private route = inject(ActivatedRoute);
@@ -37,6 +37,8 @@ export class Post implements OnInit, AfterViewInit {
     const postId = this.route.snapshot.paramMap.get('id');
     if (postId) {
       this.loadPost(postId);
+
+      setTimeout(() => this.highlightCode(), 100);
     } else {
       this.errorMessage.set('Post ID not found');
       this.isLoading.set(false);
@@ -50,16 +52,12 @@ export class Post implements OnInit, AfterViewInit {
     this.postsService.getPost(postId).subscribe({
       next: (post) => {
         this.post.set(post);
-        // Render safe HTML
+
         this.postContentSafe = this.sanitizer.bypassSecurityTrustHtml(post.content);
         this.isLoading.set(false);
-        this.highlighted = false; // reset highlighting flag
-        
-        // Highlight syntax after content is loaded
-        setTimeout(() => this.highlightCode(), 100);
+        this.highlighted = false;
       },
       error: (error) => {
-        console.error('Error loading post:', error);
         this.errorMessage.set('Failed to load post. Please try again.');
         this.isLoading.set(false);
       }
@@ -67,7 +65,7 @@ export class Post implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    setTimeout(() => this.highlightCode(), 200);
+    this.highlightCode()
   }
 
   private highlightCode() {

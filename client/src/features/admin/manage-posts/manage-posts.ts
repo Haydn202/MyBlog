@@ -62,6 +62,7 @@ export class ManagePosts implements OnInit {
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       description: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(1000)]],
+      thumbnail: [''],
       topicIds: [[], Validators.required]
     });
   }
@@ -81,6 +82,7 @@ export class ManagePosts implements OnInit {
     this.postForm.reset({
       title: '',
       description: '',
+      thumbnail: '',
       topicIds: []
     });
     this.errorMessage.set(null);
@@ -109,6 +111,7 @@ export class ManagePosts implements OnInit {
     this.postForm.patchValue({
       title: post.title,
       description: post.description,
+      thumbnail: post.thumbnail || '',
       topicIds: post.topics.map(t => t.id)
     });
     this.editorContent.set(post.content);
@@ -185,6 +188,7 @@ export class ManagePosts implements OnInit {
     this.postForm.reset({
       title: '',
       description: '',
+      thumbnail: '',
       topicIds: []
     });
     this.errorMessage.set(null);
@@ -275,5 +279,19 @@ export class ManagePosts implements OnInit {
   getTopicColorHex(topic: TopicDto): string {
     const colorOption = TopicColorOptions.find(c => c.value === topic.color);
     return colorOption?.hex || '#6b7280';
+  }
+
+  onThumbnailChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        this.postForm.patchValue({ thumbnail: result });
+      };
+      reader.readAsDataURL(file);
+    }
   }
 }
