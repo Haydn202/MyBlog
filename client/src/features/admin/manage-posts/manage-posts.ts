@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from '../../../core/services/toast.service';
 import { TopicPill } from '../../../shared/components/topic-pill/topic-pill';
+import { Thumbnail } from '../../../shared/components/thumbnail/thumbnail';
 import { TopicColorOptions } from '../../../Types/TopicColor';
 import { ConfirmationService } from '../../../core/services/confirmation.service';
 
@@ -21,7 +22,8 @@ import { ConfirmationService } from '../../../core/services/confirmation.service
     FormsModule,
     ReactiveFormsModule,
     TextEditor,
-    TopicPill
+    TopicPill,
+    Thumbnail
   ],
   templateUrl: './manage-posts.html',
   styleUrl: './manage-posts.css'

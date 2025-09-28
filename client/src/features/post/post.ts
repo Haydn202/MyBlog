@@ -4,6 +4,7 @@ import { PostsService } from '../../core/services/posts.service';
 import { PostDto } from '../../Types/PostCreate';
 import { CommonModule } from '@angular/common';
 import { TopicPill } from '../../shared/components/topic-pill/topic-pill';
+import { Thumbnail } from '../../shared/components/thumbnail/thumbnail';
 import { TopicColorOptions } from '../../Types/TopicColor';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import Prism from 'prismjs';
@@ -13,7 +14,7 @@ import 'prismjs/themes/prism-tomorrow.css';
 
 @Component({
   selector: 'app-post',
-  imports: [CommonModule, TopicPill],
+  imports: [CommonModule, TopicPill, Thumbnail],
   templateUrl: './post.html',
   styleUrls: ['./post.css']
 })

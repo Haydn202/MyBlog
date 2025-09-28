@@ -268,10 +268,11 @@
                       <span class="label-text-alt">Preview:</span>
                     </label>
                     <div class="w-full max-w-xs">
-                      <img 
-                        [src]="postForm.get('thumbnail')?.value" 
+                      <app-thumbnail 
+                        [thumbnail]="postForm.get('thumbnail')?.value" 
                         [alt]="postForm.get('title')?.value || 'Thumbnail preview'"
-                        class="w-full h-auto rounded-lg shadow-sm object-cover max-h-48">
+                        size="md">
+                      </app-thumbnail>
                     </div>
                   </div>
                 }
