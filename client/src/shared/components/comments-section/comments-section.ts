@@ -16,32 +16,32 @@ import { AccountService } from '../../../core/services/account.service';
 })
 export class CommentsSection implements OnInit {
   @Input({ required: true }) postId!: string;
-  
+
   private commentsService = inject(CommentsService);
   private toastService = inject(ToastService);
   private accountService = inject(AccountService);
   private fb = inject(FormBuilder);
-  
+
   comments = signal<CommentDto[]>([]);
   isLoading = signal(false);
   isSubmitting = signal(false);
-  
+
   commentForm!: FormGroup;
-  
+
   ngOnInit() {
     this.initializeForm();
     this.loadComments();
   }
-  
+
   private initializeForm() {
     this.commentForm = this.fb.group({
       message: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(1000)]]
     });
   }
-  
+
   private loadComments() {
     this.isLoading.set(true);
-    
+
     this.commentsService.getCommentsByPostId(this.postId).subscribe({
       next: (result) => {
         this.comments.set(result.items);
@@ -54,23 +54,23 @@ export class CommentsSection implements OnInit {
       }
     });
   }
-  
+
   submitComment() {
     if (this.commentForm.valid) {
       this.isSubmitting.set(true);
-      
+
       const currentUser = this.accountService.currentUser();
       if (!currentUser) {
         this.toastService.error('You must be logged in to comment.');
         this.isSubmitting.set(false);
         return;
       }
-      
+
       const commentData: CreateCommentDto = {
         message: this.commentForm.value.message,
         userId: currentUser.id
       };
-      
+
       this.commentsService.createComment(this.postId, commentData).subscribe({
         next: (newComment) => {
           this.toastService.success('Comment posted successfully!');
@@ -86,12 +86,12 @@ export class CommentsSection implements OnInit {
       });
     }
   }
-  
+
   onCommentUpdated() {
     // Reload comments when a comment is updated
     this.loadComments();
   }
-  
+
   onCommentDeleted() {
     // Reload comments when a comment is deleted
     this.loadComments();
