@@ -513,7 +513,6 @@ build/Release
 
 # Gatsby files
 .cache/
-public
 
 # Yarn v2
 .yarn/cache
