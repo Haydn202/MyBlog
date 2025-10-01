@@ -7,20 +7,19 @@
 
   <!-- New Comment Form -->
   <div class="mb-8">
-    <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
-      <label class="label mb-2">
-        <span class="label-text font-semibold">Add a Comment</span>
-      </label>
-
-      <div class="join">
-        <div>
-          <label class="input validator join-item">
-            <input type="text" placeholder="Share your thoughts..." required formControlName="message"/>
+    <label class="label mb-2">
+      <span class="label-text font-semibold">Add a Comment</span>
+    </label>
+    <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="flex flex-col gap-2">
+      <div class="join w-full">
+        <div class="flex-1">
+          <label class="input validator join-item w-full">
+            <input type="text" placeholder="Share your thoughts..." required formControlName="message" class="w-full"/>
           </label>
         </div>
         <button
           type="submit"
-          class="btn btn-primary join-item"
+          class="btn btn-primary join-item flex-shrink-0"
           [disabled]="isSubmitting()">
           @if (isSubmitting()) {
             <span class="loading loading-spinner loading-sm"></span>
