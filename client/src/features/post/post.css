@@ -2,15 +2,22 @@
 .prose {
   color: inherit;
   max-width: none;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 /* Override typography plugin colors to match DaisyUI theme */
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
   color: inherit;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .prose p {
   color: inherit;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .prose strong {

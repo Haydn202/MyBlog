@@ -74,44 +74,44 @@ export class Post implements OnInit, AfterViewInit {
       console.log('postContentRef not available yet');
       return;
     }
-    
+
     const element = this.postContentRef.nativeElement as HTMLElement;
     console.log('Starting syntax highlighting...');
     console.log('Element:', element);
-    
+
     const codeBlocks = element.querySelectorAll('pre[data-language]');
     console.log('Found code blocks:', codeBlocks.length);
 
     codeBlocks.forEach((preElement, index) => {
       const htmlElement = preElement as HTMLElement;
       const language = htmlElement.getAttribute('data-language');
-      
+
       console.log(`Code block ${index}:`, {
         language: language,
         textContent: htmlElement.textContent?.substring(0, 100)
       });
-      
+
       if (language && language !== 'plain') {
         htmlElement.classList.add(`language-${language}`);
-        
+
         Prism.highlightElement(htmlElement);
         console.log(`Highlighted as ${language}`);
       }
     });
-    
+
     const codeElements = element.querySelectorAll('pre code, code');
     console.log('Found code elements:', codeElements.length);
-    
+
     codeElements.forEach((codeElement, index) => {
       const htmlElement = codeElement as HTMLElement;
       const parentPre = htmlElement.closest('pre');
       const language = parentPre?.getAttribute('data-language') || 'javascript';
-      
+
       console.log(`Code element ${index}:`, {
         language: language,
         textContent: htmlElement.textContent?.substring(0, 100)
       });
-      
+
       if (language && language !== 'plain') {
         htmlElement.classList.add(`language-${language}`);
         Prism.highlightElement(htmlElement);

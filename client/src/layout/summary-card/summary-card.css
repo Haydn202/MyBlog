@@ -17,14 +17,12 @@
 
 /* Smooth expand/collapse animation */
 .card .expanded-content {
-  max-height: 0;
   opacity: 0;
   transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
   overflow: hidden;
 }
 
 .card .expanded-content:not(.hidden) {
-  max-height: 2000px;
   opacity: 1;
 }
 
@@ -32,14 +30,21 @@
 .prose {
   color: inherit;
   max-width: none;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
   color: inherit;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .prose p {
   color: inherit;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .prose strong {
