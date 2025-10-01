@@ -1,0 +1,14 @@
+/* Duck Avatar Component Styles */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar img {
+  transition: transform 0.2s ease-in-out;
+}
+
+.avatar:hover img {
+  transform: scale(1.05);
+}

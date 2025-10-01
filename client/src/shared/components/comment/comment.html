@@ -2,9 +2,9 @@
   <!-- Comment Header -->
   <div class="flex items-start justify-between mb-2">
     <div class="flex items-center gap-2">
-      <div class="avatar placeholder">
-        <div class="bg-neutral text-neutral-content rounded-full w-8 h-8">
-          <span class="text-xs">{{ (comment.userName || 'A').charAt(0) }}</span>
+      <div class="avatar">
+        <div class="w-8 h-8 rounded-full">
+          <img src="/assets/icons/Duck.svg" alt="user avatar" class="w-full h-full object-cover rounded-full">
         </div>
       </div>
       <div class="flex flex-col">
@@ -12,23 +12,23 @@
         <span class="text-xs text-base-content/60">{{ formatDate(comment.createdOn) }}</span>
       </div>
     </div>
-    
+
     <!-- Actions -->
     <div class="flex gap-1">
-      <button 
+      <button
         class="btn btn-ghost btn-xs"
         (click)="startReply()"
         [disabled]="isLoading()">
         Reply
       </button>
       @if (isCurrentUserAuthor()) {
-        <button 
+        <button
           class="btn btn-ghost btn-xs"
           (click)="startEdit()"
           [disabled]="isLoading()">
           Edit
         </button>
-        <button 
+        <button
           class="btn btn-ghost btn-xs text-error hover:bg-error hover:text-error-content"
           (click)="deleteComment()"
           [disabled]="isLoading()">
@@ -37,7 +37,7 @@
       }
     </div>
   </div>
-  
+
   <!-- Comment Content -->
   <div class="mb-3">
     @if (isEditing()) {
@@ -48,8 +48,8 @@
           rows="2"
           placeholder="Edit your comment..."></textarea>
         <div class="flex gap-2 mt-2">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             class="btn btn-primary btn-xs"
             [disabled]="editForm.invalid || isLoading()">
             @if (isLoading()) {
@@ -58,8 +58,8 @@
               Save
             }
           </button>
-          <button 
-            type="button" 
+          <button
+            type="button"
             class="btn btn-ghost btn-xs"
             (click)="cancelEdit()"
             [disabled]="isLoading()">
@@ -71,7 +71,7 @@
       <p class="text-sm text-base-content whitespace-pre-wrap">{{ comment.message }}</p>
     }
   </div>
-  
+
   <!-- Reply Form -->
   @if (isReplying()) {
     <div class="bg-base-200 rounded-lg p-3 mb-3">
@@ -82,8 +82,8 @@
           rows="2"
           placeholder="Write a reply..."></textarea>
         <div class="flex gap-2 mt-2">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             class="btn btn-primary btn-xs"
             [disabled]="replyForm.invalid || isLoading()">
             @if (isLoading()) {
@@ -92,8 +92,8 @@
               Post Reply
             }
           </button>
-          <button 
-            type="button" 
+          <button
+            type="button"
             class="btn btn-ghost btn-xs"
             (click)="cancelReply()"
             [disabled]="isLoading()">
@@ -103,13 +103,13 @@
       </form>
     </div>
   }
-  
+
   <!-- Nested Replies -->
   @if (comment.replies && comment.replies.length > 0) {
     <div class="ml-4 space-y-3">
       @for (reply of comment.replies; track reply.id) {
-        <app-comment 
-          [comment]="reply" 
+        <app-comment
+          [comment]="reply"
           [postId]="postId"
           [isReply]="true"
           [parentCommentId]="isReply ? parentCommentId : comment.id"
