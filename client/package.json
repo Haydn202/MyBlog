@@ -29,18 +29,8 @@
     "@angular/platform-browser": "^20.2.0",
     "@angular/router": "^20.2.0",
     "@tailwindcss/postcss": "^4.1.12",
-    "@tiptap/core": "^3.4.2",
-    "@tiptap/extension-code-block": "^3.4.2",
-    "@tiptap/extension-code-block-lowlight": "^3.4.2",
-    "@tiptap/extension-image": "^3.4.2",
-    "@tiptap/extension-link": "^3.4.2",
-    "@tiptap/extension-table": "^3.4.2",
-    "@tiptap/extensions": "^3.4.2",
-    "@tiptap/starter-kit": "^3.4.2",
     "highlight.js": "^11.11.1",
-    "ngx-editor": "^19.0.0-beta.1",
     "ngx-quill": "^28.0.1",
-    "ngx-tiptap": "^14.0.1",
     "prismjs": "^1.30.0",
     "quill": "^2.0.3",
     "rxjs": "~7.8.0",
@@ -63,9 +53,9 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "lowlight": "^3.3.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }
