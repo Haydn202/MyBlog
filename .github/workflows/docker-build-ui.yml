@@ -10,7 +10,7 @@ on:
 
 env:
     REGISTRY: docker.io
-    IMAGE_NAME: ${{ github.repository }}-api
+    IMAGE_NAME: ${{ github.repository }}-ui
 
 jobs:
   build-and-push:
