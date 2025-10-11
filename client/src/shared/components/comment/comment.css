@@ -1,6 +1,5 @@
 /* Minimal Comment Styles */
 .comment-item {
-  margin-bottom: 1rem;
   padding: 0.75rem;
   background-color: hsl(var(--b1));
   border-radius: 0.5rem;
@@ -13,18 +12,18 @@
   background-color: hsl(var(--b2));
 }
 
-/* Hide actions by default, show on hover for specific comment */
-.comment-item .flex.gap-1 {
+/* Hide actions by default */
+.comment-item > div > .flex.gap-1 {
   display: none;
 }
 
-/* Show actions on hover - but only for the direct comment being hovered */
-.comment-item:hover .flex.gap-1 {
+/* Show actions on hover for the specific comment being hovered */
+.comment-item:hover > div > .flex.gap-1 {
   display: flex;
 }
 
-/* Hide actions when hovering over nested comments */
-.comment-item:hover .comment-item .flex.gap-1 {
+/* Hide parent actions when hovering over nested replies */
+.comment-item:has(.comment-item:hover) > div > .flex.gap-1 {
   display: none;
 }
 
