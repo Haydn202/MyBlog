@@ -17,7 +17,6 @@ export class InitService {
         }
       }),
       catchError(() => {
-        // Silently fail if no refresh token exists
         return of(null);
       })
     );

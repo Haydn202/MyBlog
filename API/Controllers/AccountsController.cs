@@ -73,6 +73,24 @@ public class AccountsController(
         return Ok(response);
     }
 
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<ActionResult> Logout()
+    {
+        var userId = GetCurrentUserId();
+        var command = new Logout(userId);
+        var response = await sender.Send(command);
+
+        if (!response)
+        {
+            return BadRequest("Failed to logout");
+        }
+
+        Response.Cookies.Delete("refreshToken");
+
+        return Ok();
+    }
+
     private void SetRefreshTokenCookie(string refreshToken, DateTime expires)
     {
         var cookieOptions = new CookieOptions

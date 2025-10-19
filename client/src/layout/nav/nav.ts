@@ -18,6 +18,14 @@ export class Nav implements OnInit {
   protected accountService = inject(AccountService);
 
   Logout() {
-    this.accountService.logout();
+    this.accountService.logout().subscribe({
+      next: () => {
+        console.log('Logged out successfully');
+      },
+      error: (error) => {
+        console.error('Error logging out:', error);
+        this.accountService.currentUser.set(null);
+      }
+    });
   }
 }

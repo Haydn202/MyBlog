@@ -64,7 +64,7 @@ export class AccountService {
           if (user) this.setCurrentUser(user);
         },
         error: (error) => {
-          this.logout();
+          this.logout().subscribe();
           console.error('Error refreshing token', error);
         },
       });
@@ -76,7 +76,11 @@ export class AccountService {
   }
 
   logout() {
-    this.currentUser.set(null);
+    return this.http.post(`${this.baseUrl}/accounts/logout`, {}, { withCredentials: true }).pipe(
+      tap(() => {
+        this.currentUser.set(null);
+      })
+    );
   }
 
   hasRole(...allowedRoles: string[]) {

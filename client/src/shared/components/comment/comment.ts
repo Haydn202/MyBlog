@@ -98,7 +98,6 @@ export class Comment {
       
       this.commentsService.createReply(this.postId, targetCommentId, replyData).subscribe({
         next: (newReply) => {
-          this.toastService.success('Reply posted successfully!');
           this.isReplying.set(false);
           this.replyForm.reset();
           this.isLoading.set(false);
@@ -126,7 +125,6 @@ export class Comment {
         this.commentsService.updateReply(this.postId, this.directParentCommentId, this.comment.id, updateData).subscribe({
           next: (updatedReply) => {
             this.comment.message = updatedReply.message;
-            this.toastService.success('Reply updated successfully!');
             this.isEditing.set(false);
             this.isLoading.set(false);
             this.commentUpdated.emit();
@@ -141,7 +139,6 @@ export class Comment {
         this.commentsService.updateComment(this.postId, this.comment.id, updateData).subscribe({
           next: (updatedComment) => {
             this.comment.message = updatedComment.message;
-            this.toastService.success('Comment updated successfully!');
             this.isEditing.set(false);
             this.isLoading.set(false);
             this.commentUpdated.emit();
@@ -174,7 +171,6 @@ export class Comment {
       if (this.isReply && this.directParentCommentId) {
         this.commentsService.deleteReply(this.postId, this.directParentCommentId, this.comment.id).subscribe({
           next: () => {
-            this.toastService.success('Reply deleted successfully!');
             this.isLoading.set(false);
             this.commentDeleted.emit();
           },
@@ -187,7 +183,6 @@ export class Comment {
       } else {
         this.commentsService.deleteComment(this.postId, this.comment.id).subscribe({
           next: () => {
-            this.toastService.success('Comment deleted successfully!');
             this.isLoading.set(false);
             this.commentDeleted.emit();
           },
