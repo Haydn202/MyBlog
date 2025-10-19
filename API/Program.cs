@@ -27,8 +27,11 @@ app.UseAuthorization();
 
 app.UseExceptionHandler();
 
-app.UseCors(options => options.AllowAnyMethod().AllowAnyHeader()
-    .WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:4201", "https://localhost:4201"));
+app.UseCors(options => options
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials()
+    .WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:4201", "https://localhost:4201").WithExposedHeaders("X-Refresh-Token"));
 
 app.MapControllers();
 

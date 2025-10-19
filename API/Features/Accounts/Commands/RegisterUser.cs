@@ -46,12 +46,22 @@ public class RegisterUser(RegisterUserCommandRequest request) : IRequest<UserDto
                 return null;
             }
 
+            // Generate tokens
+            var accessToken = await tokenService.CreateToken(user);
+            var refreshToken = await tokenService.CreateRefreshToken();
+            
+            // Update user's refresh token
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpires = DateTime.UtcNow.AddDays(7);
+            await userManager.UpdateAsync(user);
+
             var userDto = new UserDto
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                Token = await tokenService.CreateToken(user),
+                Token = accessToken,
                 Email = user.Email,
+                RefreshToken = refreshToken
             };
             
             return userDto;

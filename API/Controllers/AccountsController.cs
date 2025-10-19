@@ -23,6 +23,11 @@ public class AccountsController(
             return BadRequest("Something went wrong");
         }
         
+        if (response.RefreshToken is not null)
+        {
+            SetRefreshTokenCookie(response.RefreshToken, DateTime.UtcNow.AddDays(7));
+        }
+        
         return Ok(response);
     }
 
@@ -33,6 +38,50 @@ public class AccountsController(
         var command = new Login(mapper.Map<LoginCommandRequest>(loginDto));
         var response = await sender.Send(command);
         
+        if (response.RefreshToken is not null)
+        {
+            SetRefreshTokenCookie(response.RefreshToken, DateTime.UtcNow.AddDays(7));
+        }
+        
         return Ok(response);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("refresh-token")]
+    public async Task<ActionResult<UserDto>> RefreshToken()
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+        if (refreshToken is null)
+        {
+            return NoContent();
+        }
+
+        var commandRequest = new RefreshTokenCommandRequest { RefreshToken = refreshToken };
+        var command = new RefreshToken(commandRequest);
+        var response = await sender.Send(command);
+
+        if (response is null)
+        {
+            return Unauthorized("Invalid or expired refresh token");
+        }
+
+        if (response.RefreshToken is not null)
+        {
+            SetRefreshTokenCookie(response.RefreshToken, DateTime.UtcNow.AddDays(7));
+        }
+
+        return Ok(response);
+    }
+
+    private void SetRefreshTokenCookie(string refreshToken, DateTime expires)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = expires,
+        };
+        Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
     }
 }

@@ -11,7 +11,6 @@ export class AccountService {
   currentUser = signal<User | null>(null);
   baseUrl = 'http://localhost:5285';
 
-  // Computed property for role
   role = computed(() => {
     const user = this.currentUser();
     if (!user?.token) return null;
@@ -20,7 +19,6 @@ export class AccountService {
     return payload?.role || null;
   });
 
-  // Computed for multiple roles (if JWT has array)
   roles = computed(() => {
     const user = this.currentUser();
     if (!user?.token) return [];
@@ -30,37 +28,61 @@ export class AccountService {
   });
 
   login(creds: LoginCreds) {
-    return this.http.post<User>(`${this.baseUrl}/accounts/login`, creds).pipe(
+    return this.http.post<User>(`${this.baseUrl}/accounts/login`, creds, { withCredentials: true }).pipe(
       tap(user => {
-        if (user) this.setCurrentUser(user);
+        if (user) {
+          this.setCurrentUser(user);
+          this.startRefreshTokenTimer();
+        }
       })
     );
   }
 
   signup(creds: RegisterCreds) {
-    return this.http.post<User>(`${this.baseUrl}/accounts/register`, creds).pipe(
+    return this.http.post<User>(`${this.baseUrl}/accounts/register`, creds, { withCredentials: true }).pipe(
+      tap(user => {
+        if (user) {
+          this.setCurrentUser(user);
+          this.startRefreshTokenTimer();
+        }
+      })
+    );
+  }
+
+  refreshToken() {
+    return this.http.post<User>(`${this.baseUrl}/accounts/refresh-token`, {}, { withCredentials: true }).pipe(
       tap(user => {
         if (user) this.setCurrentUser(user);
       })
     );
   }
 
-  private setCurrentUser(user: User) {
-    localStorage.setItem('user', JSON.stringify(user));
+  startRefreshTokenTimer() {
+    setInterval(() => {
+      this.refreshToken().subscribe({
+        next: (user) => {
+          if (user) this.setCurrentUser(user);
+        },
+        error: (error) => {
+          this.logout();
+          console.error('Error refreshing token', error);
+        },
+      });
+    }, 5 * 60 * 1000);
+  }
+
+  setCurrentUser(user: User) {
     this.currentUser.set(user);
   }
 
   logout() {
-    localStorage.removeItem('user');
     this.currentUser.set(null);
   }
 
-  /** Check if current user has at least one of the allowed roles */
   hasRole(...allowedRoles: string[]) {
     return this.roles().some((r: string) => allowedRoles.includes(r));
   }
 
-  /** Decode JWT payload */
   private decodeJwt(token: string): any {
     try {
       const payload = token.split('.')[1];
