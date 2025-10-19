@@ -1,6 +1,6 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {firstValueFrom, map, tap} from 'rxjs';
+import {firstValueFrom, map, Observable, of, tap} from 'rxjs';
 import {PaginatedResult} from '../../Types/PaginatedResult';
 import {PostSummaryDto} from '../../Types/PostSummary';
 import {PostCreateDto, PostDto, PostUpdateDto} from '../../Types/PostCreate';
@@ -13,6 +13,7 @@ export class PostsService {
   private http = inject(HttpClient);
   baseUrl = 'http://localhost:5285';
   public posts = signal<PostSummaryDto[]>([]);
+  private postCache = new Map<string, PostDto>();
 
   getPosts(filters?: PostFilters){
     let url = `${this.baseUrl}/posts/All`;
@@ -75,15 +76,34 @@ export class PostsService {
     return this.http.post<PostSummaryDto>(`${this.baseUrl}/posts`, postData);
   }
 
-  getPost(id: string) {
-    return this.http.get<PostDto>(`${this.baseUrl}/posts/${id}`);
+  getPost(id: string): Observable<PostDto> {
+    const cached = this.postCache.get(id);
+    if (cached) {
+      return of(cached);
+    }
+
+    return this.http.get<PostDto>(`${this.baseUrl}/posts/${id}`).pipe(
+      tap(post => this.postCache.set(id, post))
+    );
+  }
+
+  clearPostCache(id?: string) {
+    if (id) {
+      this.postCache.delete(id);
+    } else {
+      this.postCache.clear();
+    }
   }
 
   updatePost(id: string, postData: PostUpdateDto) {
-    return this.http.put<PostSummaryDto>(`${this.baseUrl}/posts/${id}`, postData);
+    return this.http.put<PostSummaryDto>(`${this.baseUrl}/posts/${id}`, postData).pipe(
+      tap(() => this.clearPostCache(id))
+    );
   }
 
   deletePost(id: string) {
-    return this.http.delete(`${this.baseUrl}/posts/${id}`);
+    return this.http.delete(`${this.baseUrl}/posts/${id}`).pipe(
+      tap(() => this.clearPostCache(id))
+    );
   }
 }

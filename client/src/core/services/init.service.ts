@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { AccountService } from './account.service';
-import { tap } from 'rxjs';
+import { tap, catchError, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +15,10 @@ export class InitService {
           this.accountService.setCurrentUser(user);
           this.accountService.startRefreshTokenTimer();
         }
+      }),
+      catchError(() => {
+        // Silently fail if no refresh token exists
+        return of(null);
       })
     );
   }
