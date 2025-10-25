@@ -1,0 +1,37 @@
+@for (item of skeletonArray; track $index) {
+  <div class="card bg-base-100 w-3/4 mb-12 mx-auto shadow-xl">
+    <div class="p-6">
+      <div class="flex gap-6 items-start">
+        <!-- Thumbnail Skeleton -->
+        <div class="skeleton flex-shrink-0 w-32 h-32"></div>
+
+        <!-- Content Skeleton -->
+        <div class="flex flex-col flex-1 gap-3 w-full">
+          <!-- Title Skeleton -->
+          <div class="skeleton h-8 w-3/4"></div>
+
+          <!-- Description Skeleton -->
+          <div class="space-y-2">
+            <div class="skeleton h-4 w-full"></div>
+            <div class="skeleton h-4 w-5/6"></div>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <!-- Meta Information Skeleton -->
+            <div class="flex flex-wrap items-center gap-4 mt-2">
+                <div class="skeleton h-4 w-32"></div>
+                <div class="skeleton h-4 w-24"></div>
+            </div>
+
+            <!-- Topics Skeleton -->
+            <div class="flex gap-2 mt-2">
+                <div class="skeleton h-6 w-16 rounded-full"></div>
+                <div class="skeleton h-6 w-20 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+

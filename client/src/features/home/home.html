@@ -1,7 +1,37 @@
-<ul class="flex flex-col gap-6 list-none px-4 sm:px-6 md:px-12 pt-8">
-  @for (post of postService.posts(); track post.id) {
-    <li>
-      <app-summary-card [post]="post"></app-summary-card>
-    </li>
+<div class="px-4 sm:px-6 md:px-12 pt-8 pb-12">
+  <!-- Initial Loading State -->
+  @if (isLoading() && postService.posts().length === 0) {
+    <app-post-skeleton [count]="3"></app-post-skeleton>
   }
-</ul>
+
+  <!-- Posts List -->
+  <ul class="flex flex-col gap-6 list-none">
+    @for (post of postService.posts(); track post.id) {
+      <li>
+        <app-summary-card [post]="post"></app-summary-card>
+      </li>
+    }
+  </ul> 
+
+  <!-- Loading More Indicator -->
+  @if (isLoadingMore()) {
+    <app-post-skeleton [count]="2"></app-post-skeleton>
+  }
+
+  <!-- End of Posts Message -->
+  @if (!isLoading() && !isLoadingMore() && !hasMorePosts() && postService.posts().length > 0) {
+    <div class="text-center py-8">
+      <p class="text-base-content/50 text-sm">You've reached the end! No more posts to load.</p>
+    </div>
+  }
+
+  <!-- No Posts Message -->
+  @if (!isLoading() && postService.posts().length === 0) {
+    <div class="text-center py-12">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-base-content/30 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <p class="text-base-content/70">No posts available yet.</p>
+    </div>
+  }
+</div>

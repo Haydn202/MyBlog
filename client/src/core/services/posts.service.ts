@@ -1,10 +1,11 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {firstValueFrom, map, Observable, of, tap} from 'rxjs';
-import {PaginatedResult} from '../../Types/PaginatedResult';
+import {PaginatedResult, PaginationMetadata} from '../../Types/PaginatedResult';
 import {PostSummaryDto} from '../../Types/PostSummary';
 import {PostCreateDto, PostDto, PostUpdateDto} from '../../Types/PostCreate';
 import {PostFilters} from '../../Types/PostFilters';
+import {PagingParams} from '../../Types/PagingParams';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +14,22 @@ export class PostsService {
   private http = inject(HttpClient);
   baseUrl = 'http://localhost:5285';
   public posts = signal<PostSummaryDto[]>([]);
+  public paginationMetadata = signal<PaginationMetadata | null>(null);
   private postCache = new Map<string, PostDto>();
 
-  getPosts(filters?: PostFilters){
+  getPosts(filters?: PostFilters, pagingParams?: PagingParams){
     let url = `${this.baseUrl}/posts/All`;
     const params = new URLSearchParams();
 
+    // Add paging parameters
+    if (pagingParams?.pageNumber) {
+      params.append('pageNumber', pagingParams.pageNumber.toString());
+    }
+    if (pagingParams?.pageSize) {
+      params.append('pageSize', pagingParams.pageSize.toString());
+    }
+
+    // Add filters
     if (filters) {
       if (filters.status) {
         params.append('status', filters.status);
@@ -36,19 +47,26 @@ export class PostsService {
     }
 
     return this.http.get<PaginatedResult<PostSummaryDto>>(url).pipe(
-      map(response => {
-        return response.items;
-      }),
-      tap(posts => {
-        this.posts.set(posts);
+      tap(response => {
+        this.posts.set(response.items);
+        this.paginationMetadata.set(response.metadata);
       })
     );
   }
 
-  getPublicPosts(filters?: PostFilters){
+  getPublicPosts(filters?: PostFilters, pagingParams?: PagingParams, appendResults: boolean = false){
     let url = `${this.baseUrl}/posts`;
     const params = new URLSearchParams();
 
+    // Add paging parameters
+    if (pagingParams?.pageNumber) {
+      params.append('pageNumber', pagingParams.pageNumber.toString());
+    }
+    if (pagingParams?.pageSize) {
+      params.append('pageSize', pagingParams.pageSize.toString());
+    }
+
+    // Add filters
     if (filters) {
       if (filters.topicId) {
         params.append('topicId', filters.topicId);
@@ -63,11 +81,15 @@ export class PostsService {
     }
 
     return this.http.get<PaginatedResult<PostSummaryDto>>(url).pipe(
-      map(response => {
-        return response.items;
-      }),
-      tap(posts => {
-        this.posts.set(posts);
+      tap(response => {
+        if (appendResults) {
+          // Append new posts to existing ones for infinite scroll
+          this.posts.set([...this.posts(), ...response.items]);
+        } else {
+          // Replace posts (normal behavior)
+          this.posts.set(response.items);
+        }
+        this.paginationMetadata.set(response.metadata);
       })
     );
   }

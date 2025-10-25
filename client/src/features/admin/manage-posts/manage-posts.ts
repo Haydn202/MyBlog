@@ -14,6 +14,8 @@ import { TopicPill } from '../../../shared/components/topic-pill/topic-pill';
 import { Thumbnail } from '../../../shared/components/thumbnail/thumbnail';
 import { TopicColorOptions } from '../../../Types/TopicColor';
 import { ConfirmationService } from '../../../core/services/confirmation.service';
+import { Pagination } from '../../../shared/components/pagination/pagination';
+import { PagingParams } from '../../../Types/PagingParams';
 
 @Component({
   selector: 'app-manage-posts',
@@ -23,7 +25,8 @@ import { ConfirmationService } from '../../../core/services/confirmation.service
     ReactiveFormsModule,
     TextEditor,
     TopicPill,
-    Thumbnail
+    Thumbnail,
+    Pagination
   ],
   templateUrl: './manage-posts.html',
   styleUrl: './manage-posts.css'
@@ -38,12 +41,17 @@ export class ManagePosts implements OnInit {
 
   posts = this.postsService.posts;
   topics = this.topicsService.topics;
+  paginationMetadata = this.postsService.paginationMetadata;
 
   // Filter properties
   currentFilters = signal<PostFilters>({});
   statusFilter = signal<string>('');
   topicFilter = signal<string>('');
   searchFilter = signal<string>('');
+
+  // Pagination properties
+  currentPage = signal<number>(1);
+  pageSize = signal<number>(10);
 
   // Selected post and form
   selectedPost = signal<PostDto | null>(null);
@@ -70,7 +78,11 @@ export class ManagePosts implements OnInit {
   }
 
   private loadPosts() {
-    this.postsService.getPosts(this.currentFilters()).subscribe();
+    const pagingParams: PagingParams = {
+      pageNumber: this.currentPage(),
+      pageSize: this.pageSize()
+    };
+    this.postsService.getPosts(this.currentFilters(), pagingParams).subscribe();
   }
 
   private loadTopics() {
@@ -267,6 +279,7 @@ export class ManagePosts implements OnInit {
     }
 
     this.currentFilters.set(filters);
+    this.currentPage.set(1); // Reset to first page when filtering
     this.loadPosts();
   }
 
@@ -275,6 +288,12 @@ export class ManagePosts implements OnInit {
     this.topicFilter.set('');
     this.searchFilter.set('');
     this.currentFilters.set({});
+    this.currentPage.set(1); // Reset to first page when clearing filters
+    this.loadPosts();
+  }
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
     this.loadPosts();
   }
 

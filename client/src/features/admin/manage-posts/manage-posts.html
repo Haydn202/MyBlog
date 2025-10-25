@@ -131,13 +131,21 @@
           </div>
         }
       </div>
+
+      <!-- Pagination -->
+      <div class="flex-shrink-0 border-t border-base-300">
+        <app-pagination 
+          [metadata]="paginationMetadata()" 
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
     </div>
 
     <!-- Right Panel - Post Editor -->
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col overflow-y-auto">
       @if (selectedPost() || isCreatingNew()) {
         <!-- Post Editor -->
-        <div class="flex-1 flex flex-col">
+        <div class="flex-1 flex flex-col overflow-y-auto">
           <!-- Editor Header -->
           <div class="flex-shrink-0 bg-base-100 border-b border-base-300 p-4">
             <div class="flex items-center justify-between">

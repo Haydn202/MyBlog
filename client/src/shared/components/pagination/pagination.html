@@ -1,0 +1,45 @@
+@if (metadata()) {
+  <div class="pagination-container">
+    <div class="pagination-info">
+      Showing {{ (metadata()!.currentPage - 1) * metadata()!.pageSize + 1 }} 
+      to {{ Math.min(metadata()!.currentPage * metadata()!.pageSize, metadata()!.totalCount) }} 
+      of {{ metadata()!.totalCount }} results
+    </div>
+    
+    <div class="pagination-controls">
+      <button 
+        class="pagination-btn"
+        [disabled]="metadata()!.currentPage === 1"
+        (click)="onPageChange(metadata()!.currentPage - 1)"
+        aria-label="Previous page">
+        <svg class="pagination-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      @for (page of getPageNumbers(); track page) {
+        @if (page === -1) {
+          <span class="pagination-ellipsis">...</span>
+        } @else {
+          <button 
+            class="pagination-btn"
+            [class.active]="page === metadata()!.currentPage"
+            (click)="onPageChange(page)">
+            {{ page }}
+          </button>
+        }
+      }
+
+      <button 
+        class="pagination-btn"
+        [disabled]="metadata()!.currentPage === metadata()!.totalPages"
+        (click)="onPageChange(metadata()!.currentPage + 1)"
+        aria-label="Next page">
+        <svg class="pagination-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+}
+
