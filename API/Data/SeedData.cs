@@ -1,4 +1,5 @@
 using API.Entities;
+using API.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +7,7 @@ namespace API.Data;
 
 public class SeedData
 {
-    public static async Task InitialiseAdmin(UserManager<User> userManager)
+    public static async Task InitialiseAdmin(UserManager<User> userManager, AdminSettings adminSettings)
     {
         if (await userManager.Users.AnyAsync())
         {
@@ -15,11 +16,11 @@ public class SeedData
 
         var user = new User
         {
-            UserName = "admin",
-            Email = "Admin@email.com",
+            UserName = adminSettings.UserName,
+            Email = adminSettings.Email,
             EmailConfirmed = true,
         };
-        var res = await userManager.CreateAsync(user, "admin");
+        var res = await userManager.CreateAsync(user, adminSettings.Password);
 
         if (!res.Succeeded)
         {

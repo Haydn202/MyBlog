@@ -2,6 +2,7 @@ using API.Behaviours;
 using API.Data;
 using API.Entities;
 using API.Extensions;
+using API.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,8 +43,14 @@ try
     var context = services.GetRequiredService<DataContext>();
     await context.Database.MigrateAsync();
 
+    var adminSettings = builder.Configuration.GetSection("AdminSettings").Get<AdminSettings>();
+    if (adminSettings == null)
+    {
+        throw new Exception("AdminSettings configuration is missing");
+    }
+
     var userManager = services.GetRequiredService<UserManager<User>>();
-    await SeedData.InitialiseAdmin(userManager);
+    await SeedData.InitialiseAdmin(userManager, adminSettings);
 }
 catch (Exception e)
 {
