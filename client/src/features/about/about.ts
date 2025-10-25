@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrl: './about.css'
 })
 export class About {
-
+  githubUrl = 'https://github.com/Haydn202';
+  linkedInUrl = 'https://www.linkedin.com/in/haydn-thomson-b7b967109/';
 }
