@@ -2,6 +2,7 @@ import { inject, Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LoginCreds, RegisterCreds, User } from '../../Types/user';
 import { tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { tap } from 'rxjs';
 export class AccountService {
   private http = inject(HttpClient);
   currentUser = signal<User | null>(null);
-  baseUrl = 'http://localhost:5285';
+  private baseUrl = environment.apiUrl;
 
   role = computed(() => {
     const user = this.currentUser();

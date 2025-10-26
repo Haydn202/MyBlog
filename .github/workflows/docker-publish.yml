@@ -33,6 +33,8 @@ jobs:
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          CLIENT_URL: ${{ secrets.CLIENT_URL }}
+          CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3

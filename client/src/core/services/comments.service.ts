@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CommentDto, CreateCommentDto, UpdateCommentDto, CreateReplyDto, UpdateReplyDto, ReplyDto } from '../../Types/Comment';
 import { PaginatedResult } from '../../Types/PaginatedResult';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommentsService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:5285/Posts';
+  private baseUrl = `${environment.apiUrl}/Posts`;
 
   getCommentsByPostId(postId: string, pageNumber: number = 1, pageSize: number = 10): Observable<PaginatedResult<CommentDto>> {
     return this.http.get<PaginatedResult<CommentDto>>(`${this.baseUrl}/${postId}/comments?pageNumber=${pageNumber}&pageSize=${pageSize}`);

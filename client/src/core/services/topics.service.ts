@@ -2,13 +2,14 @@ import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {map, tap} from 'rxjs';
 import {TopicDto, TopicCreateDto, TopicUpdateDto} from '../../Types/TopicManagement';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TopicsService {
   private http = inject(HttpClient);
-  baseUrl = 'http://localhost:5285';
+  private baseUrl = environment.apiUrl;
   public topics = signal<TopicDto[]>([]);
 
   getTopics() {

@@ -6,13 +6,14 @@ import {PostSummaryDto} from '../../Types/PostSummary';
 import {PostCreateDto, PostDto, PostUpdateDto} from '../../Types/PostCreate';
 import {PostFilters} from '../../Types/PostFilters';
 import {PagingParams} from '../../Types/PagingParams';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostsService {
   private http = inject(HttpClient);
-  baseUrl = 'http://localhost:5285';
+  private baseUrl = environment.apiUrl;
   public posts = signal<PostSummaryDto[]>([]);
   public paginationMetadata = signal<PaginationMetadata | null>(null);
   private postCache = new Map<string, PostDto>();

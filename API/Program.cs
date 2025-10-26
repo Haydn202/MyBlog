@@ -8,6 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load CORS settings from configuration
+var corsSettings = builder.Configuration.GetSection("CorsSettings").Get<CorsSettings>();
+if (corsSettings == null || corsSettings.AllowedOrigins.Length == 0)
+{
+    throw new Exception("CorsSettings configuration is missing or empty");
+}
+
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 
@@ -32,7 +39,8 @@ app.UseCors(options => options
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()
-    .WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:4201", "https://localhost:4201").WithExposedHeaders("X-Refresh-Token"));
+    .WithOrigins(corsSettings.AllowedOrigins)
+    .WithExposedHeaders("X-Refresh-Token"));
 
 app.MapControllers();
 
