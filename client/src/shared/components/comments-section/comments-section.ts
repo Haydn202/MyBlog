@@ -73,7 +73,6 @@ export class CommentsSection implements OnInit {
 
       this.commentsService.createComment(this.postId, commentData).subscribe({
         next: (newComment) => {
-          this.toastService.success('Comment posted successfully!');
           this.commentForm.reset();
           this.loadComments(); // Reload all comments
           this.isSubmitting.set(false);
