@@ -1,11 +1,3 @@
-variable "app_name" {}
-variable "resource_group_name" {}
-variable "location" { default = "australiaeast" }
-variable "acr_name" {}
-variable "container_image" {}
-variable "container_tag" { default = "latest" }
-variable "keyvault_id" {}
-
 resource "azurerm_app_service_plan" "plan" {
   name                = "${var.app_name}-plan"
   location            = var.location
