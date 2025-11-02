@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  ACR_NAME: rubberduckdiaries-acr
+  ACR_NAME: rubberduckdiariesacr
   IMAGE_NAME: ${{ github.repository }}-ui
 
 jobs:
