@@ -74,7 +74,7 @@ export class CommentsSection implements OnInit {
       this.commentsService.createComment(this.postId, commentData).subscribe({
         next: (newComment) => {
           this.commentForm.reset();
-          this.loadComments(); // Reload all comments
+          this.loadComments();
           this.isSubmitting.set(false);
         },
         error: (error) => {
@@ -87,12 +87,10 @@ export class CommentsSection implements OnInit {
   }
 
   onCommentUpdated() {
-    // Reload comments when a comment is updated
     this.loadComments();
   }
 
   onCommentDeleted() {
-    // Reload comments when a comment is deleted
     this.loadComments();
   }
 }

@@ -1,4 +1,4 @@
-name: Docker Build and Push
+name: Docker Build and Push to ACR
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  REGISTRY: docker.io
+  ACR_NAME: rubberduckdiaries-acr
   IMAGE_NAME: ${{ github.repository }}-api
 
 jobs:
@@ -36,17 +36,20 @@ jobs:
           CLIENT_URL: ${{ secrets.CLIENT_URL }}
           CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+      - name: Log in to Azure
+        uses: azure/login@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Log in to Azure Container Registry
+        run: |
+          az acr login --name ${{ env.ACR_NAME }}
 
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix=sha-
@@ -57,4 +60,4 @@ jobs:
           context: ./API
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }} 
+          labels: ${{ steps.meta.outputs.labels }}
