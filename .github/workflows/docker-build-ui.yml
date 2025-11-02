@@ -10,7 +10,7 @@ on:
 
 env:
   ACR_NAME: rubberduckdiariesacr
-  IMAGE_NAME: ${{ github.repository }}-ui
+  IMAGE_NAME: rubberduckdiaries-ui
 
 jobs:
   build-and-push:

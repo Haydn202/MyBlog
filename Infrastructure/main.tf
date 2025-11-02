@@ -19,15 +19,68 @@ resource "azurerm_resource_group" "rg" {
   location = "australiaeast"
 }
 
-module "my_acr" {
+module "acr" {
   source              = "./modules/acr"
-  name                = "rubberduckdiaries-acr"
-  resource_group_name = "RG-RubberDuckDiaries"
-  location            = "Australia East"
+  name                = "rubberduckdiariesacr"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
   sku                 = "Basic"
   admin_enabled       = true
   tags = {
     project = "RubberDuckDiaries"
     env     = "prod"
+  }
+}
+
+module "keyvault" {
+  source              = "./modules/keyvault"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  tenant_id           = "845c67a0-eb3f-4822-be54-4f78446fc867"
+  sp_object_id        = "26a5e7bc-b888-4aa1-b248-a1750a80f0b4"
+  keyvault_name       = "rubberduckdiaries-kv"
+}
+
+module "sql_db" {
+  source               = "./modules/sql"
+  resource_group_name  = azurerm_resource_group.rg.name
+  location             = azurerm_resource_group.rg.location
+  sql_server_name      = "rubberduckdiaries-sqlserver"
+  sql_db_name          = "RubberDuckDiariesDB"
+  sql_admin            = "adminuser"
+  keyvault_id          = module.keyvault.keyvault_id
+}
+
+module "api_app_service" {
+  source              = "./modules/app_service"
+  name                = "rubberduckdiaries-api"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  app_service_plan_id = module.app_service_plan.id
+
+  container_image     = "myacr.azurecr.io/myblog-api:latest"
+  container_registry  = module.acr.login_server
+  registry_username   = module.acr.admin_username
+  registry_password   = module.acr.admin_password
+
+  app_settings = {
+    "DATABASE_CONNECTION_STRING" = module.sql_db.db_connection_string
+  }
+}
+
+module "ui_app_service" {
+  source              = "./modules/app_service"
+  name                = "rubberduckdiaries-ui"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  app_service_plan_id = module.app_service_plan.id
+
+  container_image     = "myacr.azurecr.io/myblog-ui:latest"
+  container_registry  = module.acr.login_server
+  registry_username   = module.acr.admin_username
+  registry_password   = module.acr.admin_password
+
+  app_settings = {
+    "API_URL" = "https://${module.api_app_service.default_site_hostname}"
   }
 }
