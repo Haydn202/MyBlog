@@ -1,0 +1,7 @@
+# Terraform Variables Example
+# Copy this file to terraform.tfvars and fill in the values
+# DO NOT commit terraform.tfvars to source control!
+
+admin_username = "admin"
+admin_email    = "admin@example.com"
+admin_password = "YourSecurePassword123!"

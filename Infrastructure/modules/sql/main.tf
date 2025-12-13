@@ -2,8 +2,8 @@
 
 # Generate a strong SQL admin password
 resource "random_password" "sql_password" {
-  length           = 16
-  special          = true
+  length  = 16
+  special = true
 }
 
 # SQL Server
@@ -21,9 +21,17 @@ resource "azurerm_mssql_server" "sqlserver" {
 
 # SQL Database
 resource "azurerm_mssql_database" "sqldatabase" {
-  name                = var.sql_db_name
-  server_id           = azurerm_mssql_server.sqlserver.id
-  sku_name            = "S0"
+  name      = var.sql_db_name
+  server_id = azurerm_mssql_server.sqlserver.id
+  sku_name  = "S0"
+}
+
+# Allow Azure services to access SQL Server
+resource "azurerm_mssql_firewall_rule" "allow_azure_services" {
+  name             = "AllowAzureServices"
+  server_id        = azurerm_mssql_server.sqlserver.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
 }
 
 # Local connection string
@@ -38,7 +46,7 @@ resource "azurerm_key_vault_secret" "db_connection" {
   key_vault_id = var.keyvault_id
 
   lifecycle {
-    ignore_changes  = [value]   # don't overwrite manual edits
+    ignore_changes  = [value] # don't overwrite manual edits
     prevent_destroy = true
   }
 }

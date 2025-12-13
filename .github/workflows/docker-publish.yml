@@ -11,6 +11,7 @@ on:
 env:
   ACR_NAME: rubberduckdiariesacr
   IMAGE_NAME: rubberduckdiaries-api
+  KEY_VAULT_NAME: rubberduckdiaries-kv
 
 jobs:
   build-and-push:
@@ -19,27 +20,35 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get secrets from Key Vault
+        uses: azure/keyvault-secrets@v1
+        with:
+          keyvault: ${{ env.KEY_VAULT_NAME }}
+          secrets: 'TokenKey, AdminUsername, AdminEmail, AdminPassword, ClientUrl, DbConnectionString'
+        id: keyvault
 
       - name: Replace tokens in appsettings.json
         uses: cschleiden/replace-tokens@v1
         with:
           files: '["API/appsettings.json"]'
         env:
-          TOKEN_KEY: ${{ secrets.TOKEN_KEY }}
-          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
-          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-          CLIENT_URL: ${{ secrets.CLIENT_URL }}
-          CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
-
-      - name: Log in to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          TOKEN_KEY: ${{ steps.keyvault.outputs.TokenKey }}
+          ADMIN_USERNAME: ${{ steps.keyvault.outputs.AdminUsername }}
+          ADMIN_EMAIL: ${{ steps.keyvault.outputs.AdminEmail }}
+          ADMIN_PASSWORD: ${{ steps.keyvault.outputs.AdminPassword }}
+          CLIENT_URL: ${{ steps.keyvault.outputs.ClientUrl }}
+          CONNECTION_STRING: ${{ steps.keyvault.outputs.DbConnectionString }}
 
       - name: Log in to Azure Container Registry
         run: |

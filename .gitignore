@@ -589,3 +589,7 @@ override.tf.json
 terraform.rc
 
 tfplan
+
+# Terraform variable files with secrets
+*.tfvars
+!*.tfvars.example

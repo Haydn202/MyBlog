@@ -11,6 +11,7 @@ on:
 env:
   ACR_NAME: rubberduckdiariesacr
   IMAGE_NAME: rubberduckdiaries-ui
+  KEY_VAULT_NAME: rubberduckdiaries-kv
 
 jobs:
   build-and-push:
@@ -19,25 +20,33 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get secrets from Key Vault
+        uses: azure/keyvault-secrets@v1
+        with:
+          keyvault: ${{ env.KEY_VAULT_NAME }}
+          secrets: 'ApiUrl'
+        id: keyvault
 
       - name: Replace API URL in environment
         uses: cschleiden/replace-tokens@v1
         with:
           files: '["client/src/environments/environment.prod.ts"]'
         env:
-          API_URL: ${{ secrets.API_URL }}
+          API_URL: ${{ steps.keyvault.outputs.ApiUrl }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Log in to Azure Container Registry
         run: |
