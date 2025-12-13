@@ -32,7 +32,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Get secrets from Key Vault
-        uses: azure/keyvault-secrets@v1
+        uses: Azure/get-keyvault-secrets@v1
         with:
           keyvault: ${{ env.KEY_VAULT_NAME }}
           secrets: 'ApiUrl'
