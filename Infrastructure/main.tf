@@ -51,6 +51,20 @@ module "keyvault" {
 }
 
 # =============================================================================
+# Key Vault Access for GitHub Actions Service Principal
+# =============================================================================
+resource "azurerm_key_vault_access_policy" "github_actions" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = "845c67a0-eb3f-4822-be54-4f78446fc867"
+  object_id    = "14ce4211-fcc7-4e91-9fa3-b4cc20c46eda" # GitHub Actions SP
+
+  secret_permissions = [
+    "Get",
+    "List"
+  ]
+}
+
+# =============================================================================
 # Generate Token Key for JWT
 # =============================================================================
 resource "random_password" "token_key" {
