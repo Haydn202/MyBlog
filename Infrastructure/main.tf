@@ -166,17 +166,33 @@ module "ui_container" {
 }
 
 # =============================================================================
-# URL Secrets in Key Vault (depend on containers)
+# Azure Front Door (HTTPS + CDN)
+# =============================================================================
+module "frontdoor" {
+  source              = "./modules/frontdoor"
+  profile_name        = "rubberduckdiaries-fd"
+  resource_group_name = azurerm_resource_group.rg.name
+  ui_origin_hostname  = module.ui_container.fqdn
+  api_origin_hostname = module.api_container.fqdn
+
+  tags = {
+    project = "RubberDuckDiaries"
+    env     = "prod"
+  }
+}
+
+# =============================================================================
+# URL Secrets in Key Vault (use Front Door HTTPS URLs)
 # =============================================================================
 resource "azurerm_key_vault_secret" "api_url" {
   name         = "ApiUrl"
-  value        = module.api_container.url
+  value        = module.frontdoor.api_url
   key_vault_id = module.keyvault.keyvault_id
 }
 
 resource "azurerm_key_vault_secret" "client_url" {
   name         = "ClientUrl"
-  value        = module.ui_container.url
+  value        = module.frontdoor.ui_url
   key_vault_id = module.keyvault.keyvault_id
 }
 
@@ -204,24 +220,24 @@ variable "admin_password" {
 # =============================================================================
 # Outputs
 # =============================================================================
-output "api_url" {
-  description = "URL of the API Container"
-  value       = module.api_container.url
+output "ui_url" {
+  description = "HTTPS URL of the UI (via Front Door)"
+  value       = module.frontdoor.ui_url
 }
 
-output "ui_url" {
-  description = "URL of the UI Container"
+output "api_url" {
+  description = "HTTPS URL of the API (via Front Door)"
+  value       = module.frontdoor.api_url
+}
+
+output "ui_container_url" {
+  description = "Direct URL of the UI Container (HTTP)"
   value       = module.ui_container.url
 }
 
-output "api_fqdn" {
-  description = "FQDN of the API Container"
-  value       = module.api_container.fqdn
-}
-
-output "ui_fqdn" {
-  description = "FQDN of the UI Container"
-  value       = module.ui_container.fqdn
+output "api_container_url" {
+  description = "Direct URL of the API Container (HTTP)"
+  value       = module.api_container.url
 }
 
 output "acr_login_server" {
