@@ -113,66 +113,70 @@ module "sql_db" {
 }
 
 # =============================================================================
-# App Service Plan (Shared for both UI and API)
+# API Container Instance
 # =============================================================================
-module "app_service_plan" {
-  source              = "./modules/appserviceplan"
+module "api_container" {
+  source              = "./modules/containerinstance"
+  container_name      = "rubberduckdiaries-api"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  plan_name           = "rubberduckdiaries-plan"
-  sku_name            = "B1"
-}
-
-# =============================================================================
-# API App Service
-# =============================================================================
-module "api_app_service" {
-  source              = "./modules/appservice"
-  app_name            = "rubberduckdiaries-api"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  app_service_plan_id = module.app_service_plan.id
-  container_image     = "rubberduckdiaries-api"
-  container_tag       = "latest"
-  container_registry  = module.acr.login_server
+  dns_name_label      = "rubberduckdiaries-api"
+  registry_server     = module.acr.login_server
   registry_username   = module.acr.admin_username
   registry_password   = module.acr.admin_password
+  image_name          = "rubberduckdiaries-api"
+  image_tag           = "latest"
+  cpu                 = 1
+  memory              = 1.5
+  container_port      = 8080
 
-  app_settings = {
+  environment_variables = {
     "ASPNETCORE_ENVIRONMENT" = "Production"
+    "ASPNETCORE_URLS"        = "http://+:8080"
+  }
+
+  tags = {
+    project = "RubberDuckDiaries"
+    env     = "prod"
   }
 }
 
 # =============================================================================
-# UI App Service
+# UI Container Instance
 # =============================================================================
-module "ui_app_service" {
-  source              = "./modules/appservice"
-  app_name            = "rubberduckdiaries"
+module "ui_container" {
+  source              = "./modules/containerinstance"
+  container_name      = "rubberduckdiaries-ui"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  app_service_plan_id = module.app_service_plan.id
-  container_image     = "rubberduckdiaries-ui"
-  container_tag       = "latest"
-  container_registry  = module.acr.login_server
+  dns_name_label      = "rubberduckdiaries"
+  registry_server     = module.acr.login_server
   registry_username   = module.acr.admin_username
   registry_password   = module.acr.admin_password
+  image_name          = "rubberduckdiaries-ui"
+  image_tag           = "latest"
+  cpu                 = 0.5
+  memory              = 0.5
+  container_port      = 80
 
-  app_settings = {}
+  tags = {
+    project = "RubberDuckDiaries"
+    env     = "prod"
+  }
 }
 
 # =============================================================================
-# URL Secrets in Key Vault (depend on app services)
+# URL Secrets in Key Vault (depend on containers)
 # =============================================================================
 resource "azurerm_key_vault_secret" "api_url" {
   name         = "ApiUrl"
-  value        = "https://${module.api_app_service.default_hostname}"
+  value        = module.api_container.url
   key_vault_id = module.keyvault.keyvault_id
 }
 
 resource "azurerm_key_vault_secret" "client_url" {
   name         = "ClientUrl"
-  value        = "https://${module.ui_app_service.default_hostname}"
+  value        = module.ui_container.url
   key_vault_id = module.keyvault.keyvault_id
 }
 
@@ -201,13 +205,23 @@ variable "admin_password" {
 # Outputs
 # =============================================================================
 output "api_url" {
-  description = "URL of the API App Service"
-  value       = "https://${module.api_app_service.default_hostname}"
+  description = "URL of the API Container"
+  value       = module.api_container.url
 }
 
 output "ui_url" {
-  description = "URL of the UI App Service"
-  value       = "https://${module.ui_app_service.default_hostname}"
+  description = "URL of the UI Container"
+  value       = module.ui_container.url
+}
+
+output "api_fqdn" {
+  description = "FQDN of the API Container"
+  value       = module.api_container.fqdn
+}
+
+output "ui_fqdn" {
+  description = "FQDN of the UI Container"
+  value       = module.ui_container.fqdn
 }
 
 output "acr_login_server" {

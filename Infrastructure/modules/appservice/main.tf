@@ -19,6 +19,7 @@ resource "azurerm_linux_web_app" "app" {
     "DOCKER_REGISTRY_SERVER_URL"          = "https://${var.container_registry}"
     "DOCKER_REGISTRY_SERVER_USERNAME"     = var.registry_username
     "DOCKER_REGISTRY_SERVER_PASSWORD"     = var.registry_password
+    "WEBSITES_PORT"                       = "8080"
   }, var.app_settings)
 
   identity {

@@ -1,10 +1,79 @@
 services:
+  # =============================================================================
+  # SQL Server Database
+  # =============================================================================
   sql:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sql
+    container_name: rubberduck-sql
     environment:
       - MSSQL_SA_PASSWORD=Password@1
       - ACCEPT_EULA=Y
     platform: linux/amd64
     ports:
-      - 1433:1433
+      - "1433:1433"
+    volumes:
+      - sql-data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "Password@1" -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - rubberduck-network
+
+  # =============================================================================
+  # API (.NET 8)
+  # =============================================================================
+  api:
+    build:
+      context: ./API
+      dockerfile: Dockerfile
+    container_name: rubberduck-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sql,1433;Database=RubberDuckDiariesDB;User Id=sa;Password=Password@1;TrustServerCertificate=True;
+      - TokenKey=super-secret-local-development-token-key-that-is-at-least-64-characters-long!!
+      - AdminSettings__UserName=admin
+      - AdminSettings__Email=admin@localhost.com
+      - AdminSettings__Password=Admin123!
+      - CorsSettings__AllowedOrigins__0=http://localhost:4200
+      - CorsSettings__AllowedOrigins__1=http://localhost
+    ports:
+      - "5001:8080"
+    depends_on:
+      sql:
+        condition: service_healthy
+    networks:
+      - rubberduck-network
+
+  # =============================================================================
+  # UI (Angular + nginx)
+  # =============================================================================
+  ui:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        - API_URL=http://localhost:5001
+    container_name: rubberduck-ui
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - rubberduck-network
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  sql-data:
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  rubberduck-network:
+    driver: bridge

@@ -71,6 +71,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Restart App Service to pull new image
+      - name: Restart Container Instance to pull new image
         run: |
-          az webapp restart --name rubberduckdiaries --resource-group RG-RubberDuckDiaries
+          az container restart --name rubberduckdiaries-ui --resource-group RG-RubberDuckDiaries
