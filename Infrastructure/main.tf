@@ -128,11 +128,11 @@ module "api_container" {
   image_tag           = "latest"
   cpu                 = 1
   memory              = 1.5
-  container_port      = 8080
+  container_port      = 80
 
   environment_variables = {
     "ASPNETCORE_ENVIRONMENT" = "Production"
-    "ASPNETCORE_URLS"        = "http://+:8080"
+    "ASPNETCORE_URLS"        = "http://+:80"
   }
 
   tags = {
