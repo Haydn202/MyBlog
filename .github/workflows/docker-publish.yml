@@ -70,3 +70,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Restart App Service to pull new image
+        run: |
+          az webapp restart --name rubberduckdiaries-api --resource-group RG-RubberDuckDiaries
