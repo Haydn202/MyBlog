@@ -69,5 +69,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "/client"
+          app_artifact_location: "dist/client/browser"
           output_location: "dist/client/browser"
           skip_app_build: true
