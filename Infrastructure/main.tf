@@ -126,8 +126,8 @@ module "api_container" {
   registry_password   = module.acr.admin_password
   image_name          = "rubberduckdiaries-api"
   image_tag           = "latest"
-  cpu                 = 1
-  memory              = 1.5
+  cpu                 = 0.5
+  memory              = 0.5
   container_port      = 80
 
   environment_variables = {
@@ -155,7 +155,7 @@ module "ui_container" {
   registry_password   = module.acr.admin_password
   image_name          = "rubberduckdiaries-ui"
   image_tag           = "latest"
-  cpu                 = 0.5
+  cpu                 = 0.25
   memory              = 0.5
   container_port      = 80
 
@@ -166,33 +166,17 @@ module "ui_container" {
 }
 
 # =============================================================================
-# Azure Front Door (HTTPS + CDN)
-# =============================================================================
-module "frontdoor" {
-  source              = "./modules/frontdoor"
-  profile_name        = "rubberduckdiaries-fd"
-  resource_group_name = azurerm_resource_group.rg.name
-  ui_origin_hostname  = module.ui_container.fqdn
-  api_origin_hostname = module.api_container.fqdn
-
-  tags = {
-    project = "RubberDuckDiaries"
-    env     = "prod"
-  }
-}
-
-# =============================================================================
-# URL Secrets in Key Vault (use Front Door HTTPS URLs)
+# URL Secrets in Key Vault (using custom domain via Cloudflare)
 # =============================================================================
 resource "azurerm_key_vault_secret" "api_url" {
   name         = "ApiUrl"
-  value        = module.frontdoor.api_url
+  value        = var.custom_domain != "" ? "https://api.${var.custom_domain}" : module.api_container.url
   key_vault_id = module.keyvault.keyvault_id
 }
 
 resource "azurerm_key_vault_secret" "client_url" {
   name         = "ClientUrl"
-  value        = module.frontdoor.ui_url
+  value        = var.custom_domain != "" ? "https://${var.custom_domain}" : module.ui_container.url
   key_vault_id = module.keyvault.keyvault_id
 }
 
@@ -217,27 +201,33 @@ variable "admin_password" {
   sensitive   = true
 }
 
+variable "custom_domain" {
+  description = "Custom domain for Cloudflare (e.g., rubberduckdiaries.com). Leave empty to use container URLs directly."
+  type        = string
+  default     = ""
+}
+
 # =============================================================================
 # Outputs
 # =============================================================================
 output "ui_url" {
-  description = "HTTPS URL of the UI (via Front Door)"
-  value       = module.frontdoor.ui_url
+  description = "URL of the UI (custom domain or container)"
+  value       = var.custom_domain != "" ? "https://${var.custom_domain}" : module.ui_container.url
 }
 
 output "api_url" {
-  description = "HTTPS URL of the API (via Front Door)"
-  value       = module.frontdoor.api_url
+  description = "URL of the API (custom domain or container)"
+  value       = var.custom_domain != "" ? "https://api.${var.custom_domain}" : module.api_container.url
 }
 
-output "ui_container_url" {
-  description = "Direct URL of the UI Container (HTTP)"
-  value       = module.ui_container.url
+output "ui_container_fqdn" {
+  description = "FQDN of the UI Container (for Cloudflare CNAME)"
+  value       = module.ui_container.fqdn
 }
 
-output "api_container_url" {
-  description = "Direct URL of the API Container (HTTP)"
-  value       = module.api_container.url
+output "api_container_fqdn" {
+  description = "FQDN of the API Container (for Cloudflare CNAME)"
+  value       = module.api_container.fqdn
 }
 
 output "acr_login_server" {

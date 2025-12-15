@@ -19,11 +19,14 @@ resource "azurerm_mssql_server" "sqlserver" {
   public_network_access_enabled = true
 }
 
-# SQL Database
+# SQL Database (Serverless - auto-pause when idle)
 resource "azurerm_mssql_database" "sqldatabase" {
-  name      = var.sql_db_name
-  server_id = azurerm_mssql_server.sqlserver.id
-  sku_name  = "S0"
+  name                        = var.sql_db_name
+  server_id                   = azurerm_mssql_server.sqlserver.id
+  sku_name                    = "GP_S_Gen5_1"
+  min_capacity                = 0.5
+  auto_pause_delay_in_minutes = 20
+  max_size_gb                 = 32
 }
 
 # Allow Azure services to access SQL Server
