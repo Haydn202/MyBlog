@@ -19,7 +19,7 @@ provider "azurerm" {
 # =============================================================================
 resource "azurerm_resource_group" "rg" {
   name     = "RG-RubberDuckDiaries"
-  location = "australiaeast"
+  location = "centralus"
 }
 
 # =============================================================================
@@ -45,8 +45,8 @@ module "keyvault" {
   source              = "./modules/keyvault"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  tenant_id           = "845c67a0-eb3f-4822-be54-4f78446fc867"
-  sp_object_id        = "26a5e7bc-b888-4aa1-b248-a1750a80f0b4"
+  tenant_id           = var.tenant_id
+  sp_object_id        = var.service_principal_object_id
   keyvault_name       = "rubberduckdiaries-kv"
 }
 
@@ -55,12 +55,28 @@ module "keyvault" {
 # =============================================================================
 resource "azurerm_key_vault_access_policy" "github_actions" {
   key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = "845c67a0-eb3f-4822-be54-4f78446fc867"
-  object_id    = "14ce4211-fcc7-4e91-9fa3-b4cc20c46eda" # GitHub Actions SP
+  tenant_id    = var.tenant_id
+  object_id    = var.github_actions_object_id
 
   secret_permissions = [
     "Get",
     "List"
+  ]
+}
+
+# =============================================================================
+# Key Vault Access for Current User (Terraform)
+# =============================================================================
+resource "azurerm_key_vault_access_policy" "current_user" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = var.tenant_id
+  object_id    = var.current_user_object_id
+
+  secret_permissions = [
+    "Get",
+    "List",
+    "Set",
+    "Delete"
   ]
 }
 
@@ -142,28 +158,43 @@ module "api_container" {
 }
 
 # =============================================================================
-# UI Container Instance
+# UI Static Web App (Free tier - replaces container)
 # =============================================================================
-module "ui_container" {
-  source              = "./modules/containerinstance"
-  container_name      = "rubberduckdiaries-ui"
+module "ui_static_webapp" {
+  source              = "./modules/staticwebapp"
+  app_name            = "rubberduckdiaries-ui"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  dns_name_label      = "rubberduckdiaries"
-  registry_server     = module.acr.login_server
-  registry_username   = module.acr.admin_username
-  registry_password   = module.acr.admin_password
-  image_name          = "rubberduckdiaries-ui"
-  image_tag           = "latest"
-  cpu                 = 0.25
-  memory              = 0.5
-  container_port      = 80
 
   tags = {
     project = "RubberDuckDiaries"
     env     = "prod"
   }
 }
+
+# =============================================================================
+# UI Container Instance (Commented out - kept for reference/future use)
+# =============================================================================
+# module "ui_container" {
+#   source              = "./modules/containerinstance"
+#   container_name      = "rubberduckdiaries-ui"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   location            = azurerm_resource_group.rg.location
+#   dns_name_label      = "rubberduckdiaries"
+#   registry_server     = module.acr.login_server
+#   registry_username   = module.acr.admin_username
+#   registry_password   = module.acr.admin_password
+#   image_name          = "rubberduckdiaries-ui"
+#   image_tag           = "latest"
+#   cpu                 = 0.25
+#   memory              = 0.5
+#   container_port      = 80
+#
+#   tags = {
+#     project = "RubberDuckDiaries"
+#     env     = "prod"
+#   }
+# }
 
 # =============================================================================
 # URL Secrets in Key Vault (using custom domain via Cloudflare)
@@ -176,8 +207,15 @@ resource "azurerm_key_vault_secret" "api_url" {
 
 resource "azurerm_key_vault_secret" "client_url" {
   name         = "ClientUrl"
-  value        = var.custom_domain != "" ? "https://${var.custom_domain}" : module.ui_container.url
+  value        = var.custom_domain != "" ? "https://${var.custom_domain}" : module.ui_static_webapp.url
   key_vault_id = module.keyvault.keyvault_id
+}
+
+resource "azurerm_key_vault_secret" "static_webapp_api_key" {
+  name         = "StaticWebAppApiKey"
+  value        = module.ui_static_webapp.api_key
+  key_vault_id = module.keyvault.keyvault_id
+  depends_on   = [module.ui_static_webapp]
 }
 
 # =============================================================================
@@ -207,12 +245,36 @@ variable "custom_domain" {
   default     = ""
 }
 
+variable "tenant_id" {
+  description = "Azure AD tenant ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "service_principal_object_id" {
+  description = "Object ID of the service principal for Key Vault access"
+  type        = string
+  sensitive   = true
+}
+
+variable "github_actions_object_id" {
+  description = "Object ID of the GitHub Actions service principal"
+  type        = string
+  sensitive   = true
+}
+
+variable "current_user_object_id" {
+  description = "Object ID of the current user running Terraform"
+  type        = string
+  sensitive   = true
+}
+
 # =============================================================================
 # Outputs
 # =============================================================================
 output "ui_url" {
-  description = "URL of the UI (custom domain or container)"
-  value       = var.custom_domain != "" ? "https://${var.custom_domain}" : module.ui_container.url
+  description = "URL of the UI (custom domain or Static Web App)"
+  value       = var.custom_domain != "" ? "https://${var.custom_domain}" : module.ui_static_webapp.url
 }
 
 output "api_url" {
@@ -220,9 +282,15 @@ output "api_url" {
   value       = var.custom_domain != "" ? "https://api.${var.custom_domain}" : module.api_container.url
 }
 
-output "ui_container_fqdn" {
-  description = "FQDN of the UI Container (for Cloudflare CNAME)"
-  value       = module.ui_container.fqdn
+output "ui_static_webapp_hostname" {
+  description = "Hostname of the Static Web App (for Cloudflare CNAME)"
+  value       = module.ui_static_webapp.default_hostname
+}
+
+output "static_webapp_api_key" {
+  description = "API key for Static Web App deployment (add to GitHub Secrets)"
+  value       = module.ui_static_webapp.api_key
+  sensitive   = true
 }
 
 output "api_container_fqdn" {

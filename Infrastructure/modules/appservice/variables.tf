@@ -13,7 +13,7 @@ variable "resource_group_name" {
 variable "location" {
   description = "Azure region"
   type        = string
-  default     = "australiaeast"
+  default     = "centralus"
 }
 
 variable "app_service_plan_id" {

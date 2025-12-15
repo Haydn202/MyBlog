@@ -5,3 +5,14 @@
 admin_username = "admin"
 admin_email    = "admin@example.com"
 admin_password = "YourSecurePassword123!"
+
+# Custom domain for Cloudflare (leave empty to use container URLs directly)
+# Example: "rubberduckdiaries.com"
+custom_domain = ""
+
+# Azure AD Configuration
+# Get these values from Azure Portal or Azure CLI
+tenant_id                  = "YOUR_TENANT_ID"
+service_principal_object_id = "YOUR_SERVICE_PRINCIPAL_OBJECT_ID"
+github_actions_object_id    = "YOUR_GITHUB_ACTIONS_SP_OBJECT_ID"
+current_user_object_id      = "YOUR_USER_OBJECT_ID"

@@ -6,7 +6,7 @@ variable "resource_group_name" {
 variable "location" {
   description = "Azure region where Key Vault will be deployed"
   type        = string
-  default     = "australiaeast"
+  default     = "centralus"
 }
 
 variable "tenant_id" {
