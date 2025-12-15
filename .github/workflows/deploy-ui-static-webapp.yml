@@ -1,0 +1,58 @@
+name: Deploy UI to Static Web Apps
+
+on:
+  push:
+    branches: 
+      - master
+    paths:
+      - 'client/**'
+  workflow_dispatch:
+
+env:
+  KEY_VAULT_NAME: rubberduckdiaries-kv
+  STATIC_WEB_APP_NAME: rubberduckdiaries-ui
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get secrets from Key Vault
+        uses: Azure/get-keyvault-secrets@v1
+        with:
+          keyvault: ${{ env.KEY_VAULT_NAME }}
+          secrets: 'ApiUrl, StaticWebAppApiKey'
+        id: keyvault
+
+      - name: Replace API URL in environment
+        uses: cschleiden/replace-tokens@v1
+        with:
+          files: '["client/src/environments/environment.prod.ts"]'
+        env:
+          API_URL: ${{ steps.keyvault.outputs.ApiUrl }}
+
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ steps.keyvault.outputs.StaticWebAppApiKey }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/client"
+          output_location: "dist/client/browser"
+          skip_app_build: false
