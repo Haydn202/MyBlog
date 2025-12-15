@@ -76,7 +76,10 @@ resource "azurerm_key_vault_access_policy" "current_user" {
     "Get",
     "List",
     "Set",
-    "Delete"
+    "Delete",
+    "Recover",
+    "Backup",
+    "Restore"
   ]
 }
 
