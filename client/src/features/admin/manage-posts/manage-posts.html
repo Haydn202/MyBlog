@@ -134,8 +134,8 @@
 
       <!-- Pagination -->
       <div class="flex-shrink-0 border-t border-base-300">
-        <app-pagination 
-          [metadata]="paginationMetadata()" 
+        <app-pagination
+          [metadata]="paginationMetadata()"
           (pageChange)="onPageChange($event)">
         </app-pagination>
       </div>
@@ -169,7 +169,7 @@
                     }
                     {{ isCreatingNew() ? 'Save as Draft' : 'Save as Draft' }}
                   </button>
-                  
+
                   <!-- Dropdown Toggle -->
                   <div class="dropdown dropdown-end">
                     <div tabindex="0" role="button" class="btn btn-primary btn-sm rounded-l-none shadow-none">
@@ -179,7 +179,7 @@
                     </div>
                     <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                       <li>
-                        <button 
+                        <button
                           (click)="publishPost()"
                           [disabled]="!postForm.valid || !editorContent() || isLoading()"
                           class="gap-2">
@@ -191,7 +191,7 @@
                       </li>
                       @if (selectedPost() && !isCreatingNew()) {
                         <li>
-                          <button 
+                          <button
                             (click)="deletePost(selectedPost()!.id)"
                             [disabled]="isLoading()"
                             class="text-error gap-2">
@@ -209,7 +209,7 @@
                     </ul>
                   </div>
                 </div>
-                
+
                 <button
                   (click)="cancelEdit()"
                   class="btn btn-outline btn-sm">
@@ -268,7 +268,7 @@
                   accept="image/*"
                   (change)="onThumbnailChange($event)"
                   class="file-input file-input-bordered w-full" />
-                
+
                 <!-- Thumbnail Preview -->
                 @if (postForm.get('thumbnail')?.value) {
                   <div class="mt-4">
@@ -276,8 +276,8 @@
                       <span class="label-text-alt">Preview:</span>
                     </label>
                     <div class="w-full max-w-xs">
-                      <app-thumbnail 
-                        [thumbnail]="postForm.get('thumbnail')?.value" 
+                      <app-thumbnail
+                        [thumbnail]="postForm.get('thumbnail')?.value"
                         [alt]="postForm.get('title')?.value || 'Thumbnail preview'"
                         size="md">
                       </app-thumbnail>
@@ -303,8 +303,8 @@
                             [value]="topic.id"
                             (change)="onTopicChange(topic.id, $event)"
                             [checked]="postForm.get('topicIds')?.value?.includes(topic.id)" />
-                          <div 
-                            class="w-4 h-4 rounded-full" 
+                          <div
+                            class="w-4 h-4 rounded-full"
                             [style.background-color]="getTopicColorHex(topic)">
                           </div>
                           <span class="label-text text-sm">{{ topic.name }}</span>
@@ -347,10 +347,10 @@
 
                 @if (isPreviewMode()) {
                   <!-- Content Preview -->
-                  <div class="border border-base-300 rounded-lg p-4 bg-base-100 min-h-[500px]">
+                  <div class="border border-base-300 rounded-lg p-4 bg-base-100 min-h-[500px] overflow-hidden">
                     @if (editorContent()) {
-                      <article class="prose prose-base">
-                        <div [innerHTML]="editorContent()"></div>
+                      <article class="prose prose-base max-w-full">
+                        <div [innerHTML]="editorContent()" class="break-words"></div>
                       </article>
                     } @else {
                       <div class="text-center text-base-content/50 py-8">

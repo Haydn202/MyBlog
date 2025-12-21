@@ -3,7 +3,11 @@
 /* Content Preview Styling */
 .prose {
   color: hsl(var(--bc));
-  max-width: none;
+  max-width: 100%;
+  word-wrap: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: none;
 }
 
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
@@ -12,6 +16,9 @@
   line-height: 1.25;
   margin-top: 1.5em;
   margin-bottom: 0.5em;
+  word-wrap: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .prose h1 {
@@ -30,6 +37,9 @@
   margin-top: 1em;
   margin-bottom: 1em;
   line-height: 1.75;
+  word-wrap: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .prose ul, .prose ol {
@@ -64,6 +74,8 @@
   padding: 1em;
   border-radius: 0.5em;
   overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
   margin: 1.5em 0;
 }
 
@@ -87,12 +99,24 @@
   height: auto;
   border-radius: 0.5em;
   margin: 1em 0;
+  display: block;
 }
 
 .prose table {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   margin: 1.5em 0;
+  table-layout: auto;
+}
+
+.prose {
+  overflow-wrap: break-word;
+}
+
+.prose > * {
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .prose th, .prose td {
