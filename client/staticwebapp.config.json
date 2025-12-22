@@ -2,11 +2,10 @@
   "buildCommand": "npm run build",
   "outputLocation": "dist/client/browser",
   "appLocation": "/",
-  "routes": [
-    {
-      "route": "/*",
-      "serve": "/index.html",
-      "statusCode": 200
-    }
-  ]
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": [
+      "/*.{js,css,png,jpg,jpeg,gif,ico,svg,woff,woff2,ttf,eot,json}"
+    ]
+  }
 }
