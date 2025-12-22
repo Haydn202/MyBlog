@@ -1,10 +1,8 @@
 {
-  "buildCommand": "npm run build",
-  "outputLocation": "dist/client/browser",
-  "appLocation": "/",
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": [
+      "/assets/*",
       "/*.{js,css,png,jpg,jpeg,gif,ico,svg,woff,woff2,ttf,eot,json}"
     ]
   }
