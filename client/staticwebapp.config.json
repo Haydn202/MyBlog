@@ -1,5 +1,12 @@
 {
   "buildCommand": "npm run build",
   "outputLocation": "dist/client/browser",
-  "appLocation": "/"
+  "appLocation": "/",
+  "routes": [
+    {
+      "route": "/*",
+      "serve": "/index.html",
+      "statusCode": 200
+    }
+  ]
 }
