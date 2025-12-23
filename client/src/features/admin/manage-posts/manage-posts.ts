@@ -16,6 +16,7 @@ import { TopicColorOptions } from '../../../Types/TopicColor';
 import { ConfirmationService } from '../../../core/services/confirmation.service';
 import { Pagination } from '../../../shared/components/pagination/pagination';
 import { PagingParams } from '../../../Types/PagingParams';
+import { processContent } from '../../../core/utils/content-processor';
 
 @Component({
   selector: 'app-manage-posts',
@@ -226,11 +227,7 @@ export class ManagePosts implements OnInit {
    */
   getProcessedContent(): string {
     const content = this.editorContent();
-    if (!content) return '';
-
-    // Replace &nbsp; with regular spaces to allow proper word wrapping
-    // This is safe because we're only displaying, not editing
-    return content.replace(/&nbsp;/g, ' ');
+    return processContent(content);
   }
 
   async deletePost(postId: string) {

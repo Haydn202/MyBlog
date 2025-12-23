@@ -7,6 +7,7 @@ import { TopicPill } from '../../shared/components/topic-pill/topic-pill';
 import { Thumbnail } from '../../shared/components/thumbnail/thumbnail';
 import { TopicColorOptions } from '../../Types/TopicColor';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { processContent } from '../../core/utils/content-processor';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-json';
@@ -54,7 +55,9 @@ export class Post implements OnInit, AfterViewInit {
       next: (post) => {
         this.post.set(post);
 
-        this.postContentSafe = this.sanitizer.bypassSecurityTrustHtml(post.content);
+        // Process content to replace &nbsp; with regular spaces for proper word wrapping
+        const processedContent = processContent(post.content);
+        this.postContentSafe = this.sanitizer.bypassSecurityTrustHtml(processedContent);
         this.isLoading.set(false);
         this.highlighted = false;
       },

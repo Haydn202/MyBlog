@@ -7,6 +7,7 @@ import {CommonModule} from '@angular/common';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {TopicPill} from '../../shared/components/topic-pill/topic-pill';
 import {CommentsSection} from '../../shared/components/comments-section/comments-section';
+import {processContent} from '../../core/utils/content-processor';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-typescript';
@@ -50,7 +51,9 @@ export class SummaryCard {
     this.postsService.getPost(this.post.id).subscribe({
       next: (post) => {
         this.fullPost.set(post);
-        this.postContentSafe = this.sanitizer.bypassSecurityTrustHtml(post.content);
+        // Process content to replace &nbsp; with regular spaces for proper word wrapping
+        const processedContent = processContent(post.content);
+        this.postContentSafe = this.sanitizer.bypassSecurityTrustHtml(processedContent);
         this.isLoading.set(false);
         
         // Highlight syntax after content is loaded
