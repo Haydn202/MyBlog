@@ -347,10 +347,10 @@
 
                 @if (isPreviewMode()) {
                   <!-- Content Preview -->
-                  <div class="border border-base-300 rounded-lg p-4 bg-base-100 min-h-[500px] overflow-hidden">
+                  <div class="border border-base-300 rounded-lg p-4 bg-base-100 min-h-[500px] overflow-y-auto prose-container w-full">
                     @if (editorContent()) {
-                      <article class="prose prose-base max-w-full">
-                        <div [innerHTML]="editorContent()" class="break-words"></div>
+                      <article class="prose prose-base w-full">
+                        <div [innerHTML]="getProcessedContent()" class="w-full"></div>
                       </article>
                     } @else {
                       <div class="text-center text-base-content/50 py-8">

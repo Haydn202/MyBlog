@@ -220,6 +220,19 @@ export class ManagePosts implements OnInit {
     this.isPreviewMode.set(false);
   }
 
+  /**
+   * Process HTML content to replace non-breaking spaces with regular spaces
+   * This allows text to wrap properly at word boundaries
+   */
+  getProcessedContent(): string {
+    const content = this.editorContent();
+    if (!content) return '';
+
+    // Replace &nbsp; with regular spaces to allow proper word wrapping
+    // This is safe because we're only displaying, not editing
+    return content.replace(/&nbsp;/g, ' ');
+  }
+
   async deletePost(postId: string) {
     const confirmed = await this.confirmationService.confirm({
       title: 'Delete Post',
@@ -231,7 +244,7 @@ export class ManagePosts implements OnInit {
 
     if (confirmed) {
       this.isLoading.set(true);
-      
+
       this.postsService.deletePost(postId).subscribe({
         next: () => {
           this.isLoading.set(false);
@@ -305,7 +318,7 @@ export class ManagePosts implements OnInit {
   onThumbnailChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    
+
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
