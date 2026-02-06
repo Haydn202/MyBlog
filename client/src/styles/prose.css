@@ -1,0 +1,211 @@
+/* Shared prose styles for all article content */
+/* Used in: admin preview, post view, summary card */
+
+/* Override Tailwind Typography defaults - ensure proper width constraints */
+/* Use break-word to wrap at spaces first, only break words if absolutely necessary */
+.prose {
+  color: inherit;
+  width: 100% !important; /* Force full width to override Tailwind Typography */
+  max-width: 100% !important; /* Override Tailwind Typography's default max-width */
+  word-wrap: break-word;
+  overflow-wrap: break-word; /* Wraps at spaces first, breaks words only if necessary */
+  word-break: normal; /* Prevents unnecessary word breaking */
+  hyphens: none;
+  white-space: normal;
+  min-width: 0; /* Allow flex items to shrink */
+}
+
+/* Apply word wrapping to all children - wrap at spaces first */
+.prose * {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word; /* Wraps at spaces first, breaks words only if necessary */
+  word-break: normal; /* Prevents unnecessary word breaking */
+  box-sizing: border-box;
+}
+
+/* Ensure text elements wrap at spaces first */
+.prose p,
+.prose div,
+.prose span,
+.prose li,
+.prose td,
+.prose th {
+  max-width: 100%;
+  overflow-wrap: break-word; /* Wraps at spaces first, breaks words only if necessary */
+  word-break: normal; /* Prevents unnecessary word breaking */
+}
+
+/* Typography - Headings */
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  color: inherit;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose h1 {
+  font-size: 2em;
+}
+
+.prose h2 {
+  font-size: 1.5em;
+}
+
+.prose h3 {
+  font-size: 1.25em;
+}
+
+/* Typography - Paragraphs */
+.prose p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  line-height: 1.75;
+}
+
+/* Typography - Lists */
+.prose ul, .prose ol {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Typography - Blockquotes */
+.prose blockquote {
+  border-left: 4px solid hsl(var(--p));
+  padding-left: 1em;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: hsl(var(--bc) / 0.8);
+  background: hsl(var(--b2));
+}
+
+/* Typography - Code */
+.prose code {
+  background: hsl(var(--b2));
+  color: inherit;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875em;
+}
+
+.prose pre {
+  background: hsl(var(--b2));
+  color: inherit;
+  border: 1px solid hsl(var(--b3));
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 1.5rem 0;
+}
+
+.prose pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Syntax highlighting overrides for Prism.js */
+.prose pre[class*="language-"] {
+  background: #2d3748 !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #4a5568;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 1.5rem 0 !important;
+  padding: 1.5rem !important;
+}
+
+.prose pre[class*="language-"] code {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+.prose pre code[class*="language-"] {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* Make code blocks wider and more prominent (post view specific) */
+.prose pre[data-language] {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: -2rem !important;
+  margin-right: -2rem !important;
+  padding: 2rem !important;
+  font-size: 0.9rem !important;
+  line-height: 1.6 !important;
+}
+
+/* Responsive code blocks */
+@media (min-width: 768px) {
+  .prose pre[data-language] {
+    margin-left: -4rem !important;
+    margin-right: -4rem !important;
+    padding: 2.5rem !important;
+  }
+}
+
+/* Typography - Links */
+.prose a {
+  color: hsl(var(--p));
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.prose a:hover {
+  text-decoration: underline;
+}
+
+/* Typography - Images */
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5em;
+  margin: 1em 0;
+  display: block;
+}
+
+/* Typography - Tables */
+.prose table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  table-layout: auto;
+}
+
+.prose th, .prose td {
+  border: 1px solid hsl(var(--bc) / 0.2);
+  padding: 0.5em;
+  text-align: left;
+}
+
+.prose th {
+  background-color: hsl(var(--b2));
+  font-weight: 600;
+}
+
+/* Typography - Strong/Bold */
+.prose strong {
+  color: inherit;
+  font-weight: 600;
+}
+
+/* Container for prose content (admin preview) */
+.prose-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+

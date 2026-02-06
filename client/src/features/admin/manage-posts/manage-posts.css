@@ -1,107 +1,43 @@
 /* Custom styles for manage posts - using DaisyUI classes */
+/* Prose styles are now in shared styles/prose.css */
 
-/* Content Preview Styling */
-.prose {
-  color: hsl(var(--bc));
-  max-width: none;
-}
-
-.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
-  color: hsl(var(--bc));
-  font-weight: 600;
-  line-height: 1.25;
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
-}
-
-.prose h1 {
-  font-size: 2em;
-}
-
-.prose h2 {
-  font-size: 1.5em;
-}
-
-.prose h3 {
-  font-size: 1.25em;
-}
-
-.prose p {
-  margin-top: 1em;
-  margin-bottom: 1em;
-  line-height: 1.75;
-}
-
-.prose ul, .prose ol {
-  margin-top: 1em;
-  margin-bottom: 1em;
-  padding-left: 1.5em;
-}
-
-.prose li {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-}
-
-.prose blockquote {
-  border-left: 4px solid hsl(var(--p));
-  padding-left: 1em;
-  margin: 1.5em 0;
-  font-style: italic;
-  color: hsl(var(--bc) / 0.8);
-}
-
-.prose code {
-  background-color: hsl(var(--b2));
-  padding: 0.125em 0.25em;
-  border-radius: 0.25em;
-  font-size: 0.875em;
-  color: hsl(var(--bc));
-}
-
-.prose pre {
-  background-color: hsl(var(--b2));
-  padding: 1em;
-  border-radius: 0.5em;
-  overflow-x: auto;
-  margin: 1.5em 0;
-}
-
-.prose pre code {
-  background-color: transparent;
-  padding: 0;
-  color: hsl(var(--bc));
-}
-
-.prose a {
-  color: hsl(var(--p));
-  text-decoration: underline;
-}
-
-.prose a:hover {
-  color: hsl(var(--pf));
-}
-
-.prose img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 0.5em;
-  margin: 1em 0;
-}
-
-.prose table {
+/* Ensure form and form-control have width constraints */
+form {
   width: 100%;
-  border-collapse: collapse;
-  margin: 1.5em 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-.prose th, .prose td {
-  border: 1px solid hsl(var(--bc) / 0.2);
-  padding: 0.5em;
-  text-align: left;
+.form-control {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-.prose th {
-  background-color: hsl(var(--b2));
-  font-weight: 600;
+/* Admin-specific container styles - Standard CSS word wrapping approach */
+/* Standard: overflow-wrap: break-word wraps at spaces first, breaks words only if necessary */
+.prose-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+  overflow-x: hidden; /* Hide horizontal overflow - text should wrap */
+  overflow-y: auto;
+  display: block;
+  /* Force width constraint - prevent expansion beyond parent */
+  min-width: 0;
+}
+
+/* Ensure prose respects container width in admin preview */
+.prose-container .prose {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* Ensure all content inside prose respects width */
+.prose-container .prose > * {
+  max-width: 100% !important;
+  box-sizing: border-box;
 }

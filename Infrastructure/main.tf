@@ -177,30 +177,6 @@ module "ui_static_webapp" {
 }
 
 # =============================================================================
-# UI Container Instance (Commented out - kept for reference/future use)
-# =============================================================================
-# module "ui_container" {
-#   source              = "./modules/containerinstance"
-#   container_name      = "rubberduckdiaries-ui"
-#   resource_group_name = azurerm_resource_group.rg.name
-#   location            = azurerm_resource_group.rg.location
-#   dns_name_label      = "rubberduckdiaries"
-#   registry_server     = module.acr.login_server
-#   registry_username   = module.acr.admin_username
-#   registry_password   = module.acr.admin_password
-#   image_name          = "rubberduckdiaries-ui"
-#   image_tag           = "latest"
-#   cpu                 = 0.25
-#   memory              = 0.5
-#   container_port      = 80
-#
-#   tags = {
-#     project = "RubberDuckDiaries"
-#     env     = "prod"
-#   }
-# }
-
-# =============================================================================
 # URL Secrets in Key Vault (using custom domain via Cloudflare)
 # =============================================================================
 resource "azurerm_key_vault_secret" "api_url" {

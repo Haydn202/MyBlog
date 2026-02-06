@@ -16,6 +16,7 @@ import { TopicColorOptions } from '../../../Types/TopicColor';
 import { ConfirmationService } from '../../../core/services/confirmation.service';
 import { Pagination } from '../../../shared/components/pagination/pagination';
 import { PagingParams } from '../../../Types/PagingParams';
+import { processContent } from '../../../core/utils/content-processor';
 
 @Component({
   selector: 'app-manage-posts',
@@ -220,6 +221,15 @@ export class ManagePosts implements OnInit {
     this.isPreviewMode.set(false);
   }
 
+  /**
+   * Process HTML content to replace non-breaking spaces with regular spaces
+   * This allows text to wrap properly at word boundaries
+   */
+  getProcessedContent(): string {
+    const content = this.editorContent();
+    return processContent(content);
+  }
+
   async deletePost(postId: string) {
     const confirmed = await this.confirmationService.confirm({
       title: 'Delete Post',
@@ -231,7 +241,7 @@ export class ManagePosts implements OnInit {
 
     if (confirmed) {
       this.isLoading.set(true);
-      
+
       this.postsService.deletePost(postId).subscribe({
         next: () => {
           this.isLoading.set(false);
@@ -305,7 +315,7 @@ export class ManagePosts implements OnInit {
   onThumbnailChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    
+
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {

@@ -61,6 +61,9 @@ jobs:
         working-directory: ./client
         run: npm run build
 
+      - name: Copy staticwebapp.config.json to build output
+        run: cp client/staticwebapp.config.json client/dist/client/browser/staticwebapp.config.json
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1

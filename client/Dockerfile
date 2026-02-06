@@ -5,7 +5,7 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 # Build argument for API URL
-ARG API_URL=http://localhost:5000
+ARG API_URL=http://localhost:8081
 
 # Copy package files
 COPY package*.json ./
