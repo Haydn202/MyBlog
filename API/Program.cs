@@ -28,7 +28,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// No UseHttpsRedirection: TLS at edge (Azure + Cloudflare); redirect caused 301 loop when behind proxy
+app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
