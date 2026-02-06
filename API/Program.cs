@@ -44,6 +44,9 @@ app.UseCors(options => options
 
 app.MapControllers();
 
+// Root health check (used by Container Apps liveness probe and to verify API is up)
+app.MapGet("/", () => Results.Ok("OK"));
+
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try
