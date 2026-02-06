@@ -71,6 +71,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Restart Container Instance to pull new image
+      - name: Deploy new revision to Container App (pulls latest image)
         run: |
-          az container restart --name rubberduckdiaries-api --resource-group RG-RubberDuckDiaries
+          az containerapp update --name rubberduckdiaries-api --resource-group RG-RubberDuckDiaries --image ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
