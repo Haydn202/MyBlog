@@ -168,6 +168,7 @@ module "ui_static_webapp" {
   app_name            = "rubberduckdiaries-ui"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
+  custom_domain       = var.custom_domain
 
   tags = {
     project = "RubberDuckDiaries"
@@ -293,6 +294,12 @@ output "ui_static_webapp_hostname" {
 output "static_webapp_api_key" {
   description = "API key for Static Web App deployment (add to GitHub Secrets)"
   value       = module.ui_static_webapp.api_key
+  sensitive   = true
+}
+
+output "custom_domain_validation_token" {
+  description = "TXT record value for custom domain validation - add this as a TXT record in Cloudflare DNS"
+  value       = var.custom_domain != "" ? module.ui_static_webapp.custom_domain_validation_token : null
   sensitive   = true
 }
 

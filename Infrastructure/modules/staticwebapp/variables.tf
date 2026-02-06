@@ -21,3 +21,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "custom_domain" {
+  description = "Custom domain name (e.g., rubberduckdiaries.net). Leave empty to skip custom domain."
+  type        = string
+  default     = ""
+}
