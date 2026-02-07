@@ -15,6 +15,9 @@ if (corsSettings == null || corsSettings.AllowedOrigins.Length == 0)
     throw new Exception("CorsSettings configuration is missing or empty");
 }
 
+// ✅ Register CORS services (YOU WERE MISSING THIS)
+builder.Services.AddCors();
+
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 
@@ -30,6 +33,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// ✅ CORS MUST be before auth & controllers
 app.UseCors(options => options
     .AllowAnyMethod()
     .AllowAnyHeader()
