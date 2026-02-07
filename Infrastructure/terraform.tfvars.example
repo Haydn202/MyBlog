@@ -10,6 +10,10 @@ admin_password = "YourSecurePassword123!"
 # Example: "rubberduckdiaries.com"
 custom_domain = ""
 
+# Docker Hub: username for image path; token so Container App can pull (same as DOCKERHUB_* in GitHub for push).
+dockerhub_username = "your-dockerhub-username"
+dockerhub_token    = "your-dockerhub-token"
+
 # Azure AD Configuration
 # Get these values from Azure Portal or Azure CLI
 tenant_id                  = "YOUR_TENANT_ID"

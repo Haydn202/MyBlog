@@ -23,22 +23,6 @@ resource "azurerm_resource_group" "rg" {
 }
 
 # =============================================================================
-# Container Registry
-# =============================================================================
-module "acr" {
-  source              = "./modules/acr"
-  name                = "rubberduckdiariesacr"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  sku                 = "Basic"
-  admin_enabled       = true
-  tags = {
-    project = "RubberDuckDiaries"
-    env     = "prod"
-  }
-}
-
-# =============================================================================
 # Key Vault
 # =============================================================================
 module "keyvault" {
@@ -139,10 +123,10 @@ module "api_container" {
   app_name            = "rubberduckdiaries-api"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  registry_server     = module.acr.login_server
-  registry_username   = module.acr.admin_username
-  registry_password   = module.acr.admin_password
-  image_name          = "rubberduckdiaries-api"
+  registry_server     = "docker.io"
+  registry_username   = var.dockerhub_username
+  registry_password   = var.dockerhub_token
+  image_name          = "${var.dockerhub_username}/rubberduckdiaries-api"
   image_tag           = "latest"
   container_port      = 80
   cpu                 = 0.25
@@ -245,6 +229,17 @@ variable "custom_domain" {
   default     = ""
 }
 
+variable "dockerhub_username" {
+  description = "Docker Hub username (image path docker.io/<this>/rubberduckdiaries-api). Provide via terraform.tfvars, -var, or TF_VAR_dockerhub_username."
+  type        = string
+}
+
+variable "dockerhub_token" {
+  description = "Docker Hub token/password for the Container App to pull the image. Store in terraform.tfvars (do not commit)."
+  type        = string
+  sensitive   = true
+}
+
 variable "tenant_id" {
   description = "Azure AD tenant ID"
   type        = string
@@ -308,11 +303,6 @@ output "api_custom_domain_verification_id" {
   description = "TXT record value for API custom domain (api.<custom_domain>). In Cloudflare add TXT name 'asuid.api' with this value."
   value       = var.custom_domain != "" ? module.api_container.custom_domain_verification_id : null
   sensitive   = true
-}
-
-output "acr_login_server" {
-  description = "ACR login server for pushing images"
-  value       = module.acr.login_server
 }
 
 output "sql_server_name" {

@@ -21,18 +21,20 @@ variable "location" {
 }
 
 variable "registry_server" {
-  description = "Container registry server (e.g. myacr.azurecr.io)"
+  description = "Container registry server (e.g. docker.io or myacr.azurecr.io)"
   type        = string
 }
 
 variable "registry_username" {
-  description = "Container registry username"
+  description = "Container registry username (omit for public images, e.g. public Docker Hub)"
   type        = string
+  default     = null
 }
 
 variable "registry_password" {
-  description = "Container registry password"
+  description = "Container registry password (omit for public images)"
   type        = string
+  default     = null
   sensitive   = true
 }
 

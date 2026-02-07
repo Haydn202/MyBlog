@@ -19,22 +19,28 @@ resource "azurerm_container_app_environment" "env" {
   tags = var.tags
 }
 
-# Secret for ACR password (referenced by registry and never exposed in env)
+# Registry auth only when password is set (e.g. private registry). Public Docker Hub needs no credentials.
 resource "azurerm_container_app" "app" {
-  name                       = var.app_name
+  name                        = var.app_name
   container_app_environment_id = azurerm_container_app_environment.env.id
-  resource_group_name        = var.resource_group_name
-  revision_mode              = "Single"
+  resource_group_name         = var.resource_group_name
+  revision_mode               = "Single"
 
-  secret {
-    name  = "acr-password"
-    value = var.registry_password
+  dynamic "secret" {
+    for_each = var.registry_password != null ? [1] : []
+    content {
+      name  = "registry-password"
+      value = var.registry_password
+    }
   }
 
-  registry {
-    server               = var.registry_server
-    username             = var.registry_username
-    password_secret_name = "acr-password"
+  dynamic "registry" {
+    for_each = var.registry_password != null ? [1] : []
+    content {
+      server               = var.registry_server
+      username             = var.registry_username
+      password_secret_name = "registry-password"
+    }
   }
 
   template {
