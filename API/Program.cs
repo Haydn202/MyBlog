@@ -8,17 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS: allow env var ALLOWED_ORIGINS (comma-separated) to override config for runtime (e.g. Container App)
-var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")?
-    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-    .ToArray();
-if (allowedOrigins is null || allowedOrigins.Length == 0)
-{
-    var corsSettings = builder.Configuration.GetSection("CorsSettings").Get<CorsSettings>();
-    if (corsSettings == null || corsSettings.AllowedOrigins.Length == 0)
-        throw new Exception("CorsSettings.AllowedOrigins or ALLOWED_ORIGINS env var is required");
-    allowedOrigins = corsSettings.AllowedOrigins;
-}
+var corsSettings = builder.Configuration.GetSection("CorsSettings").Get<CorsSettings>();
+if (corsSettings == null || corsSettings.AllowedOrigins.Length == 0)
+    throw new Exception("CorsSettings.AllowedOrigins is required");
+var allowedOrigins = corsSettings.AllowedOrigins;
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
@@ -33,18 +26,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// No UseHttpsRedirection: TLS at edge; redirect causes 301 loop behind proxy
+app.UseHttpsRedirection();
 
-// CORS before auth so preflight OPTIONS gets CORS headers without requiring auth
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseCors(policy => policy
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()
     .WithOrigins(allowedOrigins)
     .WithExposedHeaders("X-Refresh-Token"));
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.UseExceptionHandler();
 
