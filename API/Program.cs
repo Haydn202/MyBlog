@@ -1,4 +1,3 @@
-using API.Behaviours;
 using API.Data;
 using API.Entities;
 using API.Extensions;
@@ -8,10 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load CORS settings from configuration
 var corsSettings = builder.Configuration.GetSection("CorsSettings").Get<CorsSettings>();
 if (corsSettings == null || corsSettings.AllowedOrigins.Length == 0)
-    throw new Exception("CorsSettings.AllowedOrigins is required");
-var allowedOrigins = corsSettings.AllowedOrigins;
+{
+    throw new Exception("CorsSettings configuration is missing or empty");
+}
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
@@ -28,15 +29,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseCors(policy => policy
+app.UseCors(options => options
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()
-    .WithOrigins(allowedOrigins)
+    .WithOrigins(corsSettings.AllowedOrigins)
     .WithExposedHeaders("X-Refresh-Token"));
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseExceptionHandler();
 
