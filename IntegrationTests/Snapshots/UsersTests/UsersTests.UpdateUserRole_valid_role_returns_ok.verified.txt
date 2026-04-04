@@ -1,0 +1,14 @@
+﻿{
+  ContentHeaders: {
+    Content-Type: [
+      application/json; charset=utf-8
+    ]
+  },
+  ReasonPhrase: OK,
+  ResponseHeaders: {
+    X-Correlation-ID: [
+      Guid_1
+    ]
+  },
+  StatusCode: 200
+}

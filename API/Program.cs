@@ -56,7 +56,22 @@ var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<DataContext>();
-    await context.Database.MigrateAsync();
+    if (app.Environment.IsEnvironment("Testing"))
+    {
+        // SQLite (in-memory factory): no SQL Server migrations; SQL Server (e.g. Testcontainers): migrations apply.
+        if (context.Database.ProviderName?.Contains("Sqlite", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            await context.Database.EnsureCreatedAsync();
+        }
+        else
+        {
+            await context.Database.MigrateAsync();
+        }
+    }
+    else
+    {
+        await context.Database.MigrateAsync();
+    }
 
     var adminSettings = builder.Configuration.GetSection("AdminSettings").Get<AdminSettings>();
     if (adminSettings == null)
@@ -64,8 +79,9 @@ try
         throw new Exception("AdminSettings configuration is missing");
     }
 
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = services.GetRequiredService<UserManager<User>>();
-    await SeedData.InitialiseAdmin(userManager, adminSettings);
+    await SeedData.InitialiseAdmin(roleManager, userManager, adminSettings);
 }
 catch (Exception e)
 {

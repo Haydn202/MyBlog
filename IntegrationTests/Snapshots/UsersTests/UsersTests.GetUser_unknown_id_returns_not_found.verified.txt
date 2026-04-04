@@ -1,0 +1,14 @@
+﻿{
+  ContentHeaders: {
+    Content-Type: [
+      application/problem+json; charset=utf-8
+    ]
+  },
+  ReasonPhrase: Not Found,
+  ResponseHeaders: {
+    X-Correlation-ID: [
+      Guid_1
+    ]
+  },
+  StatusCode: 404
+}

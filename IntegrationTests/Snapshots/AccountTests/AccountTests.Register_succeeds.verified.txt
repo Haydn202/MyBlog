@@ -1,0 +1,45 @@
+﻿{
+  Content: {
+    Headers: [
+      {
+        Content-Type: [
+          application/json; charset=utf-8
+        ]
+      }
+    ]
+  },
+  Headers: [
+    {
+      Set-Cookie: [
+                refreshToken=Scrubbed; expires=Scrubbed; path=/; secure; samesite=strict; httponly
+      ]
+    },
+    {
+      X-Correlation-ID: [
+        Guid_1
+      ]
+    }
+  ],
+  IsSuccessStatusCode: true,
+  ReasonPhrase: OK,
+  RequestMessage: {
+    Content: {
+      Headers: [
+        {
+          Content-Type: [
+            application/json; charset=utf-8
+          ]
+        }
+      ]
+    },
+    Headers: [],
+    Method: {
+      Method: POST
+    },
+    RequestUri: http://localhost/Accounts/register,
+    Version: 1.1
+  },
+  StatusCode: OK,
+  TrailingHeaders: [],
+  Version: 1.1
+}

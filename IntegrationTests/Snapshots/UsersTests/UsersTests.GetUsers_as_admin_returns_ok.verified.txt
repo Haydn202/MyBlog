@@ -1,0 +1,37 @@
+﻿{
+  Content: {
+    Headers: [
+      {
+        Content-Type: [
+          application/json; charset=utf-8
+        ]
+      }
+    ]
+  },
+  Headers: [
+    {
+      X-Correlation-ID: [
+        Guid_1
+      ]
+    }
+  ],
+  IsSuccessStatusCode: true,
+  ReasonPhrase: OK,
+  RequestMessage: {
+    Headers: [
+      {
+        Authorization: [
+          Bearer <scrubbed>
+        ]
+      }
+    ],
+    Method: {
+      Method: GET
+    },
+    RequestUri: http://localhost/Users,
+    Version: 1.1
+  },
+  StatusCode: OK,
+  TrailingHeaders: [],
+  Version: 1.1
+}

@@ -1,0 +1,24 @@
+﻿{
+  Body: {"type":"https://tools.ietf.org/html/rfc7231#section-6.5.1","title":"one or more validation errors occurred.","status":400,"instance":"/Users/Guid_1","errors":["The provided role is not a valid."],"correlationId":"Guid_2"},
+  ContentHeaders: {
+    Content-Type: [
+      application/json; charset=utf-8
+    ],
+    Expires: [
+      -1
+    ]
+  },
+  ReasonPhrase: Bad Request,
+  ResponseHeaders: {
+    Cache-Control: [
+      no-store, no-cache
+    ],
+    Pragma: [
+      no-cache
+    ],
+    X-Correlation-ID: [
+      Guid_2
+    ]
+  },
+  StatusCode: 400
+}

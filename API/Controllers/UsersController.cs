@@ -28,7 +28,7 @@ public class UsersController(
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<User>> GetUser(Guid id)
     { 
-        var user = await context.Users.FindAsync(id);
+        var user = await context.Users.FindAsync(id.ToString());
         if (user == null)
         {
             return NotFound();

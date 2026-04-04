@@ -1,0 +1,30 @@
+﻿{
+  Content: {
+    Headers: []
+  },
+  Headers: [
+    {
+      WWW-Authenticate: [
+        Bearer
+      ]
+    },
+    {
+      X-Correlation-ID: [
+        Guid_1
+      ]
+    }
+  ],
+  IsSuccessStatusCode: false,
+  ReasonPhrase: Unauthorized,
+  RequestMessage: {
+    Headers: [],
+    Method: {
+      Method: POST
+    },
+    RequestUri: http://localhost/Accounts/logout,
+    Version: 1.1
+  },
+  StatusCode: Unauthorized,
+  TrailingHeaders: [],
+  Version: 1.1
+}

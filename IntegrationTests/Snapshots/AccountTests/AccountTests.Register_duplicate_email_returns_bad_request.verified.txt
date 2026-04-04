@@ -1,0 +1,55 @@
+﻿{
+  Content: {
+    Headers: [
+      {
+        Content-Type: [
+          application/json; charset=utf-8
+        ]
+      },
+      {
+        Expires: [
+          -1
+        ]
+      }
+    ]
+  },
+  Headers: [
+    {
+      Cache-Control: [
+        no-store, no-cache
+      ]
+    },
+    {
+      Pragma: [
+        no-cache
+      ]
+    },
+    {
+      X-Correlation-ID: [
+        Guid_1
+      ]
+    }
+  ],
+  IsSuccessStatusCode: false,
+  ReasonPhrase: Bad Request,
+  RequestMessage: {
+    Content: {
+      Headers: [
+        {
+          Content-Type: [
+            application/json; charset=utf-8
+          ]
+        }
+      ]
+    },
+    Headers: [],
+    Method: {
+      Method: POST
+    },
+    RequestUri: http://localhost/Accounts/register,
+    Version: 1.1
+  },
+  StatusCode: BadRequest,
+  TrailingHeaders: [],
+  Version: 1.1
+}

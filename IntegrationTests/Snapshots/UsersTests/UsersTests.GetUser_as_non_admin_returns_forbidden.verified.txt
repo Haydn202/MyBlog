@@ -1,0 +1,31 @@
+﻿{
+  Content: {
+    Headers: []
+  },
+  Headers: [
+    {
+      X-Correlation-ID: [
+        Guid_1
+      ]
+    }
+  ],
+  IsSuccessStatusCode: false,
+  ReasonPhrase: Forbidden,
+  RequestMessage: {
+    Headers: [
+      {
+        Authorization: [
+          Bearer <scrubbed>
+        ]
+      }
+    ],
+    Method: {
+      Method: GET
+    },
+    RequestUri: http://localhost/Users/ffffffff-ffff-ffff-ffff-ffffffffffff,
+    Version: 1.1
+  },
+  StatusCode: Forbidden,
+  TrailingHeaders: [],
+  Version: 1.1
+}
