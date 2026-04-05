@@ -3,6 +3,7 @@ using API.Entities;
 using IntegrationTests.Builders.User;
 using IntegrationTests.Helpers;
 using IntegrationTests.Infrastructure;
+using VerifyXunit;
 
 namespace IntegrationTests.Tests.Users;
 
@@ -48,6 +49,46 @@ public class UsersTests(TestFixture fixture)
         var token = await api.Http.LoginGetBearerTokenAsync();
         api.Http.SetBearerToken(token);
         await api.Users.GetUsers().Verify();
+    }
+
+    [Fact]
+    public async Task GetUsers_after_registering_users_snapshot_contains_sorted_list()
+    {
+        const string emailA = "getusers_snapshot_a@test.local";
+        const string emailB = "getusers_snapshot_b@test.local";
+
+        var registerApi = fixture.CreateApi();
+        foreach (var (name, email) in new (string Name, string Email)[]
+                 {
+                     ("getusers_snapshot_a", emailA),
+                     ("getusers_snapshot_b", emailB),
+                 })
+        {
+            using var reg = await registerApi.Accounts.Register(
+                new RegisterUserRequest()
+                    .WithName(name)
+                    .WithEmail(email)
+                    .WithPassword("password"));
+            reg.EnsureSuccessStatusCode();
+        }
+
+        var api = fixture.CreateApi();
+        var token = await api.Http.LoginGetBearerTokenAsync();
+        api.Http.SetBearerToken(token);
+        using var response = await api.Users.GetUsers();
+        response.EnsureSuccessStatusCode();
+        var body = await response.Content.ReadAsStringAsync();
+        var users = UserListSnapshot.BuildSortedDisplayRows(
+            body,
+            email => email is not null &&
+                     (string.Equals(email, AuthTestCredentials.AdminEmail, StringComparison.OrdinalIgnoreCase) ||
+                      email.StartsWith("getusers_snapshot_", StringComparison.Ordinal)));
+        await Verifier.Verify(
+            new
+            {
+                StatusCode = (int)response.StatusCode,
+                Users = users,
+            });
     }
 
     [Fact]

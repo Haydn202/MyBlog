@@ -1,0 +1,20 @@
+﻿{
+  StatusCode: 200,
+  Users: [
+    {
+      email: admin@email.com,
+      role: null,
+      userName: admin
+    },
+    {
+      email: getusers_snapshot_a@test.local,
+      role: null,
+      userName: getusers_snapshot_a
+    },
+    {
+      email: getusers_snapshot_b@test.local,
+      role: null,
+      userName: getusers_snapshot_b
+    }
+  ]
+}
