@@ -1,0 +1,25 @@
+﻿{
+  Content: {
+    Headers: []
+  },
+  Headers: [
+    {
+      X-Correlation-ID: [
+        Guid_1
+      ]
+    }
+  ],
+  IsSuccessStatusCode: true,
+  ReasonPhrase: No Content,
+  RequestMessage: {
+    Headers: [],
+    Method: {
+      Method: POST
+    },
+    RequestUri: http://localhost/Accounts/refresh-token,
+    Version: 1.1
+  },
+  StatusCode: NoContent,
+  TrailingHeaders: [],
+  Version: 1.1
+}

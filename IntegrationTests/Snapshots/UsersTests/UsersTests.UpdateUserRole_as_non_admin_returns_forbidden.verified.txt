@@ -1,0 +1,40 @@
+﻿{
+  Content: {
+    Headers: []
+  },
+  Headers: [
+    {
+      X-Correlation-ID: [
+        Guid_1
+      ]
+    }
+  ],
+  IsSuccessStatusCode: false,
+  ReasonPhrase: Forbidden,
+  RequestMessage: {
+    Content: {
+      Headers: [
+        {
+          Content-Type: [
+            application/json; charset=utf-8
+          ]
+        }
+      ]
+    },
+    Headers: [
+      {
+        Authorization: [
+          Bearer <scrubbed>
+        ]
+      }
+    ],
+    Method: {
+      Method: PATCH
+    },
+    RequestUri: http://localhost/Users/ffffffff-ffff-ffff-ffff-ffffffffffff,
+    Version: 1.1
+  },
+  StatusCode: Forbidden,
+  TrailingHeaders: [],
+  Version: 1.1
+}

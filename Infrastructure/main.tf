@@ -23,22 +23,6 @@ resource "azurerm_resource_group" "rg" {
 }
 
 # =============================================================================
-# Container Registry
-# =============================================================================
-module "acr" {
-  source              = "./modules/acr"
-  name                = "rubberduckdiariesacr"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  sku                 = "Basic"
-  admin_enabled       = true
-  tags = {
-    project = "RubberDuckDiaries"
-    env     = "prod"
-  }
-}
-
-# =============================================================================
 # Key Vault
 # =============================================================================
 module "keyvault" {
@@ -132,32 +116,52 @@ module "sql_db" {
 }
 
 # =============================================================================
-# API Container Instance
+# API Container App (scale-to-zero)
 # =============================================================================
 module "api_container" {
-  source              = "./modules/containerinstance"
-  container_name      = "rubberduckdiaries-api"
+  source              = "./modules/containerapp"
+  app_name            = "rubberduckdiaries-api"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  dns_name_label      = "rubberduckdiaries-api"
-  registry_server     = module.acr.login_server
-  registry_username   = module.acr.admin_username
-  registry_password   = module.acr.admin_password
-  image_name          = "rubberduckdiaries-api"
+  registry_server     = "docker.io"
+  registry_username   = var.dockerhub_username
+  registry_password   = var.dockerhub_token
+  image_name          = "${var.dockerhub_username}/rubberduckdiaries-api"
   image_tag           = "latest"
-  cpu                 = 0.5
-  memory              = 0.5
   container_port      = 80
+  cpu                 = 0.25
+  memory_gb           = "0.5"
+  min_replicas        = 0
+  max_replicas        = 1
+  custom_domain       = var.custom_domain != "" ? "api.${var.custom_domain}" : ""
 
-  environment_variables = {
-    "ASPNETCORE_ENVIRONMENT" = "Production"
-    "ASPNETCORE_URLS"        = "http://+:80"
-  }
+  environment_variables = merge(
+    {
+      "ASPNETCORE_ENVIRONMENT" = "Production"
+      "ASPNETCORE_URLS"        = "http://+:80"
+    },
+    var.custom_domain != "" ? {
+      # CORS: API reads this at startup; include every origin that can host the UI (custom domain + Static Web App default)
+      "ALLOWED_ORIGINS" = "https://${var.custom_domain},https://www.${var.custom_domain},${module.ui_static_webapp.url}"
+    } : {}
+  )
 
   tags = {
     project = "RubberDuckDiaries"
     env     = "prod"
   }
+}
+
+# Key Vault access for Container App (so API can read secrets at runtime)
+resource "azurerm_key_vault_access_policy" "container_app" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = var.tenant_id
+  object_id    = module.api_container.principal_id
+
+  secret_permissions = [
+    "Get",
+    "List"
+  ]
 }
 
 # =============================================================================
@@ -168,6 +172,7 @@ module "ui_static_webapp" {
   app_name            = "rubberduckdiaries-ui"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
+  custom_domain       = var.custom_domain
 
   tags = {
     project = "RubberDuckDiaries"
@@ -224,6 +229,17 @@ variable "custom_domain" {
   default     = ""
 }
 
+variable "dockerhub_username" {
+  description = "Docker Hub username (image path docker.io/<this>/rubberduckdiaries-api). Provide via terraform.tfvars, -var, or TF_VAR_dockerhub_username."
+  type        = string
+}
+
+variable "dockerhub_token" {
+  description = "Docker Hub token/password for the Container App to pull the image. Store in terraform.tfvars (do not commit)."
+  type        = string
+  sensitive   = true
+}
+
 variable "tenant_id" {
   description = "Azure AD tenant ID"
   type        = string
@@ -272,14 +288,21 @@ output "static_webapp_api_key" {
   sensitive   = true
 }
 
+output "custom_domain_validation_token" {
+  description = "TXT record value for custom domain validation - add this as a TXT record in Cloudflare DNS"
+  value       = var.custom_domain != "" ? module.ui_static_webapp.custom_domain_validation_token : null
+  sensitive   = true
+}
+
 output "api_container_fqdn" {
   description = "FQDN of the API Container (for Cloudflare CNAME)"
   value       = module.api_container.fqdn
 }
 
-output "acr_login_server" {
-  description = "ACR login server for pushing images"
-  value       = module.acr.login_server
+output "api_custom_domain_verification_id" {
+  description = "TXT record value for API custom domain (api.<custom_domain>). In Cloudflare add TXT name 'asuid.api' with this value."
+  value       = var.custom_domain != "" ? module.api_container.custom_domain_verification_id : null
+  sensitive   = true
 }
 
 output "sql_server_name" {

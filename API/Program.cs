@@ -15,6 +15,9 @@ if (corsSettings == null || corsSettings.AllowedOrigins.Length == 0)
     throw new Exception("CorsSettings configuration is missing or empty");
 }
 
+// ✅ Register CORS services (YOU WERE MISSING THIS)
+builder.Services.AddCors();
+
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 
@@ -30,11 +33,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseExceptionHandler();
-
+// ✅ CORS MUST be before auth & controllers
 app.UseCors(options => options
     .AllowAnyMethod()
     .AllowAnyHeader()
@@ -42,14 +41,37 @@ app.UseCors(options => options
     .WithOrigins(corsSettings.AllowedOrigins)
     .WithExposedHeaders("X-Refresh-Token"));
 
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseExceptionHandler();
+
 app.MapControllers();
+
+// Root health check (used by Container Apps liveness probe and to verify API is up)
+app.MapGet("/", () => Results.Ok("OK"));
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<DataContext>();
-    await context.Database.MigrateAsync();
+    if (app.Environment.IsEnvironment("Testing"))
+    {
+        // SQLite (in-memory factory): no SQL Server migrations; SQL Server (e.g. Testcontainers): migrations apply.
+        if (context.Database.ProviderName?.Contains("Sqlite", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            await context.Database.EnsureCreatedAsync();
+        }
+        else
+        {
+            await context.Database.MigrateAsync();
+        }
+    }
+    else
+    {
+        await context.Database.MigrateAsync();
+    }
 
     var adminSettings = builder.Configuration.GetSection("AdminSettings").Get<AdminSettings>();
     if (adminSettings == null)
@@ -57,8 +79,9 @@ try
         throw new Exception("AdminSettings configuration is missing");
     }
 
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = services.GetRequiredService<UserManager<User>>();
-    await SeedData.InitialiseAdmin(userManager, adminSettings);
+    await SeedData.InitialiseAdmin(roleManager, userManager, adminSettings);
 }
 catch (Exception e)
 {

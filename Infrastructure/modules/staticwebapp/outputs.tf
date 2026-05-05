@@ -20,3 +20,9 @@ output "url" {
   description = "The URL of the Static Web App"
   value       = "https://${azurerm_static_web_app.swa.default_host_name}"
 }
+
+output "custom_domain_validation_token" {
+  description = "TXT record value for custom domain validation (add as TXT record in DNS)"
+  value       = var.custom_domain != "" ? azurerm_static_web_app_custom_domain.custom_domain[0].validation_token : null
+  sensitive   = true
+}

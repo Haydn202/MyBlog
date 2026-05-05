@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using API.Behaviours;
@@ -24,6 +24,7 @@ public static class ApplicationServiceExtensions
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
         services.AddDbContext<DataContext>(opt =>
         {
@@ -40,7 +41,7 @@ public static class ApplicationServiceExtensions
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddScoped<ITokenService, TokenService>(); 
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddAutoMapper(cfg => { }, typeof(Program).Assembly);
         
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddExceptionHandler<GlobalExceptionHandler>();

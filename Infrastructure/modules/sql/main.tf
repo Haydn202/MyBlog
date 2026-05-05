@@ -24,9 +24,9 @@ resource "azurerm_mssql_database" "sqldatabase" {
   name                        = var.sql_db_name
   server_id                   = azurerm_mssql_server.sqlserver.id
   sku_name                    = "Basic"
-  min_capacity                = 0.5
-  auto_pause_delay_in_minutes = 20
-  max_size_gb                 = 32
+  min_capacity                = 0
+  auto_pause_delay_in_minutes = 0
+  max_size_gb                 = 1
 }
 
 # Allow Azure services to access SQL Server
