@@ -10,7 +10,7 @@
  */
 export function processContent(content: string): string {
   if (!content) return '';
-  
+
   // Replace &nbsp; with regular spaces to allow proper word wrapping
   // This is safe because we're only displaying, not editing
   return content.replace(/&nbsp;/g, ' ');
